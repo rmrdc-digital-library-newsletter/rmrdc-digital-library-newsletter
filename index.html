@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RMRDC Digital Library</title>
+  <meta name="description" content="RMRDC Digital Library publications portal" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-row">
+      <div class="brand-wrap">
+        <div class="brand-mark">R</div>
+        <div>
+          <p class="eyebrow">Raw Materials Research and Development Council</p>
+          <h1>RMRDC Digital Library</h1>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <a href="index.html" class="active">Library</a>
+        <a href="admin/">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="section-tag">Institutional Knowledge Portal</p>
+        <h2>Discover publications by type, year, title, and subject.</h2>
+        <p class="hero-copy">Browse policy briefs, technical reports, books, journals, conference papers, and other RMRDC publications in a clean searchable archive with a reader-friendly document view.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#catalog">Explore Library</a>
+          <a class="btn btn-secondary" href="admin/">Staff Admin</a>
+        </div>
+      </div>
+      <div class="hero-card stat-panel">
+        <div>
+          <span class="stat-label">Publications</span>
+          <strong id="statTotal">0</strong>
+        </div>
+        <div>
+          <span class="stat-label">Categories</span>
+          <strong id="statTypes">0</strong>
+        </div>
+        <div>
+          <span class="stat-label">Years Covered</span>
+          <strong id="statYears">0</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container" id="catalog">
+    <section class="toolbar card">
+      <div class="toolbar-row">
+        <div class="field grow">
+          <label for="searchInput">Search</label>
+          <input id="searchInput" type="search" placeholder="Search by title, author, abstract, keyword..." />
+        </div>
+        <div class="field">
+          <label for="typeFilter">Publication Type</label>
+          <select id="typeFilter">
+            <option value="">All types</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="yearFilter">Year</label>
+          <select id="yearFilter">
+            <option value="">All years</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sortFilter">Sort</label>
+          <select id="sortFilter">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title-asc">Title A–Z</option>
+            <option value="title-desc">Title Z–A</option>
+            <option value="popular">Most viewed</option>
+          </select>
+        </div>
+      </div>
+      <div class="toolbar-meta">
+        <p id="resultsText">Loading publications...</p>
+        <button class="link-button" id="clearFilters" type="button">Clear filters</button>
+      </div>
+    </section>
+
+    <section>
+      <div id="emptyState" class="empty-state hidden card">
+        <h3>No publications found</h3>
+        <p>Try adjusting your search or filters.</p>
+      </div>
+      <div id="grid" class="publication-grid"></div>
+    </section>
+  </main>
+
+  <template id="publicationCardTemplate">
+    <article class="publication-card card lift">
+      <a class="cover-link" href="#">
+        <div class="cover-wrap">
+          <img class="cover-image" alt="Publication cover" />
+          <div class="cover-overlay">
+            <span>Open publication</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="pill type-pill"></span>
+          <h3 class="pub-title"></h3>
+          <p class="pub-meta"></p>
+        </div>
+      </a>
+    </article>
+  </template>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>© <span id="yearNow"></span> RMRDC Digital Library</p>
+      <p>Powered by Netlify + Supabase</p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

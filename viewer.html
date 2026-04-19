@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Publication Viewer | RMRDC Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+</head>
+<body class="viewer-page">
+  <header class="site-header compact">
+    <div class="container nav-row">
+      <div class="brand-wrap small">
+        <div class="brand-mark">R</div>
+        <div>
+          <p class="eyebrow">RMRDC</p>
+          <h1>Digital Library Viewer</h1>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <a href="index.html">Back to Library</a>
+        <a href="admin/">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container viewer-layout">
+    <aside class="viewer-sidebar card">
+      <img id="detailCover" class="detail-cover" alt="Publication cover" />
+      <span id="detailType" class="pill"></span>
+      <h2 id="detailTitle">Loading...</h2>
+      <p id="detailAuthors" class="muted"></p>
+      <div class="meta-list">
+        <div><span>Year</span><strong id="detailYear">—</strong></div>
+        <div><span>Views</span><strong id="detailViews">0</strong></div>
+        <div><span>Downloads</span><strong id="detailDownloads">0</strong></div>
+      </div>
+      <p id="detailAbstract" class="abstract-block"></p>
+      <div class="sidebar-actions">
+        <a id="directPdfLink" class="btn btn-secondary" target="_blank" rel="noopener">Open PDF</a>
+        <button id="downloadBtn" class="btn btn-primary" type="button">Download PDF</button>
+      </div>
+    </aside>
+
+    <section class="viewer-main card">
+      <div class="viewer-toolbar">
+        <div>
+          <h3>Document View</h3>
+          <p class="muted">Flipbook mode with PDF fallback controls</p>
+        </div>
+        <div class="viewer-controls">
+          <button id="prevPage" class="btn btn-secondary" type="button">Previous</button>
+          <span id="pageStatus">Page 0 / 0</span>
+          <button id="nextPage" class="btn btn-secondary" type="button">Next</button>
+          <button id="zoomOut" class="btn btn-secondary" type="button">−</button>
+          <button id="zoomIn" class="btn btn-secondary" type="button">+</button>
+        </div>
+      </div>
+      <div id="flipbookShell" class="flipbook-shell">
+        <div id="flipbook" class="flipbook"></div>
+      </div>
+      <div id="viewerMessage" class="viewer-message hidden"></div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script type="module" src="js/viewer.js"></script>
+</body>
+</html>

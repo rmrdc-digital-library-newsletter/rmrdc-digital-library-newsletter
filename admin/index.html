@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | RMRDC Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header compact">
+    <div class="container nav-row">
+      <div class="brand-wrap small">
+        <div class="brand-mark">R</div>
+        <div>
+          <p class="eyebrow">RMRDC</p>
+          <h1>Digital Library Admin</h1>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <a href="../index.html">Library</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container admin-layout">
+    <section class="card auth-card">
+      <div class="section-head">
+        <div>
+          <p class="section-tag">Authentication</p>
+          <h2>Staff login</h2>
+        </div>
+        <button id="signOutBtn" class="btn btn-secondary hidden" type="button">Sign out</button>
+      </div>
+      <div id="authStatus" class="notice">Not signed in.</div>
+      <form id="authForm" class="grid-two">
+        <div class="field grow">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="staff@rmrdc.gov.ng" required />
+        </div>
+        <div class="field grow">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="••••••••" required />
+        </div>
+        <div class="form-actions span-two">
+          <button class="btn btn-primary" type="submit">Sign in</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card upload-card">
+      <div class="section-head">
+        <div>
+          <p class="section-tag">Content Management</p>
+          <h2>Add a new publication</h2>
+        </div>
+      </div>
+      <form id="publicationForm" class="grid-two">
+        <div class="field span-two">
+          <label for="title">Title</label>
+          <input id="title" type="text" required />
+        </div>
+        <div class="field span-two">
+          <label for="authors">Authors</label>
+          <input id="authors" type="text" placeholder="Separate multiple authors with commas" required />
+        </div>
+        <div class="field">
+          <label for="type">Publication Type</label>
+          <select id="type" required>
+            <option value="">Select type</option>
+            <option>Policy Brief</option>
+            <option>Technical Report</option>
+            <option>Journal Article</option>
+            <option>Conference Paper</option>
+            <option>Book</option>
+            <option>Monograph</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="year">Year</label>
+          <input id="year" type="number" min="1900" max="2100" required />
+        </div>
+        <div class="field span-two">
+          <label for="abstract">Abstract / Description</label>
+          <textarea id="abstract" rows="5" required></textarea>
+        </div>
+        <div class="field">
+          <label for="cover">Cover image</label>
+          <input id="cover" type="file" accept="image/*" required />
+        </div>
+        <div class="field">
+          <label for="pdf">PDF document</label>
+          <input id="pdf" type="file" accept="application/pdf" required />
+        </div>
+        <div class="form-actions span-two">
+          <button id="uploadBtn" class="btn btn-primary" type="submit">Upload publication</button>
+        </div>
+      </form>
+      <div id="uploadMessage" class="notice hidden"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <div>
+          <p class="section-tag">Library Records</p>
+          <h2>Recent publications</h2>
+        </div>
+      </div>
+      <div id="adminList" class="admin-list"></div>
+    </section>
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
