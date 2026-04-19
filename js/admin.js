@@ -4,12 +4,14 @@ const signOutBtn = document.getElementById('signOutBtn');
 const publicationForm = document.getElementById('publicationForm');
 const uploadMessage = document.getElementById('uploadMessage');
 const adminList = document.getElementById('adminList');
+const uploadSection = document.getElementById('uploadSection');
+const recordsSection = document.getElementById('recordsSection');
 
 function setNotice(message, isError = false) {
   uploadMessage.textContent = message;
   uploadMessage.classList.remove('hidden');
-  uploadMessage.style.background = isError ? '#ffe6e6' : '#eef3fb';
-  uploadMessage.style.color = isError ? '#8c1d1d' : '#132238';
+  uploadMessage.style.background = isError ? '#fff1f1' : '#edf7f1';
+  uploadMessage.style.color = isError ? '#9b1c1c' : '#0d4d2e';
 }
 
 async function getProfileRole(userId) {
@@ -17,30 +19,50 @@ async function getProfileRole(userId) {
     .from('profiles')
     .select('role, full_name')
     .eq('id', userId)
-    .single();
-  if (error) return null;
+    .maybeSingle();
+  if (error) {
+    console.error('Profile lookup failed:', error);
+    return null;
+  }
   return data;
+}
+
+function toggleAuthorizedUI(canUpload) {
+  uploadSection?.classList.toggle('hidden', !canUpload);
+  recordsSection?.classList.toggle('hidden', !canUpload);
+  publicationForm?.querySelectorAll('input, textarea, select, button').forEach(el => {
+    el.disabled = !canUpload;
+  });
 }
 
 async function refreshAuthUI() {
   if (!window.db) {
     authStatus.textContent = 'Update ../js/config.js with your Supabase credentials.';
+    toggleAuthorizedUI(false);
     return;
   }
+
   const { data: { session } } = await window.db.auth.getSession();
   if (!session?.user) {
     authStatus.textContent = 'Not signed in.';
+    authForm.classList.remove('hidden');
     signOutBtn.classList.add('hidden');
-    publicationForm.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = true);
+    toggleAuthorizedUI(false);
     return;
   }
+
   const profile = await getProfileRole(session.user.id);
   authStatus.textContent = `Signed in as ${session.user.email}${profile?.role ? ` • Role: ${profile.role}` : ''}`;
   signOutBtn.classList.remove('hidden');
+
   const canUpload = ['admin', 'editor'].includes(profile?.role);
-  publicationForm.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = !canUpload);
+  authForm.classList.toggle('hidden', canUpload);
+  toggleAuthorizedUI(canUpload);
+
   if (!canUpload) {
     setNotice('Your account is signed in, but it does not have editor or admin upload permission.', true);
+  } else {
+    uploadMessage.classList.add('hidden');
   }
 }
 
@@ -70,6 +92,17 @@ async function createPublication(formData) {
   if (error) throw error;
 }
 
+function formatPrice(value) {
+  if (value === null || value === undefined || value === '') return 'Free';
+  const amount = Number(value);
+  if (Number.isNaN(amount) || amount <= 0) return 'Free';
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 2
+  }).format(amount);
+}
+
 async function loadRecentPublications() {
   if (!window.db) return;
   const { data, error } = await window.db
@@ -97,6 +130,7 @@ async function loadRecentPublications() {
       <div>
         <strong>${pub.title}</strong>
         <p class="muted">${pub.type || 'Publication'} • ${pub.year || 'N/A'} • ${pub.authors || 'No authors'}</p>
+        <p class="muted">${formatPrice(pub.price)}</p>
       </div>
       <a class="btn btn-secondary" href="../viewer.html?id=${pub.id}">Open</a>
     `;
@@ -104,18 +138,19 @@ async function loadRecentPublications() {
   });
 }
 
-authForm.addEventListener('submit', async (e) => {
+authForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!window.db) return;
   await signIn(document.getElementById('email').value, document.getElementById('password').value);
 });
 
-signOutBtn.addEventListener('click', async () => {
+signOutBtn?.addEventListener('click', async () => {
   await window.db.auth.signOut();
+  authForm.classList.remove('hidden');
   await refreshAuthUI();
 });
 
-publicationForm.addEventListener('submit', async (e) => {
+publicationForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   setNotice('Uploading publication...');
   try {
@@ -126,11 +161,13 @@ publicationForm.addEventListener('submit', async (e) => {
     const coverUrl = await uploadFile(window.APP_CONFIG.STORAGE_BUCKET_COVERS, coverFile, 'covers');
     const pdfUrl = await uploadFile(window.APP_CONFIG.STORAGE_BUCKET_DOCUMENTS, pdfFile, 'documents');
 
+    const rawPrice = document.getElementById('price').value;
     const payload = {
       title: document.getElementById('title').value.trim(),
       authors: document.getElementById('authors').value.trim(),
       type: document.getElementById('type').value.trim(),
       year: Number(document.getElementById('year').value),
+      price: rawPrice === '' ? null : Number(rawPrice),
       abstract: document.getElementById('abstract').value.trim(),
       cover_url: coverUrl,
       pdf_url: pdfUrl

@@ -7,6 +7,7 @@ let pageFlip = null;
 let currentZoom = 1;
 let totalPages = 0;
 let currentPublication = null;
+let fitMode = 'page';
 
 const refs = {
   cover: document.getElementById('detailCover'),
@@ -14,10 +15,11 @@ const refs = {
   title: document.getElementById('detailTitle'),
   authors: document.getElementById('detailAuthors'),
   year: document.getElementById('detailYear'),
+  price: document.getElementById('detailPrice'),
   views: document.getElementById('detailViews'),
   downloads: document.getElementById('detailDownloads'),
   abstract: document.getElementById('detailAbstract'),
-  directPdf: document.getElementById('directPdfLink'),
+  viewFull: document.getElementById('viewFullBtn'),
   download: document.getElementById('downloadBtn'),
   flipbook: document.getElementById('flipbook'),
   shell: document.getElementById('flipbookShell'),
@@ -26,12 +28,25 @@ const refs = {
   next: document.getElementById('nextPage'),
   zoomIn: document.getElementById('zoomIn'),
   zoomOut: document.getElementById('zoomOut'),
+  fitPage: document.getElementById('fitPage'),
+  fitWidth: document.getElementById('fitWidth'),
   pageStatus: document.getElementById('pageStatus')
 };
 
 function showMessage(text) {
   refs.message.textContent = text;
   refs.message.classList.remove('hidden');
+}
+
+function formatPrice(value) {
+  if (value === null || value === undefined || value === '') return 'Free';
+  const amount = Number(value);
+  if (Number.isNaN(amount) || amount <= 0) return 'Free';
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 2
+  }).format(amount);
 }
 
 function updateStatus(pageIndex = 0) {
@@ -71,10 +86,28 @@ function hydrateSidebar(publication) {
   refs.title.textContent = publication.title || 'Untitled publication';
   refs.authors.textContent = publication.authors || 'No author information';
   refs.year.textContent = publication.year || '—';
+  refs.price.textContent = formatPrice(publication.price);
   refs.views.textContent = publication.view_count || 0;
   refs.downloads.textContent = publication.download_count || 0;
   refs.abstract.textContent = publication.abstract || 'No abstract available.';
-  refs.directPdf.href = publication.pdf_url;
+  refs.viewFull.href = publication.pdf_url;
+}
+
+function buildFlipDimensions() {
+  const shellWidth = Math.max(320, refs.shell.clientWidth - 24);
+  const shellHeight = Math.max(420, refs.shell.clientHeight - 24);
+
+  if (fitMode === 'width') {
+    return {
+      width: Math.max(280, Math.floor(shellWidth / 2)),
+      height: Math.max(420, Math.floor(shellHeight))
+    };
+  }
+
+  return {
+    width: Math.max(300, Math.floor(shellWidth * 0.44)),
+    height: Math.max(420, Math.floor(shellHeight * 0.92))
+  };
 }
 
 async function renderFlipbook(pdfUrl) {
@@ -85,7 +118,7 @@ async function renderFlipbook(pdfUrl) {
 
   for (let pageNum = 1; pageNum <= totalPages; pageNum += 1) {
     const page = await pdf.getPage(pageNum);
-    const viewport = page.getViewport({ scale: currentZoom * 1.25 });
+    const viewport = page.getViewport({ scale: currentZoom * 1.35 });
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = viewport.width;
@@ -95,7 +128,7 @@ async function renderFlipbook(pdfUrl) {
     const pageEl = document.createElement('div');
     pageEl.className = 'flipbook-page';
     const img = document.createElement('img');
-    img.src = canvas.toDataURL('image/jpeg', 0.92);
+    img.src = canvas.toDataURL('image/jpeg', 0.94);
     img.alt = `Page ${pageNum}`;
     pageEl.appendChild(img);
     refs.flipbook.appendChild(pageEl);
@@ -105,17 +138,20 @@ async function renderFlipbook(pdfUrl) {
     pageFlip.destroy();
   }
 
+  const dims = buildFlipDimensions();
   pageFlip = new St.PageFlip(refs.flipbook, {
-    width: 420,
-    height: 560,
+    width: dims.width,
+    height: dims.height,
     size: 'stretch',
     minWidth: 280,
-    maxWidth: 920,
+    maxWidth: 1400,
     minHeight: 360,
-    maxHeight: 1200,
-    maxShadowOpacity: 0.3,
+    maxHeight: 1600,
+    maxShadowOpacity: 0.25,
     showCover: true,
-    mobileScrollSupport: true
+    mobileScrollSupport: true,
+    usePortrait: true,
+    autoSize: true
   });
 
   pageFlip.loadFromHTML(document.querySelectorAll('.flipbook-page'));
@@ -126,17 +162,34 @@ async function renderFlipbook(pdfUrl) {
 refs.prev.addEventListener('click', () => pageFlip?.flipPrev());
 refs.next.addEventListener('click', () => pageFlip?.flipNext());
 refs.zoomIn.addEventListener('click', async () => {
-  currentZoom = Math.min(2.2, currentZoom + 0.2);
+  currentZoom = Math.min(2.4, currentZoom + 0.15);
   if (currentPublication?.pdf_url) await renderFlipbook(currentPublication.pdf_url);
 });
 refs.zoomOut.addEventListener('click', async () => {
-  currentZoom = Math.max(0.8, currentZoom - 0.2);
+  currentZoom = Math.max(0.75, currentZoom - 0.15);
+  if (currentPublication?.pdf_url) await renderFlipbook(currentPublication.pdf_url);
+});
+refs.fitPage.addEventListener('click', async () => {
+  fitMode = 'page';
+  if (currentPublication?.pdf_url) await renderFlipbook(currentPublication.pdf_url);
+});
+refs.fitWidth.addEventListener('click', async () => {
+  fitMode = 'width';
   if (currentPublication?.pdf_url) await renderFlipbook(currentPublication.pdf_url);
 });
 refs.download.addEventListener('click', async () => {
   if (!currentPublication?.pdf_url) return;
   await incrementMetric('download', currentPublication);
   window.open(currentPublication.pdf_url, '_blank', 'noopener');
+});
+
+window.addEventListener('resize', async () => {
+  if (currentPublication?.pdf_url) {
+    clearTimeout(window.__rmrdcResizeTimer);
+    window.__rmrdcResizeTimer = setTimeout(async () => {
+      await renderFlipbook(currentPublication.pdf_url);
+    }, 180);
+  }
 });
 
 (async function init() {
@@ -148,6 +201,6 @@ refs.download.addEventListener('click', async () => {
     await renderFlipbook(currentPublication.pdf_url);
   } catch (err) {
     console.error(err);
-    showMessage('Flipbook could not load this PDF. Use “Open PDF” for direct viewing.');
+    showMessage('Flipbook could not load this PDF. Use “View Full” for direct viewing.');
   }
 })();

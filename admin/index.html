@@ -16,8 +16,8 @@
       <div class="brand-wrap small">
         <div class="brand-mark">R</div>
         <div>
-          <p class="eyebrow">RMRDC</p>
-          <h1>Digital Library Admin</h1>
+          <p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p>
+          <h1>RMRDC Digital Library</h1>
         </div>
       </div>
       <nav class="top-nav">
@@ -51,7 +51,7 @@
       </form>
     </section>
 
-    <section class="card upload-card">
+    <section id="uploadSection" class="card upload-card hidden">
       <div class="section-head">
         <div>
           <p class="section-tag">Content Management</p>
@@ -85,6 +85,10 @@
           <input id="year" type="number" min="1900" max="2100" required />
         </div>
         <div class="field span-two">
+          <label for="price">Price (₦)</label>
+          <input id="price" type="number" min="0" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="field span-two">
           <label for="abstract">Abstract / Description</label>
           <textarea id="abstract" rows="5" required></textarea>
         </div>
@@ -103,7 +107,7 @@
       <div id="uploadMessage" class="notice hidden"></div>
     </section>
 
-    <section class="card">
+    <section id="recordsSection" class="card hidden">
       <div class="section-head">
         <div>
           <p class="section-tag">Library Records</p>
@@ -113,6 +117,13 @@
       <div id="adminList" class="admin-list"></div>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>RMRDC Digital Library</p>
+      <p>Raw Materials Research and Development Council • Nigeria</p>
+    </div>
+  </footer>
 
   <script src="../js/config.js"></script>
   <script src="../js/supabase-client.js"></script>

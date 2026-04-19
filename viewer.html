@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs" type="module"></script>
   <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 </head>
 <body class="viewer-page">
@@ -18,8 +17,8 @@
       <div class="brand-wrap small">
         <div class="brand-mark">R</div>
         <div>
-          <p class="eyebrow">RMRDC</p>
-          <h1>Digital Library Viewer</h1>
+          <p class="eyebrow">Document Viewer</p>
+          <h1>RMRDC Digital Library</h1>
         </div>
       </div>
       <nav class="top-nav">
@@ -29,7 +28,7 @@
     </div>
   </header>
 
-  <main class="container viewer-layout">
+  <main class="container viewer-layout viewer-layout-wide">
     <aside class="viewer-sidebar card">
       <img id="detailCover" class="detail-cover" alt="Publication cover" />
       <span id="detailType" class="pill"></span>
@@ -37,36 +36,46 @@
       <p id="detailAuthors" class="muted"></p>
       <div class="meta-list">
         <div><span>Year</span><strong id="detailYear">—</strong></div>
+        <div><span>Price</span><strong id="detailPrice">Free</strong></div>
         <div><span>Views</span><strong id="detailViews">0</strong></div>
         <div><span>Downloads</span><strong id="detailDownloads">0</strong></div>
       </div>
       <p id="detailAbstract" class="abstract-block"></p>
       <div class="sidebar-actions">
-        <a id="directPdfLink" class="btn btn-secondary" target="_blank" rel="noopener">Open PDF</a>
+        <a id="viewFullBtn" class="btn btn-secondary" target="_blank" rel="noopener">View Full</a>
         <button id="downloadBtn" class="btn btn-primary" type="button">Download PDF</button>
       </div>
     </aside>
 
-    <section class="viewer-main card">
-      <div class="viewer-toolbar">
+    <section class="viewer-main card viewer-main-fill">
+      <div class="viewer-toolbar viewer-toolbar-wrap">
         <div>
           <h3>Document View</h3>
-          <p class="muted">Flipbook mode with PDF fallback controls</p>
+          <p class="muted">Read in flipbook mode or open the full PDF directly.</p>
         </div>
-        <div class="viewer-controls">
+        <div class="viewer-controls viewer-controls-wrap">
           <button id="prevPage" class="btn btn-secondary" type="button">Previous</button>
           <span id="pageStatus">Page 0 / 0</span>
           <button id="nextPage" class="btn btn-secondary" type="button">Next</button>
           <button id="zoomOut" class="btn btn-secondary" type="button">−</button>
           <button id="zoomIn" class="btn btn-secondary" type="button">+</button>
+          <button id="fitPage" class="btn btn-secondary" type="button">Fit Page</button>
+          <button id="fitWidth" class="btn btn-secondary" type="button">Fit Width</button>
         </div>
       </div>
-      <div id="flipbookShell" class="flipbook-shell">
-        <div id="flipbook" class="flipbook"></div>
+      <div id="flipbookShell" class="flipbook-shell fill-shell">
+        <div id="flipbook" class="flipbook fill-book"></div>
       </div>
       <div id="viewerMessage" class="viewer-message hidden"></div>
     </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>RMRDC Digital Library</p>
+      <p>Raw Materials Research and Development Council • Nigeria</p>
+    </div>
+  </footer>
 
   <script src="js/config.js"></script>
   <script src="js/supabase-client.js"></script>
