@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/viewer-fix.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 </head>
 <body class="viewer-page">
   <header class="site-header compact">
@@ -50,8 +50,8 @@
     <section class="viewer-main card viewer-main-fill">
       <div class="viewer-toolbar viewer-toolbar-wrap">
         <div>
-          <h3>Document View</h3>
-          <p class="muted">Read in flipbook mode or open the full PDF directly.</p>
+          <h3 id="viewerDocTitle">Document View</h3>
+          <p id="viewerDocLine" class="muted">Reading: Loading publication… • Published by RMRDC</p>
         </div>
         <div class="viewer-controls viewer-controls-wrap">
           <button id="prevPage" class="btn btn-secondary" type="button">Previous</button>
@@ -63,9 +63,27 @@
           <button id="fitWidth" class="btn btn-secondary" type="button">Fit Width</button>
         </div>
       </div>
-      <div id="flipbookShell" class="flipbook-shell fill-shell">
-        <div id="flipbook" class="flipbook fill-book"></div>
+
+      <div class="viewer-searchbar">
+        <input id="searchInput" type="text" placeholder="Search inside document" />
+        <button id="searchBtn" class="btn btn-secondary" type="button">Search</button>
+        <button id="prevMatch" class="btn btn-secondary" type="button">Prev Match</button>
+        <button id="nextMatch" class="btn btn-secondary" type="button">Next Match</button>
+        <span id="searchStatus" class="muted">No search yet</span>
       </div>
+
+      <div class="viewer-document-grid">
+        <aside class="viewer-thumbs card">
+          <div class="viewer-thumbs-head">Pages</div>
+          <div id="thumbList" class="viewer-thumbs-list"></div>
+        </aside>
+
+        <div id="viewerCanvasShell" class="viewer-canvas-shell">
+          <div id="viewerLoading" class="viewer-loading">Loading document…</div>
+          <canvas id="pdfCanvas" class="viewer-canvas"></canvas>
+        </div>
+      </div>
+
       <div id="viewerMessage" class="viewer-message hidden"></div>
     </section>
   </main>
