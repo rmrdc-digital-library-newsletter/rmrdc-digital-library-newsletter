@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard | RMRDC Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header compact">
+    <div class="container nav-row">
+      <div class="brand-wrap small"><div class="brand-mark">R</div><div><p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p><h1>My RMRDC Dashboard</h1></div></div>
+      <nav class="top-nav"><a href="index.html">Library</a><a href="dashboard.html" class="active">Dashboard</a><button id="logoutBtn" class="link-button" type="button">Sign out</button></nav>
+    </div>
+  </header>
+  <main class="container dashboard-layout">
+    <section class="card profile-card">
+      <div class="section-head"><div><p class="section-tag">Profile</p><h2 id="profileName">Loading...</h2></div></div>
+      <p id="profileEmail" class="muted"></p>
+      <p id="profileOrg" class="muted"></p>
+      <div class="field"><label for="profileAreas">Research areas / preferences</label><textarea id="profileAreas" rows="3"></textarea><small class="muted">Separate with commas. Your publication matches are based on these areas.</small></div>
+      <label class="check-row"><input id="emailNotifications" type="checkbox" /> Receive email notifications for matching publications</label>
+      <div class="form-actions"><button id="saveProfileBtn" class="btn btn-primary" type="button">Save preferences</button></div>
+      <div id="profileMessage" class="notice hidden"></div>
+    </section>
+    <section class="card grow">
+      <div class="section-head"><div><p class="section-tag">Recommended Publications</p><h2>Matched to your research interests</h2></div></div>
+      <div id="matchMessage" class="notice hidden"></div>
+      <div id="matchedPublications" class="dashboard-list"></div>
+    </section>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

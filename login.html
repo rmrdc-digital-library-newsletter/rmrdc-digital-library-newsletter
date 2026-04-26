@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Login | RMRDC Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header compact">
+    <div class="container nav-row">
+      <div class="brand-wrap small"><div class="brand-mark">R</div><div><p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p><h1>RMRDC Digital Library</h1></div></div>
+      <nav class="top-nav"><a href="index.html">Library</a><a href="login.html" class="active">User Login</a><a href="admin/">Admin</a></nav>
+    </div>
+  </header>
+  <main class="container auth-page">
+    <section class="card auth-card centered-card">
+      <div class="section-head"><div><p class="section-tag">Research User Access</p><h2>Sign in to your dashboard</h2></div></div>
+      <p class="muted">Use the email and temporary password created by the administrator.</p>
+      <div id="loginMessage" class="notice hidden"></div>
+      <form id="loginForm" class="stack-form">
+        <div class="field"><label for="loginEmail">Email</label><input id="loginEmail" type="email" placeholder="name@example.com" required /></div>
+        <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" placeholder="••••••••" required /></div>
+        <button class="btn btn-primary" type="submit">Sign in</button>
+      </form>
+    </section>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/user-auth.js"></script>
+</body>
+</html>

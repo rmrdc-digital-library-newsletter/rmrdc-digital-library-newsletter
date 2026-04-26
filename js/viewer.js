@@ -12,6 +12,21 @@ let currentPublication = null;
 let fitMode = 'page';
 let pdfDocument = null;
 let renderToken = 0;
+const PAID_PREVIEW_PAGE_LIMIT = 4;
+
+function isPaidPublication(publication) {
+  return Boolean(publication?.is_paid) || Number(publication?.price || 0) > 0;
+}
+
+function canReadPage(pageNum) {
+  return !isPaidPublication(currentPublication) || pageNum <= Number(currentPublication?.preview_page_limit || PAID_PREVIEW_PAGE_LIMIT);
+}
+
+function getReadablePdfUrl(publication) {
+  if (!publication) return null;
+  if (isPaidPublication(publication)) return publication.preview_url || publication.pdf_url;
+  return publication.pdf_url || publication.preview_url;
+}
 
 const refs = {
   cover: document.getElementById('detailCover'),
@@ -127,7 +142,16 @@ function hydrateSidebar(publication) {
   refs.views.textContent = publication.view_count || 0;
   refs.downloads.textContent = publication.download_count || 0;
   refs.abstract.textContent = publication.abstract || 'No abstract available.';
-  refs.viewFull.href = publication.pdf_url;
+  const paid = isPaidPublication(publication);
+  refs.viewFull.href = paid ? '#' : (publication.pdf_url || publication.preview_url || '#');
+  refs.viewFull.textContent = paid ? 'Full copy available in library' : 'View Full';
+  refs.viewFull.classList.toggle('is-disabled', paid);
+  refs.download.disabled = paid;
+  refs.download.textContent = paid ? 'Subscription required' : 'Download PDF';
+
+  if (paid) {
+    showMessage(`Paid publication preview: only the first ${publication.preview_page_limit || PAID_PREVIEW_PAGE_LIMIT} pages are available online. Subscribe or visit the RMRDC Library to access the full copy.`);
+  }
 }
 
 function buildFlipDimensions() {
@@ -190,6 +214,22 @@ async function renderFlipbook(pdfUrl, forceReloadPdf = false) {
     img.src = await renderPageToImage(pageNum, renderScale);
     img.alt = `Page ${pageNum}`;
     pageEl.appendChild(img);
+
+    if (!canReadPage(pageNum)) {
+      pageEl.classList.add('locked-page');
+      const lockOverlay = document.createElement('div');
+      lockOverlay.className = 'locked-page-overlay';
+      lockOverlay.innerHTML = `
+        <div class="lock-card">
+          <div class="lock-icon">🔒</div>
+          <strong>Preview limit reached</strong>
+          <p>This is a paid publication. Subscribe or visit the RMRDC Library to access the full copy.</p>
+          <span>Online preview includes pages 1–${PAID_PREVIEW_PAGE_LIMIT}</span>
+        </div>
+      `;
+      pageEl.appendChild(lockOverlay);
+    }
+
     refs.flipbook.appendChild(pageEl);
   }
 
@@ -222,10 +262,14 @@ async function renderFlipbook(pdfUrl, forceReloadPdf = false) {
   if (initialPage > 0) pageFlip.flip(initialPage, 'top');
   updateStatus(initialPage);
   setLoading(false);
+  if (isPaidPublication(currentPublication)) {
+    showMessage(`Paid publication preview: only the first ${publication.preview_page_limit || PAID_PREVIEW_PAGE_LIMIT} pages are available online. Subscribe or visit the RMRDC Library to access the full copy.`);
+  }
 }
 
 async function rerender() {
-  if (currentPublication?.pdf_url) await renderFlipbook(currentPublication.pdf_url, false);
+  const readableUrl = getReadablePdfUrl(currentPublication);
+  if (readableUrl) await renderFlipbook(readableUrl, false);
 }
 
 refs.prev.addEventListener('click', () => pageFlip?.flipPrev());
@@ -240,8 +284,19 @@ refs.fullscreen.addEventListener('click', async () => {
   if (!document.fullscreenElement) await refs.shell.requestFullscreen?.();
   else await document.exitFullscreen?.();
 });
+refs.viewFull.addEventListener('click', (event) => {
+  if (isPaidPublication(currentPublication)) {
+    event.preventDefault();
+    showMessage('This is a paid publication. Please subscribe or visit the RMRDC Library to access the full copy.');
+  }
+});
+
 refs.download.addEventListener('click', async () => {
-  if (!currentPublication?.pdf_url) return;
+  if (!getReadablePdfUrl(currentPublication)) return;
+  if (isPaidPublication(currentPublication)) {
+    showMessage('Downloads are disabled for paid publications. Please subscribe or visit the RMRDC Library for the full copy.');
+    return;
+  }
   await incrementMetric('download', currentPublication);
   window.open(currentPublication.pdf_url, '_blank', 'noopener');
 });
@@ -252,7 +307,7 @@ window.addEventListener('keydown', (event) => {
 });
 
 window.addEventListener('resize', () => {
-  if (currentPublication?.pdf_url) {
+  if (getReadablePdfUrl(currentPublication)) {
     clearTimeout(window.__rmrdcResizeTimer);
     window.__rmrdcResizeTimer = setTimeout(() => rerender().catch(console.error), 250);
   }
@@ -268,7 +323,7 @@ document.addEventListener('fullscreenchange', () => {
   hydrateSidebar(currentPublication);
   await incrementMetric('view', currentPublication);
   try {
-    await renderFlipbook(currentPublication.pdf_url, true);
+    await renderFlipbook(getReadablePdfUrl(currentPublication), true);
   } catch (err) {
     console.error(err);
     setLoading(false);

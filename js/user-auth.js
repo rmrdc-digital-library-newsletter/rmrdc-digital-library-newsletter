@@ -1,0 +1,5 @@
+const loginForm = document.getElementById('loginForm');
+const loginMessage = document.getElementById('loginMessage');
+function showLoginMessage(message, isError=false) { loginMessage.textContent = message; loginMessage.classList.remove('hidden'); loginMessage.style.background = isError ? '#fff1f1' : '#edf7f1'; loginMessage.style.color = isError ? '#9b1c1c' : '#0d4d2e'; }
+(async function redirectIfLoggedIn(){ if (!window.db) return showLoginMessage('Update js/config.js with your Supabase credentials.', true); const { data:{session} } = await window.db.auth.getSession(); if (session?.user) window.location.href = 'dashboard.html'; })();
+loginForm?.addEventListener('submit', async (e)=>{ e.preventDefault(); if (!window.db) return; showLoginMessage('Signing in...'); const email=document.getElementById('loginEmail').value.trim().toLowerCase(); const password=document.getElementById('loginPassword').value; const { error } = await window.db.auth.signInWithPassword({ email, password }); if (error) return showLoginMessage(error.message, true); window.location.href='dashboard.html'; });

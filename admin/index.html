@@ -3,127 +3,232 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin | RMRDC Digital Library</title>
+  <title>Admin Dashboard | RMRDC Digital Library</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
 </head>
-<body>
-  <header class="site-header compact">
-    <div class="container nav-row">
-      <div class="brand-wrap small">
-        <div class="brand-mark">R</div>
+<body class="admin-ui-body">
+  <div class="admin-shell-v2">
+    <aside class="admin-sidebar-v2">
+      <div class="admin-logo-row">
+        <div class="admin-logo-mark">R</div>
         <div>
-          <p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p>
-          <h1>RMRDC Digital Library</h1>
+          <h1>RMRDC</h1>
+          <p>Digital Library</p>
         </div>
       </div>
-      <nav class="top-nav">
-        <a href="../index.html">Library</a>
+
+      <div class="admin-profile-card">
+        <div class="admin-profile-icon">◆</div>
+        <div>
+          <strong id="sidebarUserName">Welcome, Admin</strong>
+          <span id="sidebarRole">Administrator</span>
+        </div>
+      </div>
+
+      <nav class="admin-menu-v2" aria-label="Admin navigation">
+        <a href="#dashboard" data-admin-section="dashboard" class="active"><span>▦</span>Dashboard</a>
+        <a href="#upload" data-admin-section="upload"><span>⇧</span>Upload Publication</a>
+        <a href="#register" data-admin-section="register"><span>＋</span>Register User</a>
+        <a href="#publications" data-admin-section="publications"><span>▤</span>Manage Publications</a>
+        <a href="#subscribers" data-admin-section="subscribers"><span>👥</span>Subscribers</a>
+        <a href="#emailNotifications" data-admin-section="emailNotifications"><span>✉</span>Email Notifications</a>
+        <a href="#analytics" data-admin-section="analytics"><span>▥</span>Analytics</a>
+        <a href="#settings" data-admin-section="settings"><span>⚙</span>Settings</a>
+        <a href="#activityLogs" data-admin-section="activityLogs"><span>☷</span>Activity Logs</a>
       </nav>
+
+      <div class="admin-sidebar-footer-v2">
+        <a class="admin-view-library-v2" href="../index.html"><span>↗</span> View Library</a>
+        <button id="signOutBtn" class="admin-logout-v2" type="button">↪ Logout</button>
+      </div>
+    </aside>
+
+    <div class="admin-main-v2">
+      <header class="admin-topbar-v2">
+        <button class="menu-toggle-v2" type="button" aria-label="Toggle menu">☰</button>
+        <div>
+          <p class="admin-kicker">Raw Materials Research and Development Council</p>
+          <h2>Admin Dashboard</h2>
+        </div>
+        <div class="admin-top-actions">
+          <a class="btn btn-secondary" href="../index.html">Library</a>
+          <div class="admin-avatar">A</div>
+        </div>
+      </header>
+
+      <main id="dashboard" class="admin-content-v2">
+        <section class="admin-auth-panel card">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Authentication</p>
+              <h2>Staff login</h2>
+            </div>
+          </div>
+          <div id="authStatus" class="notice">Not signed in.</div>
+          <form id="authForm" class="admin-login-grid">
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="staff@rmrdc.gov.ng" required />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" type="password" placeholder="••••••••" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Sign in</button>
+          </form>
+        </section>
+
+        <section id="statsSection" class="stats-grid-v2 hidden" aria-label="Dashboard statistics">
+          <article class="stat-card-v2">
+            <div class="stat-icon green">📖</div>
+            <div><p>Total Publications</p><strong id="statPublications">0</strong><span id="statPublicationsHint">Library records</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon blue">👥</div>
+            <div><p>Total Users</p><strong id="statUsers">0</strong><span>Registered profiles</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon purple">💌</div>
+            <div><p>Subscribers</p><strong id="statSubscribers">0</strong><span>Research interests</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon orange">👁</div>
+            <div><p>Total Views</p><strong id="statViews">0</strong><span>Reader activity</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon red">⬇</div>
+            <div><p>Total Downloads</p><strong id="statDownloads">0</strong><span>PDF downloads</span></div>
+          </article>
+        </section>
+
+        <section id="registerUploadGrid" class="admin-two-col-v2 hidden">
+          <article id="register" class="admin-panel-v2 card">
+            <div class="section-head">
+              <div>
+                <p class="section-tag">User Registration</p>
+                <h2>Register New User / Subscriber</h2>
+              </div>
+            </div>
+            <form id="registerUserForm" class="admin-form-stack">
+              <div class="field">
+                <label for="regName">Full Name <span class="required">*</span></label>
+                <input id="regName" type="text" placeholder="Enter full name" required />
+              </div>
+              <div class="field">
+                <label for="regEmail">Email Address <span class="required">*</span></label>
+                <input id="regEmail" type="email" placeholder="Enter email address" required />
+              </div>
+              <div class="field">
+                <label for="regOrganisation">Organisation</label>
+                <input id="regOrganisation" type="text" placeholder="Enter organisation" />
+              </div>
+              <div class="field">
+                <label for="regPassword">Temporary Password</label>
+                <input id="regPassword" type="text" placeholder="Optional, e.g. rmrdc123" />
+              </div>
+              <div class="field">
+                <label for="regResearchAreas">Research Areas / Preferences <span class="required">*</span></label>
+                <input id="regResearchAreas" type="text" placeholder="cassava, biotechnology, agronomy" required />
+                <div class="tag-preview" id="regTagPreview"></div>
+              </div>
+              <label class="check-row-v2"><input id="regEmailNotifications" type="checkbox" checked /> Send email notifications for relevant publications</label>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">＋ Register User</button>
+                <button class="btn btn-secondary" type="reset">Reset</button>
+              </div>
+            </form>
+            <div id="registerMessage" class="notice hidden"></div>
+          </article>
+
+          <article id="subscribers" class="admin-panel-v2 card">
+            <div class="section-head">
+              <div>
+                <p class="section-tag">Subscribers</p>
+                <h2>Recent Subscriptions</h2>
+              </div>
+              <button id="refreshSubscribersBtn" class="btn btn-secondary" type="button">View All</button>
+            </div>
+            <div class="table-scroll-v2">
+              <table class="admin-table-v2">
+                <thead><tr><th>Name</th><th>Email</th><th>Organisation</th><th>Research Areas</th><th>Joined</th></tr></thead>
+                <tbody id="subscribersTable"><tr><td colspan="5">No subscribers loaded.</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section id="upload" class="admin-panel-v2 card hidden">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Content Management</p>
+              <h2>Upload Publication</h2>
+            </div>
+          </div>
+          <form id="publicationForm" class="grid-two">
+            <div class="field span-two"><label for="title">Title</label><input id="title" type="text" required /></div>
+            <div class="field span-two"><label for="authors">Author(s)</label><input id="authors" type="text" placeholder="Separate multiple authors with commas" required /></div>
+            <div class="field"><label for="type">Publication Type</label><select id="type" required><option value="">Select type</option><option>Policy Brief</option><option>Technical Report</option><option>Journal Article</option><option>Conference Paper</option><option>Book</option><option>Monograph</option><option>Other</option></select></div>
+            <div class="field"><label for="year">Year</label><input id="year" type="number" min="1900" max="2100" required /></div>
+            <div class="field"><label for="price">Price (₦)</label><input id="price" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+            <div class="field"><label for="researchAreas">Research Areas</label><input id="researchAreas" type="text" placeholder="cassava, food science, biotechnology" /></div>
+            <div class="field span-two"><label for="abstract">Abstract / Description</label><textarea id="abstract" rows="5" required></textarea></div>
+            <div class="field"><label for="cover">Cover image</label><input id="cover" type="file" accept="image/*" required /></div>
+            <div class="field"><label for="pdf">PDF document</label><input id="pdf" type="file" accept="application/pdf" required /></div>
+            <div class="form-actions span-two"><button id="uploadBtn" class="btn btn-primary" type="submit">Upload publication</button></div>
+          </form>
+          <div id="uploadMessage" class="notice hidden"></div>
+        </section>
+
+        <section id="publications" class="admin-panel-v2 card hidden">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Library Records</p>
+              <h2>Recent Publications</h2>
+            </div>
+            <button id="refreshPublicationsBtn" class="btn btn-secondary" type="button">Refresh</button>
+          </div>
+          <div class="table-scroll-v2">
+            <table class="admin-table-v2">
+              <thead><tr><th>Title</th><th>Author(s)</th><th>Type</th><th>Year</th><th>Research Areas</th><th>Price</th><th>Views</th><th>Downloads</th><th>Actions</th></tr></thead>
+              <tbody id="publicationsTable"><tr><td colspan="9">No publications loaded.</td></tr></tbody>
+            </table>
+          </div>
+          <div id="adminList" class="admin-list hidden"></div>
+        </section>
+
+        <section id="emailNotifications" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">Email System</p><h2>Email Notifications</h2></div><button id="refreshNotificationsBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+          <p class="muted">Shows recent publication notification records created by the email matching system.</p>
+          <div class="table-scroll-v2"><table class="admin-table-v2"><thead><tr><th>Email</th><th>Publication</th><th>Status</th><th>Sent At</th><th>Error</th></tr></thead><tbody id="notificationsTable"><tr><td colspan="5">No notifications loaded.</td></tr></tbody></table></div>
+        </section>
+
+        <section id="analytics" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">Performance</p><h2>Analytics</h2></div><button id="refreshAnalyticsBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+          <div class="analytics-grid-v2"><article><span>Total Publications</span><strong id="analyticsPublications">0</strong></article><article><span>Total Users</span><strong id="analyticsUsers">0</strong></article><article><span>Total Subscribers</span><strong id="analyticsSubscribers">0</strong></article><article><span>Total Views</span><strong id="analyticsViews">0</strong></article><article><span>Total Downloads</span><strong id="analyticsDownloads">0</strong></article></div>
+        </section>
+
+        <section id="settings" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">System</p><h2>Settings</h2></div></div>
+          <div class="settings-list-v2"><label class="check-row-v2"><input type="checkbox" checked disabled /> Public library browsing enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> PDF flipbook viewer enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> Targeted email matching enabled</label><p class="muted">Advanced settings can later be connected to a database table if you want admins to edit them from this page.</p></div>
+        </section>
+
+        <section id="activityLogs" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">Audit</p><h2>Activity Logs</h2></div><button id="refreshActivityBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+          <div class="table-scroll-v2"><table class="admin-table-v2"><thead><tr><th>Type</th><th>Publication</th><th>Date</th><th>User Agent</th></tr></thead><tbody id="activityTable"><tr><td colspan="4">No activity loaded.</td></tr></tbody></table></div>
+        </section>
+
+        <footer class="admin-footer-v2">
+          <span>© 2026 RMRDC Digital Library</span>
+          <span>Raw Materials Research and Development Council</span>
+        </footer>
+      </main>
     </div>
-  </header>
-
-  <main class="container admin-layout">
-    <section class="card auth-card">
-      <div class="section-head">
-        <div>
-          <p class="section-tag">Authentication</p>
-          <h2>Staff login</h2>
-        </div>
-        <button id="signOutBtn" class="btn btn-secondary hidden" type="button">Sign out</button>
-      </div>
-      <div id="authStatus" class="notice">Not signed in.</div>
-      <form id="authForm" class="grid-two">
-        <div class="field grow">
-          <label for="email">Email</label>
-          <input id="email" type="email" placeholder="staff@rmrdc.gov.ng" required />
-        </div>
-        <div class="field grow">
-          <label for="password">Password</label>
-          <input id="password" type="password" placeholder="••••••••" required />
-        </div>
-        <div class="form-actions span-two">
-          <button class="btn btn-primary" type="submit">Sign in</button>
-        </div>
-      </form>
-    </section>
-
-    <section id="uploadSection" class="card upload-card hidden">
-      <div class="section-head">
-        <div>
-          <p class="section-tag">Content Management</p>
-          <h2>Add a new publication</h2>
-        </div>
-      </div>
-      <form id="publicationForm" class="grid-two">
-        <div class="field span-two">
-          <label for="title">Title</label>
-          <input id="title" type="text" required />
-        </div>
-        <div class="field span-two">
-          <label for="authors">Authors</label>
-          <input id="authors" type="text" placeholder="Separate multiple authors with commas" required />
-        </div>
-        <div class="field">
-          <label for="type">Publication Type</label>
-          <select id="type" required>
-            <option value="">Select type</option>
-            <option>Policy Brief</option>
-            <option>Technical Report</option>
-            <option>Journal Article</option>
-            <option>Conference Paper</option>
-            <option>Book</option>
-            <option>Monograph</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="year">Year</label>
-          <input id="year" type="number" min="1900" max="2100" required />
-        </div>
-        <div class="field span-two">
-          <label for="price">Price (₦)</label>
-          <input id="price" type="number" min="0" step="0.01" placeholder="0.00" />
-        </div>
-        <div class="field span-two">
-          <label for="abstract">Abstract / Description</label>
-          <textarea id="abstract" rows="5" required></textarea>
-        </div>
-        <div class="field">
-          <label for="cover">Cover image</label>
-          <input id="cover" type="file" accept="image/*" required />
-        </div>
-        <div class="field">
-          <label for="pdf">PDF document</label>
-          <input id="pdf" type="file" accept="application/pdf" required />
-        </div>
-        <div class="form-actions span-two">
-          <button id="uploadBtn" class="btn btn-primary" type="submit">Upload publication</button>
-        </div>
-      </form>
-      <div id="uploadMessage" class="notice hidden"></div>
-    </section>
-
-    <section id="recordsSection" class="card hidden">
-      <div class="section-head">
-        <div>
-          <p class="section-tag">Library Records</p>
-          <h2>Recent publications</h2>
-        </div>
-      </div>
-      <div id="adminList" class="admin-list"></div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-row">
-      <p>RMRDC Digital Library</p>
-      <p>Raw Materials Research and Development Council • Nigeria</p>
-    </div>
-  </footer>
+  </div>
 
   <script src="../js/config.js"></script>
   <script src="../js/supabase-client.js"></script>
