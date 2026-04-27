@@ -36,7 +36,7 @@
         <a href="#register" data-admin-section="register"><span>＋</span>Register User</a>
         <a href="#publications" data-admin-section="publications"><span>▤</span>Manage Publications</a>
         <a href="#subscribers" data-admin-section="subscribers"><span>👥</span>Subscribers</a>
-        <a href="#emailNotifications" data-admin-section="emailNotifications"><span>✉</span>Email Notifications</a>
+        <a href="#emailNotifications" data-admin-section="emailNotifications"><span>✉</span>Alert Notifications</a>
         <a href="#analytics" data-admin-section="analytics"><span>▥</span>Analytics</a>
         <a href="#settings" data-admin-section="settings"><span>⚙</span>Settings</a>
         <a href="#activityLogs" data-admin-section="activityLogs"><span>☷</span>Activity Logs</a>
@@ -124,6 +124,10 @@
                 <input id="regEmail" type="email" placeholder="Enter email address" required />
               </div>
               <div class="field">
+                <label for="regPhone">WhatsApp Phone Number</label>
+                <input id="regPhone" type="tel" placeholder="2348012345678 (no + sign)" inputmode="numeric" />
+              </div>
+              <div class="field">
                 <label for="regOrganisation">Organisation</label>
                 <input id="regOrganisation" type="text" placeholder="Enter organisation" />
               </div>
@@ -136,7 +140,10 @@
                 <input id="regResearchAreas" type="text" placeholder="cassava, biotechnology, agronomy" required />
                 <div class="tag-preview" id="regTagPreview"></div>
               </div>
-              <label class="check-row-v2"><input id="regEmailNotifications" type="checkbox" checked /> Send email notifications for relevant publications</label>
+              <div class="alert-choice-grid">
+                <label class="check-row-v2"><input id="regEmailNotifications" type="checkbox" checked /> Send email notifications for relevant publications</label>
+                <label class="check-row-v2"><input id="regWhatsappAlerts" type="checkbox" checked /> Send WhatsApp alerts for relevant publications</label>
+              </div>
               <div class="form-actions">
                 <button class="btn btn-primary" type="submit">＋ Register User</button>
                 <button class="btn btn-secondary" type="reset">Reset</button>
@@ -202,8 +209,8 @@
         </section>
 
         <section id="emailNotifications" class="admin-panel-v2 card hidden">
-          <div class="section-head"><div><p class="section-tag">Email System</p><h2>Email Notifications</h2></div><button id="refreshNotificationsBtn" class="btn btn-secondary" type="button">Refresh</button></div>
-          <p class="muted">Shows recent publication notification records created by the email matching system.</p>
+          <div class="section-head"><div><p class="section-tag">Alert System</p><h2>Email & WhatsApp Notifications</h2></div><button id="refreshNotificationsBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+          <p class="muted">Shows recent publication notification records created by the email and WhatsApp matching system.</p>
           <div class="table-scroll-v2"><table class="admin-table-v2"><thead><tr><th>Email</th><th>Publication</th><th>Status</th><th>Sent At</th><th>Error</th></tr></thead><tbody id="notificationsTable"><tr><td colspan="5">No notifications loaded.</td></tr></tbody></table></div>
         </section>
 
@@ -214,7 +221,7 @@
 
         <section id="settings" class="admin-panel-v2 card hidden">
           <div class="section-head"><div><p class="section-tag">System</p><h2>Settings</h2></div></div>
-          <div class="settings-list-v2"><label class="check-row-v2"><input type="checkbox" checked disabled /> Public library browsing enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> PDF flipbook viewer enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> Targeted email matching enabled</label><p class="muted">Advanced settings can later be connected to a database table if you want admins to edit them from this page.</p></div>
+          <div class="settings-list-v2"><label class="check-row-v2"><input type="checkbox" checked disabled /> Public library browsing enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> PDF flipbook viewer enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> Targeted email and WhatsApp matching enabled</label><p class="muted">Advanced settings can later be connected to a database table if you want admins to edit them from this page.</p></div>
         </section>
 
         <section id="activityLogs" class="admin-panel-v2 card hidden">

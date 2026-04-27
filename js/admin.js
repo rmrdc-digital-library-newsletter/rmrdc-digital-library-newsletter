@@ -124,7 +124,7 @@ function showAdminSection(sectionName = 'dashboard') {
 function toggleAuthorizedUI(canUpload) {
   adminCanAccess = Boolean(canUpload);
   publicationForm?.querySelectorAll('input, textarea, select, button').forEach(el => { el.disabled = !canUpload; });
-  registerUserForm?.querySelectorAll('input, button').forEach(el => { el.disabled = !canUpload; });
+  registerUserForm?.querySelectorAll('input, button, select, textarea').forEach(el => { el.disabled = !canUpload; });
   showAdminSection(canUpload ? currentAdminSection : 'dashboard');
 }
 
@@ -219,7 +219,7 @@ async function notifyMatchingUsers(publication) {
     if (error) throw error;
     return data;
   } catch (error) {
-    console.warn('Email notification skipped/failed:', error);
+    console.warn('Notification skipped/failed:', error);
     return { sent: 0, matched: 0, warning: error.message };
   }
 }
@@ -240,7 +240,10 @@ async function registerResearchUser(payload) {
         email: payload.email,
         organisation: payload.organisation,
         research_areas: payload.research_areas,
-        is_active: payload.email_notifications
+        phone: payload.phone,
+        email_notifications: payload.email_notifications,
+        whatsapp_alerts: payload.whatsapp_alerts,
+        is_active: true
       }, { onConflict: 'email' })
       .select()
       .single();
@@ -281,13 +284,13 @@ async function loadRecentSubscribers() {
   try {
     const { data, error } = await window.db
       .from('research_subscribers')
-      .select('full_name, email, organisation, research_areas, created_at')
+      .select('full_name, email, phone, organisation, research_areas, email_notifications, whatsapp_alerts, created_at')
       .order('created_at', { ascending: false })
       .limit(8);
     if (error) throw error;
 
     if (!data?.length) {
-      subscribersTable.innerHTML = '<tr><td colspan="5">No subscribers yet.</td></tr>';
+      subscribersTable.innerHTML = '<tr><td colspan="7">No subscribers yet.</td></tr>';
       return;
     }
 
@@ -295,14 +298,19 @@ async function loadRecentSubscribers() {
       <tr>
         <td>${sub.full_name || '—'}</td>
         <td>${sub.email || '—'}</td>
+        <td>${sub.phone || '—'}</td>
         <td>${sub.organisation || '—'}</td>
         <td>${areaTags(sub.research_areas || [])}</td>
+        <td>
+          <span class="area-chip">${sub.email_notifications !== false ? 'Email' : 'No email'}</span>
+          <span class="area-chip">${sub.whatsapp_alerts !== false ? 'WhatsApp' : 'No WhatsApp'}</span>
+        </td>
         <td>${formatDate(sub.created_at)}</td>
       </tr>
     `).join('');
   } catch (error) {
     console.error(error);
-    subscribersTable.innerHTML = '<tr><td colspan="5">Could not load subscribers. Run the research subscriber SQL first.</td></tr>';
+    subscribersTable.innerHTML = '<tr><td colspan="7">Could not load subscribers. Run the research subscriber SQL first.</td></tr>';
   }
 }
 
@@ -479,7 +487,9 @@ registerUserForm?.addEventListener('submit', async (e) => {
       organisation: document.getElementById('regOrganisation').value.trim(),
       password: document.getElementById('regPassword').value.trim(),
       research_areas: normalizeAreas(document.getElementById('regResearchAreas').value),
-      email_notifications: document.getElementById('regEmailNotifications').checked
+      phone: document.getElementById('regPhone')?.value.trim() || null,
+      email_notifications: document.getElementById('regEmailNotifications')?.checked ?? true,
+      whatsapp_alerts: document.getElementById('regWhatsappAlerts')?.checked ?? true
     };
 
     if (!payload.full_name || !payload.email || !payload.research_areas.length) {
@@ -545,7 +555,7 @@ publicationForm?.addEventListener('submit', async (e) => {
     const publication = await createPublication(payload);
     const emailResult = await notifyMatchingUsers(publication);
     publicationForm.reset();
-    setNotice(uploadMessage, `Publication uploaded successfully. Matching emails sent: ${emailResult?.sent || 0}.`);
+    setNotice(uploadMessage, `Publication uploaded successfully. Matching alerts sent: ${emailResult?.sent || emailResult?.email_sent || 0}.`);
     await loadDashboardData();
   } catch (error) {
     console.error(error);
