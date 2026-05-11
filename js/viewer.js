@@ -28,6 +28,15 @@ function getReadablePdfUrl(publication) {
   return publication.pdf_url || publication.preview_url;
 }
 
+
+function isHtmlPublication(publication) {
+  return publication?.publication_format === 'html' || publication?.storage_type === 'html' || Boolean(publication?.ebook_url);
+}
+
+function getHtmlEbookUrl(publication) {
+  return publication?.ebook_url || publication?.preview_url;
+}
+
 const refs = {
   cover: document.getElementById('detailCover'),
   type: document.getElementById('detailType'),
@@ -35,6 +44,10 @@ const refs = {
   authors: document.getElementById('detailAuthors'),
   year: document.getElementById('detailYear'),
   price: document.getElementById('detailPrice'),
+  isbn: document.getElementById('detailIsbn'),
+  doi: document.getElementById('detailDoi'),
+  citation: document.getElementById('detailCitation'),
+  copyCitation: document.getElementById('copyCitationBtn'),
   views: document.getElementById('detailViews'),
   downloads: document.getElementById('detailDownloads'),
   abstract: document.getElementById('detailAbstract'),
@@ -53,7 +66,24 @@ const refs = {
   fitPage: document.getElementById('fitPage'),
   fitWidth: document.getElementById('fitWidth'),
   fullscreen: document.getElementById('fullscreenBtn'),
-  pageStatus: document.getElementById('pageStatus')
+  pageStatus: document.getElementById('pageStatus'),
+  viewerModeText: document.getElementById('viewerModeText'),
+  ebookShell: document.getElementById('ebookShell'),
+  ebookFrame: document.getElementById('ebookFrame'),
+  savePublication: document.getElementById('savePublicationBtn'),
+  aiSummary: document.getElementById('aiSummaryBtn'),
+  aiSummaryPanel: document.getElementById('aiSummaryPanel'),
+  aiSummaryContent: document.getElementById('aiSummaryContent'),
+  avgRating: document.getElementById('avgRating'),
+  ratingCount: document.getElementById('ratingCount'),
+  avgStars: document.getElementById('avgStars'),
+  starButtons: document.getElementById('starButtons'),
+  ratingMessage: document.getElementById('ratingMessage'),
+  commentForm: document.getElementById('commentForm'),
+  commentName: document.getElementById('commentName'),
+  commentText: document.getElementById('commentText'),
+  commentsList: document.getElementById('commentsList'),
+  commentCount: document.getElementById('commentCount')
 };
 
 function showMessage(text) {
@@ -87,6 +117,153 @@ function getInitialPageIndex() {
   const match = window.location.hash.match(/page\/(\d+)/i);
   if (!match) return 0;
   return Math.max(0, Math.min(totalPages - 1, Number(match[1]) - 1));
+}
+
+
+function getReaderId() {
+  let id = localStorage.getItem('rmrdc_reader_id');
+  if (!id) {
+    id = 'reader-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    localStorage.setItem('rmrdc_reader_id', id);
+  }
+  return id;
+}
+
+function escapeHtml(text = '') {
+  return String(text).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+}
+
+function renderStars(value) {
+  const rating = Math.round(Number(value || 0));
+  return Array.from({ length: 5 }, (_, index) => index < rating ? '★' : '☆').join('');
+}
+
+function formatCitation(publication) {
+  if (publication?.citation) return publication.citation;
+  const authors = publication?.authors || 'RMRDC';
+  const year = publication?.year || 'n.d.';
+  const title = publication?.title || 'Untitled publication';
+  const type = publication?.type || 'Publication';
+  const cleanDoi = String(publication?.doi || '').replace(/^https?:\/\/doi\.org\//, '').trim();
+  return `${authors} (${year}). ${title}. RMRDC ${type}${cleanDoi ? `. https://doi.org/${cleanDoi}` : '.'}`;
+}
+
+function setMyStars(value) {
+  refs.starButtons?.querySelectorAll('button').forEach(button => {
+    button.classList.toggle('active', Number(button.dataset.rating) <= Number(value || 0));
+  });
+}
+
+async function fetchRatingSummary() {
+  if (!window.db || !currentPublication?.id) return;
+  const { data } = await window.db.from('publication_rating_summary').select('*').eq('publication_id', currentPublication.id).maybeSingle();
+  const avg = Number(data?.avg_rating || 0);
+  const count = Number(data?.rating_count || 0);
+  if (refs.avgRating) refs.avgRating.textContent = avg ? avg.toFixed(1) : '0.0';
+  if (refs.ratingCount) refs.ratingCount.textContent = `${count} rating${count === 1 ? '' : 's'}`;
+  if (refs.avgStars) refs.avgStars.textContent = renderStars(avg);
+}
+
+async function fetchMyRating() {
+  if (!window.db || !currentPublication?.id) return;
+  const { data } = await window.db.from('publication_ratings').select('rating').eq('publication_id', currentPublication.id).eq('reader_id', getReaderId()).maybeSingle();
+  setMyStars(data?.rating || 0);
+}
+
+async function saveRating(rating) {
+  if (!window.db || !currentPublication?.id) return;
+  const { error } = await window.db.from('publication_ratings').upsert({
+    publication_id: currentPublication.id,
+    reader_id: getReaderId(),
+    rating: Number(rating),
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'publication_id,reader_id' });
+  if (error) {
+    console.error(error);
+    if (refs.ratingMessage) refs.ratingMessage.textContent = 'Could not save rating.';
+    return;
+  }
+  setMyStars(rating);
+  if (refs.ratingMessage) refs.ratingMessage.textContent = 'Rating saved. Thank you.';
+  await fetchRatingSummary();
+}
+
+async function fetchComments() {
+  if (!window.db || !currentPublication?.id || !refs.commentsList) return;
+  const { data, error } = await window.db.from('publication_comments').select('*').eq('publication_id', currentPublication.id).order('created_at', { ascending: false }).limit(25);
+  if (error) {
+    refs.commentsList.innerHTML = '<p class="muted">Could not load comments.</p>';
+    return;
+  }
+  const comments = data || [];
+  refs.commentCount.textContent = comments.length;
+  refs.commentsList.innerHTML = comments.length ? comments.map(comment => `
+    <article class="comment-item">
+      <strong>${escapeHtml(comment.reader_name || 'Reader')}</strong>
+      <p>${escapeHtml(comment.comment_text || '')}</p>
+      <small>${new Date(comment.created_at).toLocaleString()}</small>
+    </article>
+  `).join('') : '<p class="muted">No comments yet. Be the first to comment.</p>';
+}
+
+function attachInteractionEvents() {
+  refs.starButtons?.querySelectorAll('button').forEach(button => button.addEventListener('click', () => saveRating(button.dataset.rating)));
+  refs.copyCitation?.addEventListener('click', async () => {
+    const text = refs.citation?.textContent || '';
+    try {
+      await navigator.clipboard.writeText(text);
+      refs.copyCitation.textContent = 'Copied';
+      setTimeout(() => refs.copyCitation.textContent = 'Copy', 1200);
+    } catch {
+      alert(text);
+    }
+  });
+  refs.commentForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const commentText = refs.commentText.value.trim();
+    if (!commentText || !window.db || !currentPublication?.id) return;
+    const { error } = await window.db.from('publication_comments').insert({
+      publication_id: currentPublication.id,
+      reader_id: getReaderId(),
+      reader_name: refs.commentName.value.trim() || 'Reader',
+      comment_text: commentText
+    });
+    if (error) {
+      alert('Could not save comment.');
+      return;
+    }
+    refs.commentText.value = '';
+    await fetchComments();
+  });
+}
+
+
+function renderHtmlEbook(publication) {
+  const ebookUrl = getHtmlEbookUrl(publication);
+  if (!ebookUrl) {
+    showMessage('This HTML eBook does not have a readable entry URL.');
+    return;
+  }
+
+  refs.flipbookShell?.classList.add('hidden');
+  refs.ebookShell?.classList.remove('hidden');
+  refs.prevPage.disabled = true;
+  refs.nextPage.disabled = true;
+  refs.zoomIn.disabled = true;
+  refs.zoomOut.disabled = true;
+  refs.fitPage.disabled = true;
+  refs.fitWidth.disabled = true;
+  refs.stagePrev.disabled = true;
+  refs.stageNext.disabled = true;
+  refs.pageStatus.textContent = 'HTML eBook';
+  if (refs.viewerModeText) refs.viewerModeText.textContent = 'Stable HTML/CD-ROM eBook viewer.';
+  if (refs.ebookFrame) refs.ebookFrame.src = ebookUrl;
+  if (refs.viewFull) refs.viewFull.href = ebookUrl;
+  if (refs.download) refs.download.textContent = 'Open eBook';
+}
+
+async function loadInteractions() {
+  await Promise.all([fetchRatingSummary(), fetchMyRating(), fetchComments()]);
 }
 
 async function incrementMetric(kind, publication) {
@@ -139,15 +316,29 @@ function hydrateSidebar(publication) {
   refs.authors.textContent = publication.authors || 'No author information';
   refs.year.textContent = publication.year || '—';
   refs.price.textContent = formatPrice(publication.price);
+  if (refs.isbn) refs.isbn.textContent = publication.isbn || '—';
+  if (refs.doi) refs.doi.textContent = publication.doi || '—';
+  if (refs.citation) refs.citation.textContent = formatCitation(publication);
   refs.views.textContent = publication.view_count || 0;
   refs.downloads.textContent = publication.download_count || 0;
   refs.abstract.textContent = publication.abstract || 'No abstract available.';
-  const paid = isPaidPublication(publication);
-  refs.viewFull.href = paid ? '#' : (publication.pdf_url || publication.preview_url || '#');
-  refs.viewFull.textContent = paid ? 'Full copy available in library' : 'View Full';
-  refs.viewFull.classList.toggle('is-disabled', paid);
-  refs.download.disabled = paid;
-  refs.download.textContent = paid ? 'Subscription required' : 'Download PDF';
+  const isHtml = isHtmlPublication(publication);
+  const paid = isPaidPublication(publication) && !isHtml;
+
+  if (isHtml) {
+    const ebookUrl = getHtmlEbookUrl(publication) || '#';
+    refs.viewFull.href = ebookUrl;
+    refs.viewFull.textContent = 'Open eBook';
+    refs.viewFull.classList.remove('is-disabled');
+    refs.download.disabled = false;
+    refs.download.textContent = 'Open eBook';
+  } else {
+    refs.viewFull.href = paid ? '#' : (publication.pdf_url || publication.preview_url || '#');
+    refs.viewFull.textContent = paid ? 'Full copy available in library' : 'View Full';
+    refs.viewFull.classList.toggle('is-disabled', paid);
+    refs.download.disabled = paid;
+    refs.download.textContent = paid ? 'Subscription required' : 'Download PDF';
+  }
 
   if (paid) {
     showMessage(`Paid publication preview: only the first ${publication.preview_page_limit || PAID_PREVIEW_PAGE_LIMIT} pages are available online. Subscribe or visit the RMRDC Library to access the full copy.`);
@@ -284,7 +475,12 @@ refs.fullscreen.addEventListener('click', async () => {
   if (!document.fullscreenElement) await refs.shell.requestFullscreen?.();
   else await document.exitFullscreen?.();
 });
+refs.savePublication?.addEventListener('click', () => saveCurrentPublication(currentPublication));
+refs.aiSummary?.addEventListener('click', () => generateAISummary(currentPublication));
+
 refs.viewFull.addEventListener('click', (event) => {
+  if (isHtmlPublication(currentPublication)) return;
+
   if (isPaidPublication(currentPublication)) {
     event.preventDefault();
     showMessage('This is a paid publication. Please subscribe or visit the RMRDC Library to access the full copy.');
@@ -292,6 +488,14 @@ refs.viewFull.addEventListener('click', (event) => {
 });
 
 refs.download.addEventListener('click', async () => {
+  if (isHtmlPublication(currentPublication)) {
+    const ebookUrl = getHtmlEbookUrl(currentPublication);
+    if (!ebookUrl) return;
+    await incrementMetric('download', currentPublication);
+    window.open(ebookUrl, '_blank', 'noopener');
+    return;
+  }
+
   if (!getReadablePdfUrl(currentPublication)) return;
   if (isPaidPublication(currentPublication)) {
     showMessage('Downloads are disabled for paid publications. Please subscribe or visit the RMRDC Library for the full copy.');
@@ -307,7 +511,7 @@ window.addEventListener('keydown', (event) => {
 });
 
 window.addEventListener('resize', () => {
-  if (getReadablePdfUrl(currentPublication)) {
+  if (!isHtmlPublication(currentPublication) && getReadablePdfUrl(currentPublication)) {
     clearTimeout(window.__rmrdcResizeTimer);
     window.__rmrdcResizeTimer = setTimeout(() => rerender().catch(console.error), 250);
   }
@@ -317,11 +521,44 @@ document.addEventListener('fullscreenchange', () => {
   setTimeout(() => rerender().catch(console.error), 250);
 });
 
+attachInteractionEvents();
+
+
+async function recordReadingHistory(publication) {
+  if (window.RMRDCUserFeatures?.recordReadingHistory) await window.RMRDCUserFeatures.recordReadingHistory(publication);
+}
+async function saveCurrentPublication(publication) {
+  if (window.RMRDCUserFeatures?.savePublication) await window.RMRDCUserFeatures.savePublication(publication);
+}
+async function generateAISummary(publication) {
+  if (!refs.aiSummaryContent || !refs.aiSummaryPanel) return;
+  refs.aiSummaryPanel.classList.remove('hidden');
+  refs.aiSummaryContent.textContent = 'Generating smart summary from publication metadata and available indexed text...';
+  try {
+    if (!window.db) throw new Error('Supabase is not connected.');
+    const { data, error } = await window.db.functions.invoke('ai-summary', { body: { publication_id: publication.id } });
+    if (error) throw error;
+    refs.aiSummaryContent.innerHTML = (data?.summary || 'No summary generated.').replace(/
+/g, '<br>');
+  } catch (error) {
+    refs.aiSummaryContent.textContent = error.message || 'AI summary is not configured. Deploy the ai-summary Edge Function.';
+  }
+}
+
 (async function init() {
   currentPublication = await fetchPublication();
   if (!currentPublication) return;
   hydrateSidebar(currentPublication);
   await incrementMetric('view', currentPublication);
+  await recordReadingHistory(currentPublication);
+  await loadInteractions();
+
+  if (isHtmlPublication(currentPublication)) {
+    setLoading(false);
+    renderHtmlEbook(currentPublication);
+    return;
+  }
+
   try {
     await renderFlipbook(getReadablePdfUrl(currentPublication), true);
   } catch (err) {

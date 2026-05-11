@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard | RMRDC Digital Library</title>
+  <title>Admin Dashboard | RMRDC Current Awareness Service (CAS)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<meta name="theme-color" content="#0f5a2d" />
+<link rel="manifest" href="manifest.webmanifest" />
 </head>
 <body class="admin-ui-body">
   <div class="admin-shell-v2">
@@ -18,7 +20,7 @@
         <div class="admin-logo-mark">R</div>
         <div>
           <h1>RMRDC</h1>
-          <p>Digital Library</p>
+          <p>CAS Platform</p>
         </div>
       </div>
 
@@ -36,10 +38,12 @@
         <a href="#register" data-admin-section="register"><span>＋</span>Register User</a>
         <a href="#publications" data-admin-section="publications"><span>▤</span>Manage Publications</a>
         <a href="#subscribers" data-admin-section="subscribers"><span>👥</span>Subscribers</a>
+        <a href="#rawMaterials" data-admin-section="rawMaterials"><span>⛏</span>Raw Materials Admin</a>
         <a href="#emailNotifications" data-admin-section="emailNotifications"><span>✉</span>Alert Notifications</a>
         <a href="#analytics" data-admin-section="analytics"><span>▥</span>Analytics</a>
         <a href="#settings" data-admin-section="settings"><span>⚙</span>Settings</a>
         <a href="#activityLogs" data-admin-section="activityLogs"><span>☷</span>Activity Logs</a>
+              <button class="admin-nav-btn" type="button" data-section="bulletins">CAS Bulletin</button>
       </nav>
 
       <div class="admin-sidebar-footer-v2">
@@ -57,6 +61,7 @@
         </div>
         <div class="admin-top-actions">
           <a class="btn btn-secondary" href="../index.html">Library</a>
+          <a class="btn btn-secondary" href="../raw-materials/index.html">Raw Materials</a>
           <div class="admin-avatar">A</div>
         </div>
       </header>
@@ -179,13 +184,64 @@
           <form id="publicationForm" class="grid-two">
             <div class="field span-two"><label for="title">Title</label><input id="title" type="text" required /></div>
             <div class="field span-two"><label for="authors">Author(s)</label><input id="authors" type="text" placeholder="Separate multiple authors with commas" required /></div>
-            <div class="field"><label for="type">Publication Type</label><select id="type" required><option value="">Select type</option><option>Policy Brief</option><option>Technical Report</option><option>Journal Article</option><option>Conference Paper</option><option>Book</option><option>Monograph</option><option>Other</option></select></div>
+            <div class="field"><label for="type">Publication Type</label><select id="type" required><option value="">Select type</option><option>Policy Brief</option><option>Technical Report</option><option>Technical Brief</option><option>RMRDC Publication</option><option>Journal Article</option><option>Conference Paper</option><option>Book</option><option>Monograph</option><option>Other</option></select></div>
             <div class="field"><label for="year">Year</label><input id="year" type="number" min="1900" max="2100" required /></div>
+            <div class="field"><label for="isbn">ISBN</label><input id="isbn" type="text" placeholder="978-..." /></div>
+            <div class="isbn-lookup-panel span-two">
+              <div>
+                <strong>Multi-Source Metadata Lookup</strong>
+                <p>Enter an ISBN, then fetch metadata from Open Library, Google Books, CrossRef and Library of Congress. Review before uploading.</p>
+              </div>
+              <div class="isbn-actions"><button id="isbnLookupBtn" class="btn btn-secondary" type="button">Lookup Metadata</button><button id="scanIsbnBtn" class="btn btn-primary" type="button">Scan ISBN Barcode</button></div>
+            </div>
+            <div id="isbnLookupStatus" class="notice hidden span-two"></div>
+            <div class="field"><label for="doi">DOI</label><input id="doi" type="text" placeholder="10.xxxx/xxxxx" /></div>
             <div class="field"><label for="price">Price (₦)</label><input id="price" type="number" min="0" step="0.01" placeholder="0.00" /></div>
             <div class="field"><label for="researchAreas">Research Areas</label><input id="researchAreas" type="text" placeholder="cassava, food science, biotechnology" /></div>
             <div class="field span-two"><label for="abstract">Abstract / Description</label><textarea id="abstract" rows="5" required></textarea></div>
-            <div class="field"><label for="cover">Cover image</label><input id="cover" type="file" accept="image/*" required /></div>
-            <div class="field"><label for="pdf">PDF document</label><input id="pdf" type="file" accept="application/pdf" required /></div>
+            <div class="field"><label for="cover">Cover image</label><input id="cover" type="file" accept="image/*" required /><small class="cover-upload-tip">Recommended cover: portrait JPG/PNG, 600 × 850px. Use the front cover page for best display.</small></div>
+            
+            <div class="field span-two">
+              <label>Publication File Type</label>
+              <div class="upload-type-options">
+                <label><input type="radio" name="publicationMode" value="pdf" checked /> PDF document / flipbook</label>
+                <label><input type="radio" name="publicationMode" value="html" /> HTML eBook / CD-ROM folder</label>
+              </div>
+            </div>
+
+            <div id="pdfUploadFields" class="field">
+              <label for="pdf">PDF document</label>
+              <input id="pdf" type="file" accept="application/pdf" />
+              <small>Use this for normal PDF publications.</small>
+            </div>
+
+            <div id="htmlUploadFields" class="html-ebook-fields span-two hidden">
+              <div class="field">
+                <label for="ebookFolder">HTML eBook folder from CD-ROM</label>
+                <input id="ebookFolder" type="file" webkitdirectory directory multiple />
+                <small>Select the copied CD-ROM folder that contains index.html and its assets.</small>
+              </div>
+
+              <div class="field">
+                <label for="ebookEntry">Entry HTML file</label>
+                <input id="ebookEntry" type="text" value="index.html" placeholder="index.html or start.html" />
+                <small>Usually index.html. If your CD-ROM uses another start file, type it here.</small>
+              </div>
+
+              <div class="field span-two">
+                <label for="ebookExternalUrl">OR paste existing HTML eBook URL/path</label>
+                <input id="ebookExternalUrl" type="url" placeholder="https://.../index.html" />
+                <small>Optional. Use this if the eBook is already hosted online.</small>
+              </div>
+            </div>
+            <div class="auto-fill-panel span-two">
+              <div>
+                <strong>Auto Fill Publication Details</strong>
+                <p>Select a PDF or HTML eBook folder, then click Auto Fill to extract title, year, ISBN, DOI and abstract hints. Review before uploading.</p>
+              </div>
+              <button id="autoFillPublicationBtn" class="btn btn-secondary" type="button">Auto Fill Details</button>
+            </div>
+            <div id="autoFillStatus" class="notice hidden span-two"></div>
             <div class="form-actions span-two"><button id="uploadBtn" class="btn btn-primary" type="submit">Upload publication</button></div>
           </form>
           <div id="uploadMessage" class="notice hidden"></div>
@@ -201,8 +257,8 @@
           </div>
           <div class="table-scroll-v2">
             <table class="admin-table-v2">
-              <thead><tr><th>Title</th><th>Author(s)</th><th>Type</th><th>Year</th><th>Research Areas</th><th>Price</th><th>Views</th><th>Downloads</th><th>Actions</th></tr></thead>
-              <tbody id="publicationsTable"><tr><td colspan="9">No publications loaded.</td></tr></tbody>
+              <thead><tr><th>Title</th><th>Author(s)</th><th>Type</th><th>Year</th><th>ISBN</th><th>DOI</th><th>Research Areas</th><th>Price</th><th>Views</th><th>Downloads</th><th>Actions</th></tr></thead>
+              <tbody id="publicationsTable"><tr><td colspan="11">No publications loaded.</td></tr></tbody>
             </table>
           </div>
           <div id="adminList" class="admin-list hidden"></div>
@@ -219,6 +275,19 @@
           <div class="analytics-grid-v2"><article><span>Total Publications</span><strong id="analyticsPublications">0</strong></article><article><span>Total Users</span><strong id="analyticsUsers">0</strong></article><article><span>Total Subscribers</span><strong id="analyticsSubscribers">0</strong></article><article><span>Total Views</span><strong id="analyticsViews">0</strong></article><article><span>Total Downloads</span><strong id="analyticsDownloads">0</strong></article></div>
         </section>
 
+
+        <section id="rawMaterials" class="admin-panel-v2 card hidden">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Raw Materials Intelligence</p>
+              <h2>Raw Materials Admin</h2>
+            </div>
+            <a class="btn btn-secondary" href="../raw-materials/index.html" target="_blank" rel="noopener">View Raw Materials Page</a>
+          </div>
+          <p class="muted">Use this section to upload Mineral Raw Material Profiles and Agro Raw Materials Profiles. It is integrated into the existing Library Admin panel.</p>
+          <iframe class="raw-materials-admin-frame" src="../raw-materials/admin.html" title="Raw Materials Admin"></iframe>
+        </section>
+
         <section id="settings" class="admin-panel-v2 card hidden">
           <div class="section-head"><div><p class="section-tag">System</p><h2>Settings</h2></div></div>
           <div class="settings-list-v2"><label class="check-row-v2"><input type="checkbox" checked disabled /> Public library browsing enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> PDF flipbook viewer enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> Targeted email and WhatsApp matching enabled</label><p class="muted">Advanced settings can later be connected to a database table if you want admins to edit them from this page.</p></div>
@@ -230,15 +299,102 @@
         </section>
 
         <footer class="admin-footer-v2">
-          <span>© 2026 RMRDC Digital Library</span>
+          <span>© 2026 RMRDC Current Awareness Service (CAS)</span>
           <span>Raw Materials Research and Development Council</span>
         </footer>
-      </main>
+      
+      <section id="bulletinsSection" class="admin-section hidden">
+        <div class="admin-section-head">
+          <div>
+            <p class="section-tag">Current Awareness Service</p>
+            <h2>Create CAS Bulletin</h2>
+          </div>
+          <button id="refreshBulletinsBtn" class="btn btn-secondary" type="button">Refresh Bulletins</button>
+        </div>
+
+        <form id="bulletinForm" class="admin-form card">
+          <div class="field">
+            <label for="bulletinTitle">Bulletin Title</label>
+            <input id="bulletinTitle" required placeholder="e.g. Weekly CAS Bulletin - Food & Beverage Updates" />
+          </div>
+
+          <div class="field">
+            <label for="bulletinType">Bulletin Type</label>
+            <select id="bulletinType">
+              <option>Weekly CAS Bulletin</option>
+              <option>Monthly CAS Bulletin</option>
+              <option>Sector Watch</option>
+              <option>New Arrival Alert</option>
+              <option>Special Research Alert</option>
+            </select>
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinSectors">Sectors / Research Areas</label>
+            <input id="bulletinSectors" placeholder="food science, agro raw materials, policy brief" />
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinSummary">Short Summary</label>
+            <textarea id="bulletinSummary" rows="3" required placeholder="A short summary shown on the bulletin page."></textarea>
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinBody">Full Bulletin Body</label>
+            <textarea id="bulletinBody" rows="8" required placeholder="Write the bulletin: new publications, key findings, who should read them, value-chain relevance, etc."></textarea>
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinPublicationIds">Featured Publication IDs or Titles</label>
+            <textarea id="bulletinPublicationIds" rows="3" placeholder="Paste publication titles or IDs, one per line."></textarea>
+          </div>
+
+          <div class="alert-options span-two">
+            <label><input id="publishBulletinNow" type="checkbox" checked /> Publish on bulletin page</label>
+            <label><input id="sendBulletinAlerts" type="checkbox" /> Send email/WhatsApp alerts to matching subscribers</label>
+          </div>
+
+          <button class="btn btn-primary span-two" type="submit">Save CAS Bulletin</button>
+          <p id="bulletinMessage" class="notice hidden span-two"></p>
+        </form>
+
+        <section id="adminBulletinList" class="admin-list"></section>
+      </section>
+
+    </main>
     </div>
   </div>
 
   <script src="../js/config.js"></script>
   <script src="../js/supabase-client.js"></script>
   <script src="../js/admin.js"></script>
+  <script src="js/site-menu.js"></script>
+
+  <div id="isbnScannerModal" class="isbn-scanner-modal hidden" role="dialog" aria-modal="true">
+    <div class="isbn-scanner-dialog">
+      <div class="isbn-scanner-head">
+        <div>
+          <p class="section-tag">Camera Barcode Scanner</p>
+          <h2>Scan ISBN Barcode</h2>
+          <p>Point your camera at the book barcode. ISBN barcodes are usually EAN-13.</p>
+        </div>
+        <button id="closeScannerBtn" class="isbn-scanner-close" type="button">×</button>
+      </div>
+
+      <div class="scanner-video-wrap">
+        <video id="isbnScannerVideo" playsinline></video>
+        <div class="scanner-guide"></div>
+      </div>
+
+      <div class="scanner-actions">
+        <button id="startScannerBtn" class="btn btn-primary" type="button">Start Camera</button>
+        <button id="stopScannerBtn" class="btn btn-secondary" type="button">Stop Camera</button>
+      </div>
+
+      <p id="scannerStatus" class="notice hidden"></p>
+    </div>
+  </div>
+
+<script src="js/pwa.js"></script>
 </body>
 </html>

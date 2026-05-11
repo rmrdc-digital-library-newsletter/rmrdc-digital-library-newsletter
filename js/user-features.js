@@ -1,0 +1,10 @@
+(function(){
+const READER_ID_KEY='rmrdc_reader_id', SAVED_KEY='rmrdc_saved_publications', HISTORY_KEY='rmrdc_reading_history';
+function getReaderId(){let id=localStorage.getItem(READER_ID_KEY); if(!id){id='reader-'+Date.now()+'-'+Math.random().toString(36).slice(2); localStorage.setItem(READER_ID_KEY,id);} return id;}
+function getLocal(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return []}}
+function setLocal(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function compact(pub){return {id:pub.id,title:pub.title,authors:pub.authors,type:pub.type,year:pub.year,cover_url:pub.cover_url,abstract:pub.abstract,research_areas:pub.research_areas||[],saved_at:new Date().toISOString(),viewed_at:new Date().toISOString()};}
+async function savePublication(pub){if(!pub?.id)return; const reader_id=getReaderId(); const item=compact(pub); const saved=getLocal(SAVED_KEY).filter(p=>p.id!==pub.id); saved.unshift(item); setLocal(SAVED_KEY,saved.slice(0,100)); if(window.db){const {error}=await window.db.from('saved_publications').upsert({reader_id,publication_id:pub.id,saved_at:new Date().toISOString()},{onConflict:'reader_id,publication_id'}); if(error) console.warn(error.message);} alert('Publication saved to your dashboard.');}
+async function recordReadingHistory(pub){if(!pub?.id)return; const reader_id=getReaderId(); const item=compact(pub); const history=getLocal(HISTORY_KEY).filter(p=>p.id!==pub.id); history.unshift(item); setLocal(HISTORY_KEY,history.slice(0,100)); if(window.db){const {error}=await window.db.from('reading_history').insert({reader_id,publication_id:pub.id,viewed_at:new Date().toISOString()}); if(error) console.warn(error.message);}}
+window.RMRDCUserFeatures={getReaderId,getSaved:()=>getLocal(SAVED_KEY),getHistory:()=>getLocal(HISTORY_KEY),savePublication,recordReadingHistory};
+})();

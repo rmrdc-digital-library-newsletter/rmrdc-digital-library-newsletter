@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RMRDC Raw Materials Profiles</title>
+  <link rel="stylesheet" href="style.css" />
+<meta name="theme-color" content="#0f5a2d"/><link rel="manifest" href="../manifest.webmanifest"/>
+</head>
+<body class="raw-materials-page raw-materials-page">
+
+<header class="site-header">
+  <div class="container nav-row">
+    <a class="brand-wrap" href="index.html">
+      <img src="../assets/rmrdc-logo.png" onerror="this.src='assets/rmrdc-logo.svg'" class="header-logo" alt="RMRDC Logo" />
+      <div>
+        <p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p>
+        <h1>RMRDC Current Awareness Service (CAS)</h1>
+      </div>
+    </a>
+
+    <nav class="top-nav">
+        <a href="../index.html">CAS Home</a>
+        <a href="../raw-materials/index.html" class="active">Raw Materials</a>
+        <a href="../subscribe.html">User Subscription/Login</a>
+        <a href="../ai-librarian.html">AI Librarian</a>
+        <a href="../admin/index.html">Staff Admin</a>
+        <button class="site-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="section-tag">Current Awareness Service • SDI</p>
+      <h2>Raw Materials Intelligence</h2>
+      <p class="hero-copy">
+        Explore mineral and agro raw materials, locations, industrial uses,
+        pilot plants, and value addition opportunities.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#materials">Explore Profiles</a>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="hero-card-top">
+        <span class="mini-icon">⛏</span>
+        <div>
+          <strong>Two focused profile categories</strong>
+          <p>Mineral raw materials and agro raw materials with value-chain insights.</p>
+        </div>
+      </div>
+
+      <div class="stat-panel">
+        <div>
+          <span class="stat-label">Mineral</span>
+          <strong id="statMineralCount">0</strong>
+        </div>
+        <div>
+          <span class="stat-label">Agro</span>
+          <strong id="statAgroCount">0</strong>
+        </div>
+        <div>
+          <span class="stat-label">Categories</span>
+          <strong>2</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="container" id="materials">
+  <section class="profile-type-grid two-only">
+    <button class="profile-type-card active" data-category="mineral">
+      <span>01</span>
+      <strong>Mineral Raw Material Profiles</strong>
+      <small>Solid minerals, industrial minerals, locations, uses, pilot plants and value chains.</small>
+    </button>
+
+    <button class="profile-type-card" data-category="agro">
+      <span>02</span>
+      <strong>Agro Raw Materials Profiles</strong>
+      <small>Agricultural raw materials, agro-processing products, pilot plants and value chains.</small>
+    </button>
+  </section>
+
+  <section class="toolbar card">
+    <div class="toolbar-row">
+      <div class="field grow">
+        <label>Search profiles</label>
+        <input id="searchInput" type="search" placeholder="Search by name, use, product, pilot plant, or state..." />
+      </div>
+      <div class="field">
+        <label>Filter by state</label>
+        <select id="stateFilter">
+          <option value="">All</option>
+        </select>
+      </div>
+    </div>
+    <p id="resultsText" class="toolbar-note"></p>
+  </section>
+
+  <section id="materialsGrid" class="materials-grid"></section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <p>© <span id="yearNow"></span> RMRDC Current Awareness Service (CAS)</p>
+    <p>Current Awareness Service & SDI Platform</p>
+  </div>
+</footer>
+
+<script src="minerals.js"></script>
+<script src="storage.js"></script>
+<script src="app.js"></script>
+
+  <script src="../js/site-menu.js"></script>
+<script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

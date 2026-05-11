@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | RMRDC Current Awareness Service (CAS)</title>
+  <link rel="stylesheet" href="style.css" />
+<meta name="theme-color" content="#0f5a2d" />
+<link rel="manifest" href="../manifest.webmanifest" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav-row">
+    <a class="brand-wrap" href="index.html">
+      <img src="../assets/rmrdc-logo.png" onerror="this.src='assets/rmrdc-logo.svg'" class="header-logo" alt="RMRDC Logo" />
+      <div>
+        <p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p>
+        <h1>RMRDC Current Awareness Service (CAS)</h1>
+      </div>
+    </a>
+
+    <nav class="top-nav">
+        <a href="../index.html">CAS Home</a>
+        <a href="../raw-materials/index.html">Raw Materials</a>
+        <a href="../subscribe.html">User Subscription/Login</a>
+        <a href="../ai-librarian.html">AI Librarian</a>
+        <a href="../admin/index.html">Staff Admin</a>
+        <button class="site-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      </nav>
+  </div>
+</header>
+
+<main class="container admin-main">
+  <section class="admin-title">
+    <p class="section-tag">RMRDC Admin</p>
+    <h2>Upload Mineral Profile</h2>
+    <p>Add mineral information, location, uses, cover image, and value-chain products.</p>
+  </section>
+
+  <section class="admin-grid">
+    <form id="mineralForm" class="admin-form card">
+      <div class="form-section-title">Basic Information</div>
+
+      <div class="field">
+        <label for="category">Raw Material Type</label>
+        <select id="category" required>
+          <option value="mineral">Mineral Raw Material Profile</option>
+          <option value="agro">Agro Raw Materials Profile</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="name">Mineral Name</label>
+        <input id="name" required placeholder="Example: Bentonite" />
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" required rows="4" placeholder="Brief description of the mineral"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="locations">Locations / States</label>
+        <input id="locations" required placeholder="Example: Borno, Adamawa, Edo" />
+      </div>
+
+      <div class="field">
+        <label for="uses">Major Uses</label>
+        <input id="uses" required placeholder="Example: Drilling mud, Foundry binder, Sealants" />
+      </div>
+
+      <div class="field">
+        <label for="relevance">Industrial Relevance</label>
+        <textarea id="relevance" required rows="3" placeholder="Explain why this mineral is important industrially"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="coverImage">Cover Image</label>
+        <input id="coverImage" type="file" accept="image/*" />
+        <small>You can upload from your PC or choose from the local image library below.</small>
+      </div>
+
+      <div class="form-section-title">Pilot Plant</div>
+
+      <div class="field">
+        <label for="pilotPlantName">Pilot Plant Name</label>
+        <input id="pilotPlantName" placeholder="Example: Cassava Processing Pilot Plant" />
+      </div>
+
+      <div class="field">
+        <label for="pilotPlantImage">Pilot Plant Image</label>
+        <input id="pilotPlantImage" type="file" accept="image/*" />
+        <small>You can upload from your PC or choose from the local image library below.</small>
+      </div>
+
+      <div class="form-section-title">Value Chain Tree</div>
+
+      <div class="field">
+        <label for="rawMineral">Raw Mineral</label>
+        <input id="rawMineral" placeholder="Example: Bentonite clay" />
+      </div>
+
+      <div class="field">
+        <label for="processedMaterial">Processed Material</label>
+        <textarea id="processedMaterial" rows="3" placeholder="Separate items with commas"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="industrialProducts">Industrial Products</label>
+        <textarea id="industrialProducts" rows="3" placeholder="Separate items with commas"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="valueAddition">30% Value Addition Opportunities</label>
+        <textarea id="valueAddition" rows="3" placeholder="Separate items with commas"></textarea>
+      </div>
+
+      <div class="admin-actions">
+        <button class="btn btn-primary" type="submit">Save Mineral</button>
+        <button class="btn btn-secondary" type="button" id="resetForm">Clear Form</button>
+      </div>
+    </form>
+
+    <aside class="admin-preview card">
+      <div class="form-section-title">Live Preview</div>
+      <div class="preview-card">
+        <img id="previewImage" src="../assets/rmrdc-logo.png" alt="Preview" />
+        <div>
+          <h3 id="previewName">Mineral Name</h3>
+          <p id="previewDescription">Your mineral description will appear here.</p>
+          <p><strong>Locations:</strong> <span id="previewLocations">—</span></p>
+          <p><strong>Uses:</strong> <span id="previewUses">—</span></p>
+        </div>
+      </div>
+
+      <div class="image-library-panel">
+        <div class="form-section-title">Local Image Library</div>
+
+        <div class="field">
+          <label for="localImageUpload">Upload Image to Library</label>
+          <input id="localImageUpload" type="file" accept="image/*" multiple />
+          <small>Images are stored locally in this browser for demo/testing.</small>
+        </div>
+
+        <div class="library-actions">
+          <button class="tree-btn" type="button" id="useAsCover">Use selected as cover</button>
+          <button class="tree-btn" type="button" id="useAsPilot">Use selected as pilot plant</button>
+        </div>
+
+        <div id="imageLibraryGrid" class="image-library-grid"></div>
+      </div>
+
+      <div class="saved-panel">
+        <div class="saved-head">
+          <h3>Uploaded Minerals</h3>
+          <button class="danger-btn" id="clearUploads" type="button">Clear uploads</button>
+        </div>
+        <div id="savedMinerals"></div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <p>© <span id="yearNow"></span> RMRDC Current Awareness Service (CAS)</p>
+    <p>Admin Mineral Upload Panel</p>
+  </div>
+</footer>
+
+<script src="minerals.js"></script>
+<script src="storage.js"></script>
+<script src="admin.js"></script>
+
+  <script src="../js/site-menu.js"></script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

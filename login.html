@@ -3,18 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Login | RMRDC Digital Library</title>
+  <title>User Login | RMRDC Current Awareness Service (CAS)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="theme-color" content="#0f5a2d" />
+<link rel="manifest" href="manifest.webmanifest" />
 </head>
 <body>
   <header class="site-header compact">
     <div class="container nav-row">
-      <div class="brand-wrap small"><div class="brand-mark">R</div><div><p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p><h1>RMRDC Digital Library</h1></div></div>
-      <nav class="top-nav"><a href="index.html">Library</a><a href="login.html" class="active">User Login</a><a href="admin/">Admin</a></nav>
+      <div class="brand-wrap small"><img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC logo" /><div><p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p><h1>RMRDC Current Awareness Service (CAS)</h1></div></div>
+      <nav class="top-nav">
+        <a href="index.html">CAS Home</a>
+        <a href="raw-materials/index.html">Raw Materials</a>
+        <a href="subscribe.html">User Subscription/Login</a>
+        <a href="ai-librarian.html">AI Librarian</a>
+        <a href="admin/index.html">Staff Admin</a>
+        <button class="site-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      </nav>
     </div>
   </header>
   <main class="container auth-page">
@@ -32,5 +41,7 @@
   <script src="js/config.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/user-auth.js"></script>
+  <script src="js/site-menu.js"></script>
+<script src="js/pwa.js"></script>
 </body>
 </html>

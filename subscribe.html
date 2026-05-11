@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscribe / Login | RMRDC CAS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="theme-color" content="#0f5a2d"/><link rel="manifest" href="manifest.webmanifest"/>
+</head>
+<body>
+<header class="site-header compact"><div class="container nav-row"><div class="brand-wrap small"><img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC logo" /><div><p class="eyebrow">CAS / SDI Access</p><h1>RMRDC Current Awareness Service (CAS)</h1></div></div><nav class="top-nav">
+        <a href="index.html">CAS Home</a>
+        <a href="cas-bulletin.html">CAS Bulletin</a>
+        <a href="raw-materials/index.html">Raw Materials</a>
+        <a href="subscribe.html" class="active">User Subscription/Login</a>
+        <a href="ai-librarian.html">AI Librarian</a>
+        <a href="admin/index.html">Staff Admin</a>
+        <button class="site-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      </nav></div></header>
+<main class="container cas-page-layout">
+<section class="cas-page-hero"><p class="section-tag">Subscribe and Login</p><h2>Register your CAS interests and access your user dashboard</h2><p>New users should subscribe first. Returning subscribers should log in with their email to access saved publications, reading history and personalized feed.</p></section>
+<section class="auth-tabs card"><button class="auth-tab active" type="button" data-auth-tab="register">New Subscription</button><button class="auth-tab" type="button" data-auth-tab="login">Subscriber Login</button></section>
+<section id="registerPanel" class="subscription-grid">
+<form id="subscriptionForm" class="subscription-form card">
+<div class="field"><label for="subName">Full Name</label><input id="subName" required /></div>
+<div class="field"><label for="subEmail">Email Address</label><input id="subEmail" type="email" required /></div>
+<div class="field"><label for="subOrganisation">Organisation / Department</label><input id="subOrganisation" /></div>
+<div class="field"><label for="subPhone">Phone / WhatsApp Number</label><input id="subPhone" /></div>
+<div class="field span-two"><label>Research Interests</label><div class="interest-grid">
+<label><input type="checkbox" value="Policy Brief" /> Policy Briefs</label><label><input type="checkbox" value="Technical Report" /> Technical Reports</label><label><input type="checkbox" value="RMRDC Publication" /> RMRDC Publications</label><label><input type="checkbox" value="Mineral Raw Materials" /> Mineral Raw Materials</label><label><input type="checkbox" value="Agro Raw Materials" /> Agro Raw Materials</label><label><input type="checkbox" value="Food Science" /> Food Science</label><label><input type="checkbox" value="Industrial Minerals" /> Industrial Minerals</label><label><input type="checkbox" value="Pilot Plants" /> Pilot Plants</label>
+</div></div>
+<div class="field span-two"><label for="customInterests">Other Interests</label><input id="customInterests" placeholder="cassava, bentonite, ceramics" /></div>
+<div class="alert-options span-two"><label><input id="subEmailAlerts" type="checkbox" checked /> Email alerts</label><label><input id="subWhatsappAlerts" type="checkbox" checked /> WhatsApp alerts</label></div>
+<button class="btn btn-primary span-two" type="submit">Save Subscription</button><p id="subscriptionMessage" class="notice hidden span-two"></p>
+</form>
+<aside class="subscription-side card"><h3>Your CAS / SDI Profile</h3><p class="muted">Your selected interests will personalize your dashboard after login.</p><div id="savedProfileBox"></div></aside>
+</section>
+<section id="loginPanel" class="login-panel card hidden"><form id="subscriberLoginForm" class="login-form"><div class="field"><label for="loginEmail">Subscriber Email</label><input id="loginEmail" type="email" required placeholder="Enter the email you used to subscribe" /></div><button class="btn btn-primary" type="submit">Login to Dashboard</button><p id="loginMessage" class="notice hidden"></p></form></section>
+</main>
+<script src="js/config.js"></script><script src="js/supabase-client.js"></script><script src="js/subscribe.js"></script><script src="js/site-menu.js"></script>
+<script src="js/pwa.js"></script>
+</body>
+</html>

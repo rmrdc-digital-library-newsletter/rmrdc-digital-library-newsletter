@@ -1,0 +1,1 @@
+(function(){const login=JSON.parse(localStorage.getItem('rmrdc_subscriber_logged_in')||'null');const profile=JSON.parse(localStorage.getItem('rmrdc_cas_profile')||'null');if(!login?.email||!profile?.email||login.email!==profile.email){alert('Please subscribe or log in before accessing your dashboard.');location.href='subscribe.html';}})();

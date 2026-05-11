@@ -1,70 +1,140 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RMRDC Digital Library</title>
-  <meta name="description" content="RMRDC Digital Library publications portal" />
+  <title>RMRDC Current Awareness Service (CAS)</title>
+  <meta name="description" content="RMRDC Current Awareness Service (CAS) publications portal" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="theme-color" content="#0f5a2d"/><link rel="manifest" href="manifest.webmanifest"/>
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-row">
       <div class="brand-wrap">
-        <div class="brand-mark">R</div>
+        <img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC logo" />
         <div>
           <p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p>
-          <h1>RMRDC Digital Library</h1>
+          <h1>RMRDC Current Awareness Service (CAS)</h1>
         </div>
       </div>
       <nav class="top-nav">
-        <a href="index.html" class="active">Library</a>
-        <a href="admin/">Admin</a>
+        <a href="index.html" class="active">CAS Home</a>
+        <a href="cas-bulletin.html">CAS Bulletin</a>
+        <a href="raw-materials/index.html">Raw Materials</a>
+        <a href="subscribe.html">User Subscription/Login</a>
+        <a href="ai-librarian.html">AI Librarian</a>
+        <a href="admin/index.html">Staff Admin</a>
+        <button class="site-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
       </nav>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container hero-grid">
+<section class="hero cas-intro-first">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <h2>Current Awareness Service for Raw Materials Research</h2>
+      <p>
+        A dedicated Current Awareness Service (CAS) and Selective Dissemination of Information (SDI)
+        platform for keeping RMRDC Library users updated with the latest research outputs,
+        policy briefs, technical reports, RMRDC publications, and raw materials intelligence.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="kpi-section">
+<div class="container">
+<div class="kpi-row">
+
+<div class="kpi-card">
+<span class="kpi-number" id="kpiPublications">0</span>
+<span class="kpi-label">Publications</span>
+</div>
+
+<div class="kpi-card">
+<span class="kpi-number" id="kpiReaders">0</span>
+<span class="kpi-label">Registered Users</span>
+</div>
+
+<div class="kpi-card">
+<span class="kpi-number" id="kpiDownloads">1.2K</span>
+<span class="kpi-label">Downloads</span>
+</div>
+
+<div class="kpi-card">
+<span class="kpi-number" id="kpiMostRead">850</span>
+<span class="kpi-label">Most Read</span>
+</div>
+
+</div>
+</div>
+</section>
+
+
+<section class="popular-covers-section">
+  <div class="container">
+
+    <div class="popular-head">
       <div>
-        
-        <h2>Research repository for industrial raw materials development</h2>
-        <p class="hero-copy">Browse policy briefs, technical reports, journals, and strategic publications from the Raw Materials Research and Development Council.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#catalog">Explore Library</a>
-          <a class="btn btn-secondary" href="admin/">Staff Admin</a>
-        </div>
-      </div>
-      <div class="hero-card stat-panel">
-        <div>
-          <span class="stat-label">Publications</span>
-          <strong id="statTotal">0</strong>
-        </div>
-        <div>
-          <span class="stat-label">Categories</span>
-          <strong id="statTypes">0</strong>
-        </div>
-        <div>
-          <span class="stat-label">Years Covered</span>
-          <strong id="statYears">0</strong>
-        </div>
+        <p class="section-tag">Most Popular / Most Read</p>
+        <h2>Trending Publications</h2>
       </div>
     </div>
-  </section>
 
-  <main class="container" id="catalog">
-    <section class="toolbar card">
+    <div class="popular-cover-marquee">
+      <div id="popularCoverTrack" class="popular-cover-track">
+        <div class="popular-loading">Loading popular publications...</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+
+
+
+
+<main class="container" id="catalog">
+    <section class="library-area-grid" aria-label="Research area groups">
+      <button class="library-area-card active" data-type="all">
+        <span>All</span>
+        <strong>All Publications</strong>
+        <small>Browse all RMRDC Library resources</small>
+      </button>
+      <button class="library-area-card" data-type="Policy Brief">
+        <span>01</span>
+        <strong>Policy Briefs</strong>
+        <small>Policy notes, strategic briefs and decision-support papers</small>
+      </button>
+      <button class="library-area-card" data-type="Technical Report">
+        <span>02</span>
+        <strong>Technical Briefs / Reports</strong>
+        <small>Technical documents, research outputs and project reports</small>
+      </button>
+      <button class="library-area-card" data-type="RMRDC Publication">
+        <span>03</span>
+        <strong>RMRDC Publications</strong>
+        <small>Official publications, books, monographs and special reports</small>
+      </button>
+    </section>
+<section class="toolbar card">
       <div class="toolbar-row">
         <div class="field grow">
           <label for="searchInput">Search</label>
           <input id="searchInput" type="search" placeholder="Search by title, author, abstract, keyword..." />
         </div>
         <div class="field">
-          <label for="typeFilter">Publication Type</label>
+          <label for="typeFilter">Research / Publication Area</label>
           <select id="typeFilter">
             <option value="">All types</option>
           </select>
@@ -119,15 +189,23 @@
     </article>
   </template>
 
+
   <footer class="site-footer">
     <div class="container footer-row">
-      <p>© <span id="yearNow"></span> RMRDC Digital Library</p>
-      <p>Powered by Netlify + Supabase</p>
+      <p>© <span id="yearNow"></span> RMRDC Current Awareness Service (CAS)</p>
+      <p>Powered by RMRDC Digital Library</p>
     </div>
-  </footer>
+  <button id="installAppBtn" class="btn btn-secondary hidden" type="button">Install App</button>
+</footer>
 
   <script src="js/config.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/site-menu.js"></script>
+<script src="js/user-enquiry.js"></script>
+<script src="js/pwa.js"></script>
+  <script src="js/shelf-demarcation.js"></script>
+<script src="js/kpis.js"></script>
+<script src="js/popular-covers.js"></script>
 </body>
 </html>

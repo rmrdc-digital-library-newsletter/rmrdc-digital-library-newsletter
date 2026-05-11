@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mineral Profile | RMRDC Current Awareness Service (CAS)</title>
+  <link rel="stylesheet" href="style.css" />
+<meta name="theme-color" content="#0f5a2d"/><link rel="manifest" href="../manifest.webmanifest"/>
+</head>
+<body class="raw-materials-page raw-materials-page">
+
+<header class="site-header">
+  <div class="container nav-row">
+    <a class="brand-wrap" href="index.html">
+      <img src="../assets/rmrdc-logo.png" onerror="this.src='assets/rmrdc-logo.svg'" class="header-logo" alt="RMRDC Logo" />
+      <div>
+        <p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p>
+        <h1>RMRDC Current Awareness Service (CAS)</h1>
+      </div>
+    </a>
+
+    <nav class="top-nav">
+        <a href="../index.html">CAS Home</a>
+        <a href="../cas-bulletin.html">CAS Bulletin</a>
+        <a href="../raw-materials/index.html">Raw Materials</a>
+        <a href="../subscribe.html">User Subscription/Login</a>
+        <a href="../ai-librarian.html">AI Librarian</a>
+        <a href="../admin/index.html">Staff Admin</a>
+        <button class="site-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      </nav>
+  </div>
+</header>
+
+<main>
+  <section class="detail-hero-wrap">
+    <div class="container">
+      <div class="profile-top-back-actions"><a class="back-library-btn" href="../index.html">← Back to Library</a><a class="back-materials-btn" href="index.html">← Back to Raw Materials Directory</a></div>
+      <div id="detailHero" class="detail-hero card"></div>
+    </div>
+  </section>
+
+  <section id="detailContent" class="detail-content container"></section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-row">
+    <p>© <span id="yearNow"></span> RMRDC Current Awareness Service (CAS)</p>
+    <p>Raw Materials Value Chain Intelligence</p>
+  </div>
+</footer>
+
+<script src="minerals.js"></script>
+<script src="storage.js"></script>
+<script src="material.js"></script>
+
+  <script src="../js/site-menu.js"></script>
+<script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+<script src="../js/pwa.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAS Bulletin | RMRDC CAS</title>
+  <meta name="theme-color" content="#0f5a2d" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header compact">
+    <div class="container nav-row">
+      <div class="brand-wrap small">
+        <img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC logo" />
+        <div>
+          <p class="eyebrow">Current Awareness Service</p>
+          <h1>CAS Bulletin</h1>
+        </div>
+      </div>
+      <nav class="top-nav">
+        <a href="index.html">CAS Home</a>
+        <a href="cas-bulletin.html" class="active">CAS Bulletin</a>
+        <a href="raw-materials/index.html">Raw Materials</a>
+        <a href="subscribe.html">User Subscription/Login</a>
+        <a href="ai-librarian.html">AI Librarian</a>
+        <a href="admin/index.html">Staff Admin</a>
+        <button class="site-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container cas-page-layout">
+    <section class="cas-page-hero bulletin-hero">
+      <p class="section-tag">Latest CAS / SDI Updates</p>
+      <h2>Weekly and monthly research awareness bulletins</h2>
+      <p>Browse current awareness updates highlighting newly added RMRDC publications, policy briefs, technical reports, raw materials profiles, and sector-based intelligence.</p>
+    </section>
+
+    <section class="bulletin-toolbar card">
+      <div class="field">
+        <label for="bulletinSearch">Search bulletins</label>
+        <input id="bulletinSearch" type="search" placeholder="Search by title, sector, keyword..." />
+      </div>
+      <div class="field">
+        <label for="bulletinSectorFilter">Filter by sector</label>
+        <select id="bulletinSectorFilter">
+          <option value="">All sectors</option>
+        </select>
+      </div>
+    </section>
+
+    <section id="bulletinGrid" class="bulletin-grid"></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>RMRDC Current Awareness Service (CAS)</p>
+      <button id="installAppBtn" class="btn btn-secondary hidden" type="button">Install App</button>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/cas-bulletin.js"></script>
+  <script src="js/site-menu.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
