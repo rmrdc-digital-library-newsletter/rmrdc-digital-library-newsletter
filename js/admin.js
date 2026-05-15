@@ -1,3 +1,121 @@
+/* =========================================================
+   RMRDC CAS PDF TEXT INDEXING FOR AI LIBRARIAN / RAG
+   Extracts PDF text after upload and saves it into
+   public.publication_chunks for publication-grounded answers.
+========================================================= */
+
+async function rmrdcEnsurePdfJs() {
+  const pdfjs = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
+
+  pdfjs.GlobalWorkerOptions.workerSrc =
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+
+  return pdfjs;
+}
+
+function rmrdcChunkText(text, maxLength = 1400) {
+  const clean = String(text || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!clean) return [];
+
+  const chunks = [];
+  let start = 0;
+
+  while (start < clean.length) {
+    let end = Math.min(start + maxLength, clean.length);
+
+    if (end < clean.length) {
+      const sentenceEnd = clean.lastIndexOf('.', end);
+      if (sentenceEnd > start + 400) end = sentenceEnd + 1;
+    }
+
+    const chunk = clean.slice(start, end).trim();
+
+    if (chunk.length > 50) chunks.push(chunk);
+
+    start = end;
+  }
+
+  return chunks;
+}
+
+async function rmrdcExtractPdfChunks(file, publicationId) {
+  if (!file || !publicationId) return [];
+
+  const pdfjs = await rmrdcEnsurePdfJs();
+  const arrayBuffer = await file.arrayBuffer();
+
+  const pdf = await pdfjs.getDocument({
+    data: arrayBuffer
+  }).promise;
+
+  const rows = [];
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+    const page = await pdf.getPage(pageNumber);
+    const textContent = await page.getTextContent();
+
+    const pageText = textContent.items
+      .map(item => item.str || '')
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const pageChunks = rmrdcChunkText(pageText);
+
+    pageChunks.forEach((content, index) => {
+      rows.push({
+        publication_id: publicationId,
+        page_number: pageNumber,
+        chunk_index: index,
+        content
+      });
+    });
+  }
+
+  return rows;
+}
+
+async function rmrdcIndexPublicationPdf(file, publicationId, statusTarget = null) {
+  if (!window.db || !file || !publicationId) return;
+
+  try {
+    setNotice(statusTarget, 'Indexing PDF text for AI Librarian...');
+
+    await window.db
+      .from('publication_chunks')
+      .delete()
+      .eq('publication_id', publicationId);
+
+    const chunks = await rmrdcExtractPdfChunks(file, publicationId);
+
+    console.log('RMRDC AI chunks extracted:', chunks.length);
+
+    if (!chunks.length) {
+      setNotice(statusTarget, 'Publication uploaded, but no readable PDF text was extracted.');
+      return;
+    }
+
+    for (let i = 0; i < chunks.length; i += 80) {
+      const batch = chunks.slice(i, i + 80);
+
+      const { error } = await window.db
+        .from('publication_chunks')
+        .insert(batch);
+
+      if (error) throw error;
+    }
+
+    setNotice(statusTarget, `Publication uploaded and ${chunks.length} AI text chunks indexed.`);
+  } catch (error) {
+    console.error('PDF text indexing failed:', error);
+    setNotice(statusTarget, 'Publication uploaded, but AI text indexing failed. Check browser console.', true);
+  }
+}
+
+
 const authForm = document.getElementById('authForm');
 const authStatus = document.getElementById('authStatus');
 const signOutBtn = document.getElementById('signOutBtn');
@@ -1215,6 +1333,11 @@ publicationForm?.addEventListener('submit', async (e) => {
     };
 
     const publication = await createPublication(payload);
+
+    if (mode === 'pdf' && pdfFile && publication?.id) {
+      await rmrdcIndexPublicationPdf(pdfFile, publication.id, uploadMessage);
+    }
+
     const emailResult = await notifyMatchingUsers(publication);
     publicationForm.reset();
     setupPublicationModeToggle();
