@@ -646,9 +646,20 @@ refs.fitWidth?.addEventListener('click', async () => {
   await rerender();
 });
 
-refs.fullscreen?.addEventListener('click', async () => {
-  if (!document.fullscreenElement) await refs.shell?.requestFullscreen?.();
-  else await document.exitFullscreen?.();
+refs.fullscreen.addEventListener('click', async () => {
+
+    if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+    } else {
+        await document.exitFullscreen();
+    }
+
+    setTimeout(async () => {
+        if (currentPublication) {
+            await rerender();
+        }
+    }, 500);
+
 });
 
 refs.savePublication?.addEventListener('click', () => saveCurrentPublication(currentPublication));
@@ -696,8 +707,8 @@ window.addEventListener('resize', () => {
   }
 });
 
-document.addEventListener('fullscreenchange', () => {
-  setTimeout(() => rerender().catch(console.error), 250);
+document.addEventListener("fullscreenchange", () => {
+  console.log("Fullscreen changed");
 });
 
 attachInteractionEvents();
@@ -776,3 +787,18 @@ async function generateAISummary(publication) {
     );
   }
 })();
+
+window.addEventListener("resize", () => {
+  if (!currentPublication) return;
+  clearTimeout(window.__viewerResizeTimer);
+  window.__viewerResizeTimer = setTimeout(async () => {
+    await rerender();
+  }, 200);
+});
+
+document.addEventListener("fullscreenchange", () => {
+  if (!currentPublication) return;
+  setTimeout(async () => {
+    await rerender();
+  }, 300);
+});
