@@ -83,11 +83,14 @@ async function rmrdcIndexPublicationPdf(file, publicationId, statusTarget = null
 
   try {
     setNotice(statusTarget, 'Indexing PDF text for AI Librarian...');
+    console.log('Starting deletion of existing chunks for publication:', publicationId);
 
-    await window.db
+    const del = await window.db
       .from('publication_chunks')
       .delete()
       .eq('publication_id', publicationId);
+
+    if (del.error) console.warn('Existing chunk delete warning:', del.error);
 
     const chunks = await rmrdcExtractPdfChunks(file, publicationId);
 
@@ -98,6 +101,9 @@ async function rmrdcIndexPublicationPdf(file, publicationId, statusTarget = null
       return;
     }
 
+    // show a small sample for diagnostics
+    console.log('Sample chunk preview:', chunks.slice(0, 3).map(c => ({ page: c.page_number, len: c.content.length, snippet: c.content.slice(0, 140) })));
+
     for (let i = 0; i < chunks.length; i += 80) {
       const batch = chunks.slice(i, i + 80);
 
@@ -105,7 +111,10 @@ async function rmrdcIndexPublicationPdf(file, publicationId, statusTarget = null
         .from('publication_chunks')
         .insert(batch);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting publication_chunks batch starting at', i, error);
+        throw error;
+      }
     }
 
     setNotice(statusTarget, `Publication uploaded and ${chunks.length} AI text chunks indexed.`);
@@ -494,7 +503,10 @@ async function loadRecentPublications() {
         <td>${formatPrice(pub.price)}</td>
         <td>${formatNumber(pub.view_count)}</td>
         <td>${formatNumber(pub.download_count)}</td>
-        <td><a class="icon-action" href="../viewer.html?id=${pub.id}" title="Open">↗</a></td>
+        <td>
+          <a class="icon-action" href="../viewer.html?id=${pub.id}" title="Open">↗</a>
+          <a class="icon-action" href="edit-publication.html?id=${pub.id}" title="Edit">✎</a>
+        </td>
       </tr>
     `).join('');
   }
@@ -512,6 +524,7 @@ async function loadRecentPublications() {
           <p class="muted">${formatPrice(pub.price)}</p>
         </div>
         <a class="btn btn-secondary" href="../viewer.html?id=${pub.id}">Open</a>
+        <a class="btn btn-primary" href="edit-publication.html?id=${pub.id}">Edit</a>
       `;
       adminList.appendChild(row);
     });

@@ -94,6 +94,8 @@ Deno.serve(async (req) => {
       .map((w) => w.replace(/[^a-z0-9]/g, ""))
       .filter((w) => w.length > 2);
 
+    console.log('AI-Librarian search terms:', words.slice(0, 12));
+
     const q = words[0] || question.slice(0, 30);
     const ilike = `%${q}%`;
 
@@ -112,6 +114,7 @@ Deno.serve(async (req) => {
       const { data, error } = await chunkQuery;
       if (!error && data) chunks = data;
       if (error) console.error("publication_chunks error:", error);
+      console.log('publication_chunks fetched:', Array.isArray(chunks) ? chunks.length : 0, 'sample:', chunks && chunks[0] ? String(chunks[0].content || '').slice(0,160) : 'none');
     } catch (e) {
       console.error("publication_chunks exception:", e);
     }
@@ -131,6 +134,7 @@ Deno.serve(async (req) => {
       const { data, error } = await pubQuery;
       if (!error && data) pubs = data;
       if (error) console.error("publications_with_stats error:", error);
+      console.log('publications_with_stats fetched:', Array.isArray(pubs) ? pubs.length : 0, 'sample title:', pubs && pubs[0] ? pubs[0].title : 'none');
     } catch (e) {
       console.error("publications_with_stats exception:", e);
     }
@@ -172,6 +176,7 @@ ANSWER:
 `;
 
     try {
+      console.log('Sending prompt to HF model. Context sizes:', { chunks: (context.publication_chunks || []).length, pubs: (context.publication_metadata || []).length });
       const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
         method: "POST",
         headers: {
