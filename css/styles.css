@@ -3682,6 +3682,59 @@ font-size:2rem;
 }
 
 
+/* Professional loader */
+#loader {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#loader.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-box {
+  text-align: center;
+}
+
+.loader-box img {
+  width: 90px;
+  margin-bottom: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  border: 5px solid #ddd;
+  border-top: 5px solid #0f5a2d;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-box h3 {
+  margin-top: 20px;
+  color: #0f5a2d;
+}
+
+.loader-box p {
+  color: #666;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+
 /* Animated KPI cards */
 .kpi-card{
 animation:kpiFloat 4s ease-in-out infinite;

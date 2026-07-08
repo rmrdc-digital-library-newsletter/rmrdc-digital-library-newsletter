@@ -189,6 +189,8 @@ function renderGrid() {
     const img = node.querySelector('.cover-image');
     img.src = pub.cover_url || 'assets/placeholder-cover.svg';
     img.alt = `${pub.title} cover`;
+    img.loading = 'lazy';
+    img.decoding = 'async';
     node.querySelector('.type-pill').textContent = pub.type || 'Publication';
     node.querySelector('.pub-title').textContent = pub.title || 'Untitled publication';
     node.querySelector('.pub-meta').textContent = `${pub.year || 'N/A'}${pub.authors ? ' • ' + pub.authors : ''}`;
@@ -292,3 +294,12 @@ function changeSlide() {
 }
 
 setInterval(changeSlide, 5000);
+
+window.addEventListener('load', function () {
+  const loader = document.getElementById('loader');
+  if (!loader) return;
+
+  setTimeout(function () {
+    loader.classList.add('hide');
+  }, 500);
+});
