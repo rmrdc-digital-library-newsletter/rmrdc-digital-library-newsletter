@@ -88,14 +88,54 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    const words = question
-      .toLowerCase()
-      .split(/\s+/)
-      .map((w) => w.replace(/[^a-z0-9]/g, ""))
-      .filter((w) => w.length > 2);
+    const stopWords = new Set([
+  "what",
+  "which",
+  "where",
+  "when",
+  "why",
+  "how",
+  "is",
+  "are",
+  "was",
+  "were",
+  "the",
+  "a",
+  "an",
+  "of",
+  "to",
+  "for",
+  "in",
+  "on",
+  "at",
+  "by",
+  "with",
+  "about",
+  "and",
+  "or",
+  "can",
+  "could",
+  "would",
+  "should",
+  "please",
+  "tell",
+  "me",
+  "explain",
+  "define"
+]);
 
-    const q = words[0] || question.slice(0, 30);
-    const ilike = `%${q}%`;
+const words = question
+  .toLowerCase()
+  .split(/\s+/)
+  .map(w => w.replace(/[^a-z0-9]/g, ""))
+  .filter(w => w.length > 2)
+  .filter(w => !stopWords.has(w));
+
+console.log("Search keywords:", words);
+
+const q = words.join(" ");
+
+const ilike = `%${q}%`;
 
     let chunks: any[] = [];
     let pubs: any[] = [];
