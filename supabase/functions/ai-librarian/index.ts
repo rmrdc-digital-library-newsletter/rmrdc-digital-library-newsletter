@@ -6,10 +6,42 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
-function safeJson(v: unknown, max = 16000) {
-  return JSON.stringify(v, null, 2).slice(0, max);
-}
+function buildContext(context: any): string {
+  const pubs = context.publication_metadata || [];
+  const chunks = context.publication_chunks || [];
 
+  let text = "";
+
+  for (const pub of pubs) {
+    text += `
+
+TITLE:
+${pub.title ?? ""}
+
+AUTHORS:
+${pub.authors ?? ""}
+
+YEAR:
+${pub.year ?? ""}
+
+ABSTRACT:
+${pub.abstract ?? ""}
+
+`;
+  }
+
+  for (const chunk of chunks) {
+    text += `
+
+PAGE ${chunk.page_number ?? ""}
+
+${chunk.content ?? ""}
+
+`;
+  }
+
+  return text.slice(0, 18000);
+}
 function fallbackAnswer(question: string, context: any) {
   const chunks = context.publication_chunks || [];
   const pubs = context.publication_metadata || [];
@@ -107,7 +139,7 @@ Deno.serve(async (req) => {
         .from("publication_chunks")
         .select("publication_id,page_number,chunk_index,content")
         .ilike("content", ilike)
-        .limit(12);
+        .limit(30);
 
       if (publicationId) chunkQuery = chunkQuery.eq("publication_id", publicationId);
 
@@ -123,7 +155,7 @@ Deno.serve(async (req) => {
       let pubQuery = supabase
         .from("publications_with_stats")
         .select("id,title,authors,type,year,abstract,research_areas,isbn,doi,citation,view_count,download_count,avg_rating,pdf_url,ebook_url,publication_format")
-        .limit(8);
+        .limit(15);
 
       if (publicationId) {
         pubQuery = pubQuery.eq("id", publicationId);
@@ -160,19 +192,39 @@ Deno.serve(async (req) => {
     const model = Deno.env.get("HF_MODEL") || "google/flan-t5-large";
 
     const prompt = `
-You are the RMRDC Current Awareness Service AI Librarian.
+You are the AI Librarian for the RMRDC Current Awareness Service.
 
-Use ONLY the retrieved publication context below.
-If the answer is not in the context, say so clearly.
-Give a concise answer for users who do not want to read the full publication page by page.
+Your task is to help researchers understand publications quickly.
 
-RETRIEVED CONTEXT:
-${safeJson(context)}
+If the user asks for a summary:
 
-USER QUESTION:
+• produce a coherent summary in your own words
+
+• do not copy large passages
+
+• identify the objective
+
+• identify the methodology if available
+
+• identify the major findings
+
+• identify the conclusions
+
+• identify the recommendations
+
+If the user asks a normal question, answer using the retrieved publication.
+
+If the publication does not contain the answer, clearly state that and then provide general background knowledge when appropriate, making it clear what comes from the publication and what is general knowledge.
+
+Publication Context
+
+${buildContext(context)}
+
+Question
+
 ${question}
 
-ANSWER:
+Answer
 `;
 
     try {
