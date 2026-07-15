@@ -40,8 +40,10 @@ ${chunk.content ?? ""}
 `;
   }
 
-  return text.slice(0, 18000);
+  // FIXED: Removed the low slice constraint (0, 18000) so Gemini can ingest the full document context.
+  return text;
 }
+
 function fallbackAnswer(question: string, context: any) {
   const chunks = context.publication_chunks || [];
   const pubs = context.publication_metadata || [];
@@ -176,98 +178,92 @@ Deno.serve(async (req) => {
       publication_metadata: pubs,
     };
 
-    const hfKey = Deno.env.get("HUGGINGFACE_API_KEY");
+    // UPDATED: Now looks for GEMINI_API_KEY from Google AI Studio instead of Hugging Face
+    const geminiKey = Deno.env.get("GEMINI_API_KEY");
 
-    if (!hfKey) {
+    if (!geminiKey) {
       return new Response(
         JSON.stringify({
           answer: fallbackAnswer(question, context),
           context,
-          warning: "Missing HUGGINGFACE_API_KEY. Returned database fallback answer.",
+          warning: "Missing GEMINI_API_KEY. Returned database fallback answer.",
         }),
         { status: 200, headers: corsHeaders }
       );
     }
 
-    const model = Deno.env.get("HF_MODEL") || "google/flan-t5-large";
+    // Default to the fast and free gemini-2.0-flash model
+    const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.0-flash";
 
+    // UPDATED: Standardized prompt to explicitly enforce your Markdown structure
     const prompt = `
 You are the AI Librarian for the RMRDC Current Awareness Service.
+Your responsibility is to help researchers, students, policymakers and industry professionals quickly understand publications.
+Always answer in clear academic English.
 
-Your task is to help researchers understand publications quickly.
+If the user asks for a summary, you MUST structure your response cleanly using these exact Markdown headers:
 
-If the user asks for a summary:
+### Summary
+[Write a natural summary in your own words. Never copy long paragraphs directly.]
 
-• produce a coherent summary in your own words
+### Key Details
+1. **Main Topic**: [Insert description]
+2. **Purpose of the Publication**: [Insert description]
+3. **Methodology**: [Insert methodology details or explicitly state "Not mentioned in publication"]
+4. **Major Findings**: [Insert description]
+5. **Conclusions**: [Insert description]
+6. **Recommendations**: [Insert description]
 
-• do not copy large passages
-
-• identify the objective
-
-• identify the methodology if available
-
-• identify the major findings
-
-• identify the conclusions
-
-• identify the recommendations
-
-If the user asks a normal question, answer using the retrieved publication.
-
-If the publication does not contain the answer, clearly state that and then provide general background knowledge when appropriate, making it clear what comes from the publication and what is general knowledge.
+If the user asks another question, answer using the publication.
+If the publication does not contain enough information, clearly state that and then provide general knowledge separately.
 
 Publication Context
-
 ${buildContext(context)}
 
 Question
-
 ${question}
 
-Answer
+Answer:
 `;
 
     try {
-      console.log('Sending prompt to HF model. Context sizes:', { chunks: (context.publication_chunks || []).length, pubs: (context.publication_metadata || []).length });
-      const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+      console.log('Sending prompt to Gemini API. Context sizes:', { chunks: (context.publication_chunks || []).length, pubs: (context.publication_metadata || []).length });
+      
+      // UPDATED: HTTP fetch payload directly mapped to Google Gemini API architectures
+      const response = await fetch(`https://googleapis.com{model}:generateContent?key=${geminiKey}`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${hfKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            max_new_tokens: 420,
+          contents: [{
+            parts: [{ text: prompt }]
+          }],
+          generationConfig: {
             temperature: 0.2,
-            return_full_text: false,
-          },
-          options: {
-            wait_for_model: true,
-          },
+            maxOutputTokens: 1000 // Higher token space for your formatted summary blocks
+          }
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Hugging Face error:", errorText);
+        console.error("Gemini API error:", errorText);
 
         return new Response(
           JSON.stringify({
             answer: fallbackAnswer(question, context),
             context,
-            warning: `Hugging Face failed. ${errorText}`,
+            warning: `Gemini API failed. ${errorText}`,
           }),
           { status: 200, headers: corsHeaders }
         );
       }
 
       const result = await response.json();
-
-      const answer =
-        Array.isArray(result)
-          ? result[0]?.generated_text || result[0]?.summary_text || ""
-          : result?.generated_text || result?.summary_text || "";
+      
+      // Parse Gemini response structure
+      const answer = result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
       return new Response(
         JSON.stringify({
@@ -276,28 +272,28 @@ Answer
         }),
         { status: 200, headers: corsHeaders }
       );
-    } catch (hfError) {
-      console.error("Hugging Face exception:", hfError);
 
+    } catch (apiError: any) {
+      console.error("Gemini API connection exception:", apiError);
       return new Response(
         JSON.stringify({
           answer: fallbackAnswer(question, context),
           context,
-          warning: String(hfError?.message || hfError),
+          warning: `Gemini Exception: ${apiError.message || apiError}`,
         }),
         { status: 200, headers: corsHeaders }
       );
     }
-  } catch (error) {
-    console.error("AI Librarian fatal error:", error);
 
+  } catch (globalError: any) {
+    console.error("Global runtime error:", globalError);
     return new Response(
       JSON.stringify({
-        answer: "AI Librarian encountered an internal error, but the function is reachable. Check Edge Function logs for details.",
-        error: String(error?.message || error),
+        answer: "A critical runtime error occurred within the Edge Function.",
+        error: globalError.message || String(globalError),
         context: {},
       }),
-      { status: 200, headers: corsHeaders }
+      { status: 500, headers: corsHeaders }
     );
   }
 });
