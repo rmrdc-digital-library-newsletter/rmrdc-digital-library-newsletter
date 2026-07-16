@@ -1,4 +1,5 @@
-import { createClient } from "https://esm.sh";
+import { createClient } from "https://deno.land";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
