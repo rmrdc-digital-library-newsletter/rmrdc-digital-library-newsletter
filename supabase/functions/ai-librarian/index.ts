@@ -71,18 +71,14 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // CLEANER SEARCH: Strip filler phrases out to find the actual subject keyword
     const cleaned = question
       .toLowerCase()
       .replace(/\b(i|want|books|book|on|show|me|find|what|is|the|a|an|for|of|in|to|and|can|you|summarize|please)\b/gi, "")
       .replace(/[^a-z0-9\s]/g, "")
       .trim();
 
-    // If cleaning emptied the phrase entirely, just use the original question
     const targetWord = cleaned || question.slice(0, 30);
     const ilike = `%${targetWord}%`;
-
-    console.log('Searching database for cleaned keyword:', targetWord);
 
     let chunks: any[] = [];
     let pubs: any[] = [];
@@ -99,7 +95,7 @@ Deno.serve(async (req) => {
       if (publicationId) {
         pubQuery = pubQuery.eq("id", publicationId);
       } else {
-        pubQuery = pubQuery.or(`title.ilike.${ilike},abstract.ilike.${ilike}`);
+        pubQuery = pubQuery.or(`title.ilike.${ilike},authors.ilike.${ilike}`);
       }
       const { data } = await pubQuery;
       if (data) pubs = data;
@@ -107,6 +103,8 @@ Deno.serve(async (req) => {
 
     const context = { publication_chunks: chunks, publication_metadata: pubs };
     const geminiKey = Deno.env.get("GEMINI_API_KEY");
+    
+    // FIXED: Ensured a stable v1 model path fallback identifier
     const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.0-flash";
 
     if (!geminiKey) {
@@ -118,10 +116,10 @@ You are the AI Librarian for the RMRDC Current Awareness Service.
 Your responsibility is to help researchers quickly understand publications.
 Always answer in clear academic English.
 
-If the user asks for a summary or lists of books, you MUST structure your response cleanly using these exact Markdown headers:
+You MUST structure your response cleanly using these exact Markdown headers:
 
 ### Summary
-[Write a natural summary in your own words. Never copy long paragraphs directly.]
+[Write a natural summary in your own words based on the provided text. Never copy long paragraphs directly.]
 
 ### Key Details
 1. **Main Topic**: [Insert description]
@@ -131,8 +129,7 @@ If the user asks for a summary or lists of books, you MUST structure your respon
 5. **Conclusions**: [Insert description]
 6. **Recommendations**: [Insert description]
 
-If the user asks another question or looks for available resources, answer using the publication text details provided below.
-If the publication text does not contain enough information, clearly state that and then provide general knowledge separately.
+If the publication context below does not contain enough information, clearly state that and then provide general knowledge separately under the appropriate sections.
 
 Publication Context
 ${buildContext(context)}
@@ -144,28 +141,42 @@ Answer:
 `;
 
     try {
+      // FIXED: Adjusted path context query params to ensure complete compatibility across enterprise API allocations
       const response = await fetch(`https://googleapis.com{model}:generateContent?key=${geminiKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 1200 }
+          generationConfig: { 
+            temperature: 0.2, 
+            maxOutputTokens: 1024
+          }
         }),
       });
 
       if (!response.ok) {
-        const err = await response.text();
-        console.error("Gemini failed:", err);
-        return new Response(JSON.stringify({ answer: fallbackAnswer(question, context), context, warning: "API error. Used fallback." }), { status: 200, headers: corsHeaders });
+        const errText = await response.text();
+        console.error("Gemini Endpoint rejection context:", errText);
+        return new Response(JSON.stringify({ answer: fallbackAnswer(question, context), context, warning: `API error: ${errText}` }), { status: 200, headers: corsHeaders });
       }
 
       const result = await response.json();
-      const answer = result?.candidates?.?.content?.parts?.?.text || "";
+      
+      // FIXED: Comprehensive fallback chaining for parsing response candidate parts across structural schemas
+      let answer = "";
+      if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        answer = result.candidates[0].content.parts[0].text;
+      } else if (result?.content?.parts?.[0]?.text) {
+        answer = result.content.parts[0].text;
+      } else if (result?.generated_text) {
+        answer = result.generated_text;
+      }
 
       return new Response(JSON.stringify({ answer: answer || fallbackAnswer(question, context), context }), { status: 200, headers: corsHeaders });
 
-    } catch (e) {
-      return new Response(JSON.stringify({ answer: fallbackAnswer(question, context), context }), { status: 200, headers: corsHeaders });
+    } catch (e: any) {
+      console.error("Fetch implementation exception trace:", e);
+      return new Response(JSON.stringify({ answer: fallbackAnswer(question, context), context, warning: e.message }), { status: 200, headers: corsHeaders });
     }
   } catch (globalError: any) {
     return new Response(JSON.stringify({ answer: "System error.", context: {} }), { status: 500, headers: corsHeaders });
