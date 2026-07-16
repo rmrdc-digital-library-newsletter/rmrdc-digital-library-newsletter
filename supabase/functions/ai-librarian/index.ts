@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
 
     const context = { publication_chunks: chunks, publication_metadata: pubs };
     const geminiKey = Deno.env.get("GEMINI_API_KEY");
-    const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.0-flash";
+    const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
 
     if (!geminiKey) {
       return new Response(JSON.stringify({ answer: fallbackAnswer(question, context), context, warning: "Missing GEMINI_API_KEY." }), { status: 200, headers: corsHeaders });
@@ -141,7 +141,8 @@ Answer:
     try {
       console.log('Sending prompt to Gemini API. Context sizes:', { chunks: chunks.length, pubs: pubs.length });
 
-      const apiUrl = `https://googleapis.com{model}:generateContent?key=${geminiKey}`;
+      const apiUrl =
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`;
       
       const response = await fetch(apiUrl, {
         method: "POST",
