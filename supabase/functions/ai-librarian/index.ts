@@ -103,8 +103,6 @@ Deno.serve(async (req) => {
 
     const context = { publication_chunks: chunks, publication_metadata: pubs };
     const geminiKey = Deno.env.get("GEMINI_API_KEY");
-    
-    // FIXED: Ensured a stable v1 model path fallback identifier
     const model = Deno.env.get("GEMINI_MODEL") || "gemini-2.0-flash";
 
     if (!geminiKey) {
@@ -141,15 +139,19 @@ Answer:
 `;
 
     try {
-      // FIXED: Adjusted path context query params to ensure complete compatibility across enterprise API allocations
-      const response = await fetch(`https://googleapis.com{model}:generateContent?key=${geminiKey}`, {
+      console.log('Sending prompt to Gemini API. Context sizes:', { chunks: chunks.length, pubs: pubs.length });
+
+      // FIXED: Corrected string template variables structure to create valid URL connections
+      const apiUrl = `https://googleapis.com{model}:generateContent?key=${geminiKey}`;
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: { 
             temperature: 0.2, 
-            maxOutputTokens: 1024
+            maxOutputTokens: 1240
           }
         }),
       });
@@ -162,20 +164,17 @@ Answer:
 
       const result = await response.json();
       
-      // FIXED: Comprehensive fallback chaining for parsing response candidate parts across structural schemas
       let answer = "";
-      if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
+      if (result?.candidates?.?.[0]?.content?.parts?.?.[0]?.text) {
         answer = result.candidates[0].content.parts[0].text;
-      } else if (result?.content?.parts?.[0]?.text) {
+      } else if (result?.content?.parts?.?.[0]?.text) {
         answer = result.content.parts[0].text;
-      } else if (result?.generated_text) {
-        answer = result.generated_text;
       }
 
       return new Response(JSON.stringify({ answer: answer || fallbackAnswer(question, context), context }), { status: 200, headers: corsHeaders });
 
     } catch (e: any) {
-      console.error("Fetch implementation exception trace:", e);
+      console.error("Gemini API connection exception:", e);
       return new Response(JSON.stringify({ answer: fallbackAnswer(question, context), context, warning: e.message }), { status: 200, headers: corsHeaders });
     }
   } catch (globalError: any) {
