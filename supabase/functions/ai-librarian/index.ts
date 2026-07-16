@@ -1,4 +1,4 @@
-import { createClient } from "https://deno.land";
+import { createClient } from "https://jsdelivr.net";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -163,7 +163,6 @@ Answer:
 
       const result = await response.json();
       
-      // FIXED: Standard syntax checks to safely retrieve response parts without chaining bugs
       let answer = "";
       if (result && result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts[0]) {
         answer = result.candidates[0].content.parts[0].text || "";
