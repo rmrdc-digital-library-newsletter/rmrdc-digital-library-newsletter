@@ -141,7 +141,6 @@ Answer:
     try {
       console.log('Sending prompt to Gemini API. Context sizes:', { chunks: chunks.length, pubs: pubs.length });
 
-      // FIXED: Corrected string template variables structure to create valid URL connections
       const apiUrl = `https://googleapis.com{model}:generateContent?key=${geminiKey}`;
       
       const response = await fetch(apiUrl, {
@@ -164,11 +163,12 @@ Answer:
 
       const result = await response.json();
       
+      // FIXED: Standard syntax checks to safely retrieve response parts without chaining bugs
       let answer = "";
-      if (result?.candidates?.?.[0]?.content?.parts?.?.[0]?.text) {
-        answer = result.candidates[0].content.parts[0].text;
-      } else if (result?.content?.parts?.?.[0]?.text) {
-        answer = result.content.parts[0].text;
+      if (result && result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts[0]) {
+        answer = result.candidates[0].content.parts[0].text || "";
+      } else if (result && result.content && result.content.parts && result.content.parts[0]) {
+        answer = result.content.parts[0].text || "";
       }
 
       return new Response(JSON.stringify({ answer: answer || fallbackAnswer(question, context), context }), { status: 200, headers: corsHeaders });
