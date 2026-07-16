@@ -1,6 +1,5 @@
 import { createClient } from "https://deno.land";
 
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -72,19 +71,18 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // FIXED: Filter out common words so it picks the real keyword (e.g. "cassava")
-    const stopWords = new Set(["what", "is", "the", "a", "an", "for", "of", "in", "on", "to", "and", "can", "you", "summarize", "please"]);
-    const words = question
+    // CLEANER SEARCH: Strip filler phrases out to find the actual subject keyword
+    const cleaned = question
       .toLowerCase()
-      .split(/\s+/)
-      .map((w) => w.replace(/[^a-z0-9]/g, ""))
-      .filter((w) => w.length > 2 && !stopWords.has(w));
+      .replace(/\b(i|want|books|book|on|show|me|find|what|is|the|a|an|for|of|in|to|and|can|you|summarize|please)\b/gi, "")
+      .replace(/[^a-z0-9\s]/g, "")
+      .trim();
 
-    // Fallback if the user typed only stop words
-    const targetWord = words.length > 0 ? words[0] : question.slice(0, 30);
+    // If cleaning emptied the phrase entirely, just use the original question
+    const targetWord = cleaned || question.slice(0, 30);
     const ilike = `%${targetWord}%`;
 
-    console.log('Searching database for keyword:', targetWord);
+    console.log('Searching database for cleaned keyword:', targetWord);
 
     let chunks: any[] = [];
     let pubs: any[] = [];
@@ -120,7 +118,7 @@ You are the AI Librarian for the RMRDC Current Awareness Service.
 Your responsibility is to help researchers quickly understand publications.
 Always answer in clear academic English.
 
-If the user asks for a summary, you MUST structure your response cleanly using these exact Markdown headers:
+If the user asks for a summary or lists of books, you MUST structure your response cleanly using these exact Markdown headers:
 
 ### Summary
 [Write a natural summary in your own words. Never copy long paragraphs directly.]
@@ -133,8 +131,8 @@ If the user asks for a summary, you MUST structure your response cleanly using t
 5. **Conclusions**: [Insert description]
 6. **Recommendations**: [Insert description]
 
-If the user asks another question, answer using the publication.
-If the publication does not contain enough information, clearly state that and then provide general knowledge separately.
+If the user asks another question or looks for available resources, answer using the publication text details provided below.
+If the publication text does not contain enough information, clearly state that and then provide general knowledge separately.
 
 Publication Context
 ${buildContext(context)}
@@ -146,7 +144,6 @@ Answer:
 `;
 
     try {
-      // FIXED: Swapped to a compatible API endpoint structure for Enterprise AQ. style keys
       const response = await fetch(`https://googleapis.com{model}:generateContent?key=${geminiKey}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -163,7 +160,7 @@ Answer:
       }
 
       const result = await response.json();
-      const answer = result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      const answer = result?.candidates?.?.content?.parts?.?.text || "";
 
       return new Response(JSON.stringify({ answer: answer || fallbackAnswer(question, context), context }), { status: 200, headers: corsHeaders });
 
