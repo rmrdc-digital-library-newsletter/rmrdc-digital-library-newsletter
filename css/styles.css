@@ -139,7 +139,57 @@ button, input, select, textarea { font: inherit; }
   font-weight: 700;
   cursor: pointer;
 }
+.dashboard-overview{
 
+display:flex;
+
+flex-direction:column;
+
+gap:30px;
+
+margin-bottom:40px;
+
+}
+
+.stats-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:20px;
+
+}
+
+.stat-card{
+
+background:#ffffff;
+
+padding:20px;
+
+border-radius:12px;
+
+box-shadow:0 3px 10px rgba(0,0,0,.08);
+
+text-align:center;
+
+}
+
+.stat-card span{
+
+font-size:32px;
+
+font-weight:bold;
+
+color:#0b6b3a;
+
+}
+
+.dashboard-section{
+
+margin-top:40px;
+
+}
 .publication-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
