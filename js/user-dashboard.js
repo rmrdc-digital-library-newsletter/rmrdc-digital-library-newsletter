@@ -1,11 +1,3 @@
-
-document.getElementById("savedCount").textContent=0;
-
-document.getElementById("historyCount").textContent=0;
-
-document.getElementById("alertCount").textContent=0;
-
-document.getElementById("recommendationCount").textContent=0;
 // semantic personalized feed enhancement
 async function loadSemanticPersonalizedFeed() {
   const profile = getProfile();
@@ -32,4 +24,33 @@ function renderLocal(){const s=window.RMRDCUserFeatures.getSaved(),h=window.RMRD
 function profile(){try{return JSON.parse(localStorage.getItem('rmrdc_cas_profile')||'null')}catch{return null}}
 function match(pub,interests){const hay=[pub.title,pub.authors,pub.abstract,pub.type,...(pub.research_areas||[])].join(' ').toLowerCase(); return interests.some(i=>hay.includes(String(i).toLowerCase()));}
 async function loadFeed(){const p=profile(); if(!p?.research_areas?.length){feedHint.textContent='Subscribe and select your research interests to generate a personalized feed.'; return;} if(!window.db){feedHint.textContent='Supabase is not connected.'; return;} const {data,error}=await window.db.from('publications_with_stats').select('*').order('created_at',{ascending:false}).limit(80); if(error){feedHint.textContent='Could not load personalized feed.';return;} const items=(data||[]).filter(pub=>match(pub,p.research_areas)).slice(0,12); feedHint.textContent=items.length?`Based on: ${p.research_areas.join(', ')}`:'No matching items yet.'; feedGrid.innerHTML=items.length?items.map(card).join(''):'<p class="empty card">No recommended publications found yet.</p>';}
-document.querySelectorAll('.dashboard-tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.dashboard-tab').forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.dashboard-panel').forEach(p=>p.classList.add('hidden')); document.getElementById(b.dataset.tab+'Panel').classList.remove('hidden');})); renderLocal(); loadFeed();
+document.querySelectorAll('.dashboard-tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.dashboard-tab').forEach(x=>x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.dashboard-panel').forEach(p=>p.classList.add('hidden')); document.getElementById(b.dataset.tab+'Panel').classList.remove('hidden');})); async function initializeDashboard() {
+
+    const {
+        data: { user },
+        error
+    } = await window.db.auth.getUser();
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const { data: profile } = await window.db
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .single();
+
+    if (profile) {
+        document.getElementById("userName").textContent =
+            profile.full_name;
+    }
+
+    renderLocal();
+
+    await loadFeed();
+
+}
+
+initializeDashboard();
