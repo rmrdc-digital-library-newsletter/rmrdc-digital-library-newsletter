@@ -1,4 +1,11 @@
 
+document.getElementById("savedCount").textContent=0;
+
+document.getElementById("historyCount").textContent=0;
+
+document.getElementById("alertCount").textContent=0;
+
+document.getElementById("recommendationCount").textContent=0;
 // semantic personalized feed enhancement
 async function loadSemanticPersonalizedFeed() {
   const profile = getProfile();
