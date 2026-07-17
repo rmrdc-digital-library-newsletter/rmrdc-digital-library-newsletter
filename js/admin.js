@@ -1173,14 +1173,27 @@ function extractAuthors(text) {
 }
 
 function extractAbstract(text) {
-  const clean = cleanAutoText(text);
-  const exec = clean.toLowerCase().indexOf('executive summary');
-  if (exec >= 0) return clean.slice(exec, exec + 900);
-  const fore = clean.toLowerCase().indexOf('foreword');
-  if (fore >= 0) return clean.slice(fore, fore + 750);
-  return clean.slice(0, 800);
-}
+    const clean = cleanAutoText(text);
 
+    const patterns = [
+        /abstract\s*([\s\S]*?)(?=\bkeywords\b|\bintroduction\b|\b1\.\s|chapter\s*1)/i,
+        /executive\s+summary\s*([\s\S]*?)(?=\bintroduction\b|\b1\.\s|chapter\s*1)/i,
+        /summary\s*([\s\S]*?)(?=\bintroduction\b|\b1\.\s|chapter\s*1)/i
+    ];
+
+    for (const pattern of patterns) {
+        const match = clean.match(pattern);
+
+        if (match && match[1]) {
+            return match[1]
+                .replace(/\s+/g, " ")
+                .trim()
+                .substring(0, 3000);
+        }
+    }
+
+    return clean.substring(0, 1200);
+}
 function inferAreas(text) {
   const hay = text.toLowerCase();
   const pairs = [['food','food science'],['beverage','beverages'],['tobacco','tobacco sector'],['cassava','cassava'],['palm oil','palm oil'],['agro','agro raw materials'],['mineral','mineral raw materials'],['policy','policy brief'],['technical','technical report'],['industrial','industrial development'],['raw material','raw materials']];
@@ -1189,7 +1202,7 @@ function inferAreas(text) {
   return out.slice(0,6).join(', ');
 }
 
-async function extractPdfTextAuto(file, maxPages = 8) {
+async function extractPdfTextAuto(file, maxPages = 20) {
   if (!file) throw new Error('Please select a PDF first.');
   const pdfjsLib = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
