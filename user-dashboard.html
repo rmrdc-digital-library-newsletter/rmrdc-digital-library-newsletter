@@ -1,4 +1,74 @@
 <!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'/><meta name='viewport' content='width=device-width, initial-scale=1.0'/><title>User Dashboard | RMRDC CAS</title><link rel='stylesheet' href='css/styles.css'/><script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'></script><meta name="theme-color" content="#0f5a2d"/><link rel="manifest" href="manifest.webmanifest"/>
-</head><body><header class='site-header compact'><div class='container nav-row'><div class='brand-wrap small'><img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC Logo" /><div><p class='eyebrow'>Personalized CAS / SDI</p><h1>User Dashboard</h1></div></div><nav class='top-nav'><a href='index.html'>CAS Home</a><a href='raw-materials/index.html'>Raw Materials</a><a href='subscribe.html'>Subscribe</a><a href='user-dashboard.html' class='active'>User Dashboard</a><a href='ai-librarian.html'>AI Librarian</a><a href='admin/index.html'>Staff Admin</a></nav></div></header><main class='container cas-page-layout'><section class='cas-page-hero'><p class='section-tag'>Your CAS / SDI Workspace</p><h2>Saved publications, reading history and personalized feed</h2><p>This dashboard helps users return to saved publications, track recently viewed records and discover content based on selected research interests.</p></section><section class='dashboard-tabs card'><button class='dashboard-tab active' data-tab='saved'>Saved Publications</button><button class='dashboard-tab' data-tab='history'>Reading History</button><button class='dashboard-tab' data-tab='feed'>Personalized Feed</button></section><section id='savedPanel' class='dashboard-panel'><div class='section-head'><div><p class='section-tag'>Saved</p><h2>Saved Publications</h2></div></div><div id='savedGrid' class='publication-grid'></div></section><section id='historyPanel' class='dashboard-panel hidden'><div class='section-head'><div><p class='section-tag'>History</p><h2>Reading History</h2></div></div><div id='historyGrid' class='publication-grid'></div></section><section id='feedPanel' class='dashboard-panel hidden'><div class='section-head'><div><p class='section-tag'>Personalized</p><h2>Recommended Feed</h2></div><a class='link-button' href='subscribe.html'>Update interests</a></div><p id='feedHint' class='muted'>Loading personalized feed...</p><div id='feedGrid' class='publication-grid'></div></section></main><script src='js/config.js'></script><script src='js/supabase-client.js'></script><script src='js/user-features.js'></script><script src='js/user-dashboard.js'></script>  <script src="js/site-menu.js"></script>
+</head><body><header class='site-header compact'><div class='container nav-row'><div class='brand-wrap small'><img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC Logo" /><div><p class='eyebrow'>Personalized CAS / SDI</p><h1>User Dashboard</h1></div></div><nav class='top-nav'><a href='index.html'>CAS Home</a><a href='raw-materials/index.html'>Raw Materials</a><a href='subscribe.html'>Subscribe</a><a href='user-dashboard.html' class='active'>User Dashboard</a><a href='ai-librarian.html'>AI Librarian</a><a href='admin/index.html'>Staff Admin</a></nav></div></header><main class='container cas-page-layout'><section class='cas-page-hero'><p class='section-tag'>Your CAS / SDI Workspace</p><h2>Saved publications, reading history and personalized feed</h2><p>This dashboard helps users return to saved publications, track recently viewed records and discover content based on selected research interests.</p></section><section class="dashboard-overview">
+
+    <div class="welcome-card">
+        <h2>Welcome Back</h2>
+        <p id="userName">Loading...</p>
+        <p>Your personalized National Research-to-Industry workspace.</p>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h3>Saved Publications</h3>
+            <span id="savedCount">0</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Reading History</h3>
+            <span id="historyCount">0</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>New Alerts</h3>
+            <span id="alertCount">0</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>AI Recommendations</h3>
+            <span id="recommendationCount">0</span>
+        </div>
+
+    </div>
+
+</section><section class="dashboard-section">
+
+<h2>Recommended For You</h2>
+
+<div id="recommendedGrid" class="publication-grid">
+
+</div>
+
+</section><section class="dashboard-section">
+
+<h2>Current Awareness Alerts</h2>
+
+<div id="alertsList">
+
+<p>No alerts available.</p>
+
+</div>
+
+</section><section class="dashboard-section">
+
+<h2>Commercialization Opportunities</h2>
+
+<div id="opportunityGrid">
+
+<p>No opportunities available.</p>
+
+</div>
+
+</section><section class="dashboard-section">
+
+<h2>Suggested Collaborators</h2>
+
+<div id="collaborationGrid">
+
+<p>No recommendations yet.</p>
+
+</div>
+
+</section><section id='savedPanel' class='dashboard-panel'><div class='section-head'><div><p class='section-tag'>Saved</p><h2>Saved Publications</h2></div></div><div id='savedGrid' class='publication-grid'></div></section><section id='historyPanel' class='dashboard-panel hidden'><div class='section-head'><div><p class='section-tag'>History</p><h2>Reading History</h2></div></div><div id='historyGrid' class='publication-grid'></div></section><section id='feedPanel' class='dashboard-panel hidden'><div class='section-head'><div><p class='section-tag'>Personalized</p><h2>Recommended Feed</h2></div><a class='link-button' href='subscribe.html'>Update interests</a></div><p id='feedHint' class='muted'>Loading personalized feed...</p><div id='feedGrid' class='publication-grid'></div></section></main><script src='js/config.js'></script><script src='js/supabase-client.js'></script><script src='js/user-features.js'></script><script src='js/user-dashboard.js'></script>  <script src="js/site-menu.js"></script>
 <script src="js/pwa.js"></script>
 </body></html>
