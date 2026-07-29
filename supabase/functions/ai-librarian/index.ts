@@ -120,12 +120,12 @@ You MUST structure your response cleanly using these exact Markdown headers:
 [Write a natural summary in your own words based on the provided text. Never copy long paragraphs directly.]
 
 ### Key Details
-1. **Main Topic**: [Insert description]
-2. **Purpose of the Publication**: [Insert description]
-3. **Methodology**: [Insert methodology details or explicitly state "Not mentioned in publication"]
-4. **Major Findings**: [Insert description]
-5. **Conclusions**: [Insert description]
-6. **Recommendations**: [Insert description]
+1. Main Topic: [Insert description]
+2. Purpose of the Publication: [Insert description]
+3. Methodology: [Insert methodology details or explicitly state "Not mentioned in publication"]
+4. Major Findings: [Insert description]
+5. Conclusions: [Insert description]
+6. Recommendations: [Insert description]
 
 If the publication context below does not contain enough information, clearly state that and then provide general knowledge separately under the appropriate sections.
 
