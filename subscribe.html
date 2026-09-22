@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Register | RMRDC Research-to-Industry Intelligence Platform</title>
+<link rel="stylesheet" href="css/styles.css"/><link rel="stylesheet" href="portal.css?v=28"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="theme-color" content="#0f5a2d"/><link rel="manifest" href="manifest.webmanifest"/>
+  <link rel="stylesheet" href="css/layout-uniformity.css">
+  <link rel="stylesheet" href="css/scroll-reveal.css">
+</head>
+<body>
+<header class="site-header compact"><div class="container nav-row"><div class="brand-wrap small"><img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC Logo"/><div><p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p><h1>Research-to-Industry Intelligence Platform</h1></div></div>      <nav class="top-nav" aria-label="Primary navigation">
+        <button class="site-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-haspopup="true"><span aria-hidden="true">☰</span></button>
+      <a href="index.html">Intelligence Hub</a>
+      <a href="researcher-portal.html">Researcher Portal</a>
+      <a href="investor-portal.html">Investor Portal</a>
+      <a href="fabricator-portal.html">Fabricator / Engineer</a>
+      <a href="subscribe.html" class="active">Sign In / Register</a>
+      <a href="ai-librarian.html">AI Research Assistant</a>
+    <a href="user-dashboard.html">User Dashboard</a>
+      </nav></div></header>
+<main class="container cas-page-layout role-registration">
+<section class="subscription-access-hero"><span class="subscription-kicker">RMRDC INTELLIGENCE ACCESS</span><h2>Choose how deeply you want to engage with RMRDC intelligence</h2><p>Start with free discovery, then subscribe when you need the detailed technology, market, raw-material, IP and commercialisation information required to evaluate an opportunity and engage RMRDC.</p></section>
+<section class="subscription-plans" aria-label="Subscription access levels">
+<article class="subscription-plan"><div class="plan-icon">◉</div><h3>Discovery</h3><p class="plan-price">Free</p><p>Explore RMRDC research, technologies, patents, TIC products and opportunities.</p><ul><li>Smart search</li><li>Basic technology information</li><li>Public RMRDC information</li></ul><span class="plan-current">Available to everyone</span></article>
+<article class="subscription-plan featured"><span class="plan-ribbon">FULL INTELLIGENCE</span><div class="plan-icon">◆</div><h3>Intelligence Access</h3><p class="plan-price">Subscriber</p><p>Unlock the detailed information needed to assess technologies and submit structured engagement requests.</p><ul><li>Technical & production intelligence</li><li>Market & raw-material information</li><li>IP & commercialisation information</li><li>Investor engagement requests</li><li>RMRDC-facilitated matching</li></ul><a class="btn btn-primary plan-cta" href="login.html?next=subscribe">Continue with Intelligence Access</a></article>
+<article class="subscription-plan"><div class="plan-icon">▣</div><h3>Institutional</h3><p class="plan-price">Partner Access</p><p>For organisations requiring broader intelligence and structured institutional engagement.</p><ul><li>Advanced intelligence</li><li>Technology matching</li><li>Deal Room participation</li><li>Institutional engagement</li></ul><a class="btn btn-outline plan-cta" href="contact.html">Contact RMRDC</a></article>
+</section>
+<section class="v3-card" id="register" style="margin-top:22px"><div class="section-head"><div><p class="section-tag">Create Account</p><h2>Join the RMRDC Intelligence Platform</h2></div></div><div id="subscriptionMessage" class="notice hidden"></div><form id="subscriptionForm" class="stack-form"><div class="form-grid"><div class="field"><label for="subName">Full name</label><input id="subName" required></div><div class="field"><label for="subEmail">Email</label><input id="subEmail" type="email" required></div><div class="field"><label for="subOrganisation">Organisation</label><input id="subOrganisation" required></div><div class="field"><label for="subPhone">Phone</label><input id="subPhone" type="tel" required></div><div class="field"><label for="subLocation">Location</label><input id="subLocation"></div><div class="field"><label for="subPassword">Password</label><input id="subPassword" type="password" minlength="8" required></div><div class="field"><label for="subPasswordConfirm">Confirm password</label><input id="subPasswordConfirm" type="password" minlength="8" required></div></div><fieldset class="field"><legend>Platform role</legend><label><input type="radio" name="userRole" value="library_user" checked> Library User</label><label><input type="radio" name="userRole" value="investor"> Investor</label><label><input type="radio" name="userRole" value="researcher"> Researcher</label><label><input type="radio" name="userRole" value="fabricator"> Fabricator / Engineer</label></fieldset><div id="roleFields" class="form-grid"></div><div class="field" id="interestPicker"><label id="interestLabel" for="interestPickerButton">Areas of interest</label><button id="interestPickerButton" type="button" class="outline-btn"><span>Select areas of interest</span></button><div id="interestMenu" class="interest-menu hidden"></div><div id="selectedInterests" class="selected"></div><div id="otherInterestField" class="hidden"><input id="customInterests" placeholder="Describe your other interest"></div></div><label><input id="subEmailAlerts" type="checkbox" checked> Receive email alerts</label><label><input id="subWhatsappAlerts" type="checkbox"> Receive WhatsApp alerts</label><button class="btn btn-primary" type="submit">Create RMRDC Intelligence Account</button></form><p class="muted">Already have an account? <a href="login.html">Sign in</a>.</p></section>
+<div class="subscription-assurance"><span>🔒</span><div><strong>Protected RMRDC intelligence</strong><p>Subscription controls access to detailed information. Sensitive technical, researcher and commercial information is not exposed to free users.</p></div></div>
+<p class="subscription-note">Already have an account? <a href="login.html?next=investor-portal.html">Sign in to continue</a></p>
+</main>
+<script src="js/config.js"></script><script src="js/supabase-client.js"></script><script src="js/platform-auth.js"></script><script src="js/subscribe.js"></script><script src="js/subscription-ui.js"></script><script src="js/site-menu.js"></script><script src="js/pwa.js"></script>
+  <script src="js/scroll-reveal.js"></script>
+</body></html>

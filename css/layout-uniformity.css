@@ -1,0 +1,326 @@
+/* RMRDC v3.4.19 — Uniform page layout layer
+   Keeps every major page/section on the same visual grid without touching
+   the working flipbook/viewer implementation. */
+:root{--layout-max:1180px;--layout-gutter:32px;--layout-section-y:72px}
+html,body{width:100%;overflow-x:hidden}
+.container,
+.site-header .container,
+.site-footer .container,
+.ri-section>.container,
+.intelligence-hero>.container,
+.popular-covers-section>.container,
+.landing-services>.container,
+.kpi-section>.container{width:min(var(--layout-max),calc(100% - var(--layout-gutter)))!important;max-width:var(--layout-max)!important;margin-left:auto!important;margin-right:auto!important}
+.ri-section{padding-top:var(--layout-section-y);padding-bottom:var(--layout-section-y)}
+.section-heading{width:100%;margin-left:0;margin-right:0}
+.section-heading>div:first-child{min-width:0}
+.section-heading-actions{max-width:560px}
+/* Featured knowledge / publication shelf: equal visual spacing at desktop. */
+.popular-covers-section#featured-knowledge{padding:42px 0 58px!important}
+.popular-covers-section#featured-knowledge .popular-head{width:100%;margin-bottom:26px}
+.popular-covers-section#featured-knowledge .popular-cover-marquee{width:100%;box-sizing:border-box;padding:20px 18px!important}
+.popular-covers-section#featured-knowledge .popular-cover-viewport{width:100%;}
+.popular-covers-section#featured-knowledge .popular-cover-track{align-items:stretch;gap:18px}
+/* Prevent the late legacy 118px cover rule from collapsing the landing shelf. */
+.popular-covers-section#featured-knowledge .popular-cover-card{width:270px!important;min-width:270px!important;height:400px!important}
+/* Full knowledge base uses the same horizontal grid as the rest of the landing page. */
+.full-knowledge-base .popular-head,
+.full-knowledge-base .library-area-grid,
+.full-knowledge-base .toolbar,
+.full-knowledge-base .knowledge-collection-label,
+.full-knowledge-base>section{width:100%;box-sizing:border-box}
+.library-area-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+/* Matching/demo blocks should always fill the same content frame. */
+.match-demo,.fabricator-match-grid,.service-grid,.stakeholder-grid,.need-grid,.opportunity-grid{width:100%;box-sizing:border-box}
+/* Keep card internals from creating uneven horizontal overflow. */
+.match-input,.match-result,.fabricator-need-card,.fabricator-result-card{min-width:0}
+/* Consistent horizontal alignment on the dark service section. */
+.ri-dark .service-grid{align-items:stretch}
+/* Portal/public content pages: same reading width and predictable vertical rhythm. */
+main>.container{width:min(var(--layout-max),calc(100% - var(--layout-gutter)))!important;max-width:var(--layout-max)!important;margin-left:auto!important;margin-right:auto!important}
+.page-section,.content-section,.dashboard-section{margin-left:auto;margin-right:auto}
+@media(max-width:900px){
+ :root{--layout-gutter:24px;--layout-section-y:58px}
+ .library-area-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .popular-covers-section#featured-knowledge .popular-cover-card{width:230px!important;min-width:230px!important;height:350px!important}
+}
+@media(max-width:600px){
+ :root{--layout-gutter:20px;--layout-section-y:46px}
+ .library-area-grid{grid-template-columns:1fr}
+ .popular-covers-section#featured-knowledge .popular-cover-card{width:190px!important;min-width:190px!important;height:290px!important}
+ .section-heading-actions{max-width:none}
+}
+
+
+/* v3.4.22 — Expanded, evenly distributed landing knowledge area.
+   The four KPI cards and featured shelf use the same full content width.
+   This override intentionally comes last so older legacy rules cannot
+   collapse the cards back to their previous narrow dimensions. */
+.ri-kpis{padding:26px 0 30px!important}
+.ri-kpi-grid{width:min(1280px,calc(100% - 48px))!important;max-width:1280px!important;gap:18px!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.ri-kpi-grid>div{min-width:0!important;min-height:128px!important;padding:25px 26px!important;border-right:0!important;border-radius:20px!important;box-sizing:border-box!important}
+.ri-kpi-grid strong{font-size:2.45rem!important}
+.ri-kpi-grid span{font-size:.76rem!important;white-space:nowrap}
+
+.popular-covers-section#featured-knowledge{padding:58px 0 72px!important}
+.popular-covers-section#featured-knowledge>.container{width:min(1280px,calc(100% - 48px))!important;max-width:1280px!important}
+.popular-covers-section#featured-knowledge .popular-head{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;gap:30px!important;margin-bottom:30px!important;width:100%!important}
+.popular-covers-section#featured-knowledge .popular-head h2{font-size:clamp(1.8rem,3vw,2.35rem)!important}
+.popular-covers-section#featured-knowledge .knowledge-featured-cta{margin-top:0!important;flex:0 0 auto!important}
+.popular-covers-section#featured-knowledge .popular-cover-marquee{width:100%!important;padding:24px 0!important;border-radius:24px!important;box-sizing:border-box!important}
+.popular-covers-section#featured-knowledge .popular-cover-viewport{width:100%!important;height:440px!important;overflow:hidden!important}
+.popular-covers-section#featured-knowledge .popular-cover-track{gap:18px!important;align-items:stretch!important}
+.popular-covers-section#featured-knowledge .popular-cover-card{width:280px!important;min-width:280px!important;height:440px!important}
+
+@media(max-width:900px){
+ .ri-kpi-grid{width:min(100% - 32px,1280px)!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .popular-covers-section#featured-knowledge>.container{width:min(100% - 32px,1280px)!important}
+ .popular-covers-section#featured-knowledge .popular-head{align-items:flex-start!important;flex-direction:column!important;gap:16px!important}
+ .popular-covers-section#featured-knowledge .popular-cover-viewport{height:350px!important}
+ .popular-covers-section#featured-knowledge .popular-cover-card{width:230px!important;min-width:230px!important;height:350px!important}
+}
+@media(max-width:560px){
+ .ri-kpi-grid{width:calc(100% - 22px)!important;gap:10px!important}
+ .ri-kpi-grid>div{min-height:105px!important;padding:18px 15px!important}
+ .ri-kpi-grid strong{font-size:1.85rem!important}
+ .ri-kpi-grid span{font-size:.61rem!important;white-space:normal!important}
+ .popular-covers-section#featured-knowledge>.container{width:calc(100% - 22px)!important}
+ .popular-covers-section#featured-knowledge .popular-cover-viewport{height:290px!important}
+ .popular-covers-section#featured-knowledge .popular-cover-card{width:190px!important;min-width:190px!important;height:290px!important}
+}
+
+/* v3.4.23 — TRUE FULL-BLEED LANDING KNOWLEDGE AREA
+   The KPI and Featured Research sections intentionally break out of the
+   legacy 1180/1280px content container and use the available viewport width. */
+@media (min-width: 901px){
+  .ri-kpis > .ri-kpi-grid,
+  .popular-covers-section#featured-knowledge > .container{
+    width: calc(100% - 32px) !important;
+    max-width: none !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+
+  .ri-kpi-grid{
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+  }
+
+  .ri-kpi-grid > div{
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .popular-covers-section#featured-knowledge .popular-head{
+    width: 100% !important;
+  }
+
+  .popular-covers-section#featured-knowledge .popular-cover-marquee{
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .popular-covers-section#featured-knowledge .popular-cover-viewport{
+    width: 100% !important;
+  }
+
+  .popular-covers-section#featured-knowledge .popular-cover-track{
+    gap: 16px !important;
+  }
+
+  .popular-covers-section#featured-knowledge .popular-cover-slide{
+    flex: 0 0 calc((100vw - 80px) / 4) !important;
+    min-width: 0 !important;
+  }
+
+  .popular-covers-section#featured-knowledge .popular-cover-card{
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    aspect-ratio: 0.69 / 1 !important;
+    max-height: none !important;
+  }
+}
+
+@media (min-width: 1600px){
+  .ri-kpi-grid > div{padding: 28px 32px !important;}
+  .ri-kpi-grid strong{font-size: 2.65rem !important;}
+  .ri-kpi-grid span{font-size: .82rem !important;}
+}
+
+/* v3.4.24 — FULL-BLEED KNOWLEDGE BASE
+   Match the landing-page full-width treatment for the complete RMRDC
+   Knowledge Base: category cards, search controls, result shelf and labels. */
+@media (min-width: 901px){
+  .full-knowledge-base > .container{
+    width:calc(100% - 32px) !important;
+    max-width:none !important;
+    margin-left:16px !important;
+    margin-right:16px !important;
+  }
+  .full-knowledge-base .popular-head{
+    width:100% !important;
+    display:flex !important;
+    align-items:flex-end !important;
+    justify-content:space-between !important;
+    gap:30px !important;
+  }
+  .full-knowledge-base .library-area-grid{
+    width:100% !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:16px !important;
+  }
+  .full-knowledge-base .library-area-card{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:170px !important;
+    box-sizing:border-box !important;
+  }
+  .full-knowledge-base .toolbar{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+  .full-knowledge-base .toolbar-row{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,2fr) repeat(3,minmax(170px,1fr)) !important;
+    gap:16px !important;
+  }
+  .full-knowledge-base .toolbar-row .field,
+  .full-knowledge-base .toolbar-row .field.grow{
+    min-width:0 !important;
+    width:100% !important;
+  }
+  .full-knowledge-base .toolbar-row input,
+  .full-knowledge-base .toolbar-row select{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+  .full-knowledge-base .knowledge-collection-label{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+  .full-knowledge-base .publication-grid{
+    width:100% !important;
+    grid-template-columns:repeat(5,minmax(0,1fr)) !important;
+    gap:18px !important;
+  }
+  .full-knowledge-base .publication-card{
+    width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+  }
+  .full-knowledge-base .cover-wrap{
+    width:100% !important;
+  }
+  .full-knowledge-base .cover-image{
+    width:100% !important;
+    height:auto !important;
+    aspect-ratio:.69 / 1 !important;
+    object-fit:cover !important;
+  }
+}
+@media (min-width:1400px){
+  .full-knowledge-base .publication-grid{grid-template-columns:repeat(6,minmax(0,1fr)) !important;}
+}
+@media (max-width:900px){
+  .full-knowledge-base > .container{width:calc(100% - 32px) !important;max-width:none !important;}
+  .full-knowledge-base .toolbar-row{grid-template-columns:1fr 1fr !important;}
+  .full-knowledge-base .publication-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:16px !important;}
+}
+@media (max-width:600px){
+  .full-knowledge-base > .container{width:calc(100% - 20px) !important;}
+  .full-knowledge-base .popular-head{align-items:flex-start !important;flex-direction:column !important;}
+  .full-knowledge-base .library-area-grid{grid-template-columns:1fr !important;}
+  .full-knowledge-base .toolbar-row{grid-template-columns:1fr !important;}
+  .full-knowledge-base .publication-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:12px !important;}
+}
+
+/* v3.4.25 — Full-bleed Research-to-Industry, Fabrication & Intelligence sections */
+@media (min-width:901px){
+  .ri-section:not(.ri-dark) > .container,
+  .ri-section.ri-dark > .container{
+    width:calc(100% - 32px) !important;
+    max-width:none !important;
+    margin-left:16px !important;
+    margin-right:16px !important;
+  }
+
+  .ri-section .section-heading{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .ri-section .match-demo,
+  .ri-section .fabricator-match-grid,
+  .ri-section .fabricator-match-footer,
+  .ri-section .service-grid{
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .ri-section .match-demo{
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important;
+  }
+
+  .ri-section .fabricator-match-grid{
+    grid-template-columns:minmax(0,1fr) minmax(240px,.7fr) minmax(0,1.2fr) !important;
+  }
+
+  .ri-section .service-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:18px !important;
+  }
+
+  .ri-section .match-input,
+  .ri-section .match-result,
+  .ri-section .fabricator-need-card,
+  .ri-section .fabricator-flow-card,
+  .ri-section .fabricator-result-card,
+  .ri-section .service-grid > div{
+    width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+  }
+}
+
+@media (min-width:1400px){
+  .ri-section .match-demo{gap:28px !important;}
+  .ri-section .fabricator-match-grid{gap:24px !important;}
+}
+
+@media (max-width:900px){
+  .ri-section > .container{
+    width:calc(100% - 32px) !important;
+    max-width:none !important;
+  }
+}
+
+@media (max-width:600px){
+  .ri-section > .container{width:calc(100% - 20px) !important;}
+}
+
+/* v3.4.25 — Knowledge Base shelf: six books per row on desktop.
+   This rule is deliberately below the older responsive rules so the final
+   shelf layout remains six columns even on common Windows browser scaling.
+*/
+@media (min-width:1100px){
+  .full-knowledge-base .publication-grid{
+    grid-template-columns:repeat(6,minmax(0,1fr)) !important;
+    gap:0 !important;
+    align-items:stretch !important;
+  }
+  .full-knowledge-base .publication-card{
+    min-width:0 !important;
+  }
+}
+
+@media (min-width:1100px) and (max-width:1450px){
+  .full-knowledge-base .publication-grid{
+    --box-min:146px;
+    --box-height:232px;
+    --book-width:108px;
+    --book-height:164px;
+  }
+}

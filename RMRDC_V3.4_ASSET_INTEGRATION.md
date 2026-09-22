@@ -1,0 +1,1 @@
+v3.4 additive asset integration: preserves all existing researcher technologies and investor opportunities; adds 46 RMRDC patents and 34 TIC products into those same sections with smart search, filtering, pagination and detail view. Source files: RMRDC patent and TIC catalogues supplied by user.

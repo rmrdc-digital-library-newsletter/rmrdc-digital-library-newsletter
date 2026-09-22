@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RMRDC Research-to-Industry Intelligence Platform</title>
+  <meta name="description" content="RMRDC platform connecting research outputs, raw-material intelligence, industrial needs and investment opportunities."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/intelligence.css"/>
+  <link rel="stylesheet" href="portal.css?v=28"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta name="theme-color" content="#0f5a2d"/>
+  <link rel="manifest" href="manifest.webmanifest"/>
+<link rel="stylesheet" href="css/research-to-industry.css"/>  <link rel="stylesheet" href="css/layout-uniformity.css">
+  <link rel="stylesheet" href="css/scroll-reveal.css">
+</head>
+<body>
+<div id="loader"><div class="loader-box"><img src="assets/rmrdc-logo.png" alt="RMRDC Logo"/><div class="spinner"></div><h3>RMRDC Intelligence Platform</h3><p>Loading research intelligence...</p></div></div>
+
+<header class="site-header">
+  <div class="container nav-row">
+    <div class="brand-wrap">
+      <img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC logo"/>
+      <div>
+        <p class="eyebrow">Raw Materials Research and Development Council • Nigeria</p>
+        <h1>Research-to-Industry Intelligence Platform</h1>
+      </div>
+    </div>
+          <nav class="top-nav" aria-label="Primary navigation">
+        <button class="site-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-haspopup="true"><span aria-hidden="true">☰</span></button>
+      <a href="index.html" class="active">Intelligence Hub</a>
+      <a href="researcher-portal.html">Researcher Portal</a>
+      <a href="investor-portal.html">Investor Portal</a>
+      <a href="fabricator-portal.html">Fabricator / Engineer</a>
+      <a href="subscribe.html">Sign In / Register</a>
+      <a href="ai-librarian.html">AI Research Assistant</a>
+    <a href="user-dashboard.html">User Dashboard</a>
+      </nav>
+  </div>
+</header>
+
+<section class="ri-hero ri-hero-dynamic" aria-label="RMRDC Research-to-Industry Intelligence Platform">
+  <div class="ri-hero-bg ri-hero-bg-a"></div>
+  <div class="ri-hero-bg ri-hero-bg-b"></div>
+  <div class="ri-hero-overlay"></div>
+  <div class="ri-hero-vignette"></div>
+  <div class="container ri-hero-content">
+    <div class="ri-hero-copy ri-hero-dynamic-copy">
+      <span class="hero-tag" data-hero-kicker>RMRDC RESEARCH-TO-INDUSTRY INTELLIGENCE</span>
+      <h2 data-hero-title>Turning research into <span>industrial opportunity.</span></h2>
+      <p data-hero-text>Discover research outputs, technologies, raw-material intelligence and commercialization opportunities through one connected RMRDC intelligence platform.</p>
+      <div class="hero-buttons">
+        <a class="btn btn-primary" href="intelligence.html">Explore Investment Intelligence</a>
+        <a class="btn btn-outline-light" href="#featured-knowledge">Browse Research Outputs</a>
+      </div>
+      <div class="hero-note"><strong data-hero-tag>Research → Technology → Industry</strong><span> &nbsp;•&nbsp; Powered by CAS / SDI intelligence</span></div>
+      <div class="ri-hero-dots" aria-label="Hero slides"></div>
+    </div>
+    <div class="ri-hero-panel">
+      <p class="section-tag">From information to opportunity</p>
+      <div class="flow-step"><b>01</b><span>Research, technology & raw-material evidence</span></div>
+      <div class="flow-line"></div>
+      <div class="flow-step"><b>02</b><span>Investor / industry intelligence needs</span></div>
+      <div class="flow-line"></div>
+      <div class="flow-step"><b>03</b><span>Match, assess, connect & commercialise</span></div>
+      <div class="hero-panel-foot">RMRDC institutional coordination hub</div>
+    </div>
+  </div>
+</section>
+
+<section class="ri-kpis">
+  <div class="container ri-kpi-grid">
+    <div><strong id="kpiPublications">0</strong><span>Research Outputs</span></div>
+    <div><strong id="kpiReaders">0</strong><span>Registered Users</span></div>
+    <div><strong id="kpiDownloads">0</strong><span>Research Downloads</span></div>
+    <div><strong id="kpiMostRead">0</strong><span>Most Accessed Output</span></div>
+  </div>
+</section>
+
+
+
+<section class="popular-covers-section" id="featured-knowledge">
+  <div class="container">
+    <div class="popular-head">
+      <div><p class="section-tag">RMRDC Knowledge Base</p><h2>Featured Research &amp; Knowledge</h2></div>
+      <div class="knowledge-featured-cta"><a class="btn btn-secondary" href="#full-knowledge-base">Explore the full RMRDC Knowledge Base →</a></div>
+    </div>
+    <div class="popular-cover-marquee"><div class="popular-cover-viewport"><div id="popularCoverTrack" class="popular-cover-track"><div class="popular-loading">Loading research outputs...</div></div></div></div>
+  </div>
+</section>
+
+<section class="service-intelligence-stage landing-services" id="investor-information-needs" aria-label="Investor information needs">
+  <div class="service-stage-glow glow-a"></div><div class="service-stage-glow glow-b"></div>
+  <div class="service-stage-head">
+    <div><div class="service-eyebrow">SERVICES WE OFFER</div><h1>Investor Information Needs</h1><p>What a technology profile should answer before an investor commits time, capital or technical resources.</p></div>
+    <div class="section-entry-actions"><a class="service-explore" href="intelligence.html">Explore technology intelligence <span>→</span></a><a class="portal-entry-btn" href="investor-portal.html"><span class="portal-entry-icon">↗</span> Investor Portal</a></div>
+  </div>
+  <div class="service-stage-grid">
+    <article class="service-float-card c1"><div class="service-top"><span class="service-no">01</span><span class="service-icon">◈</span></div><h2>Technology readiness</h2><p>TRL, pilot evidence, laboratory results, consistency and scale-up status.</p><span class="service-action">Readiness intelligence <b>↗</b></span></article>
+    <article class="service-float-card c2"><div class="service-top"><span class="service-no">02</span><span class="service-icon">₦</span></div><h2>Production economics</h2><p>Input costs, production cost, capacity, equipment and utility requirements.</p><span class="service-action">Production intelligence <b>↗</b></span></article>
+    <article class="service-float-card c3"><div class="service-top"><span class="service-no">03</span><span class="service-icon">⌖</span></div><h2>Raw-material supply</h2><p>Availability, location, seasonality, quantity, suppliers and logistics.</p><span class="service-action">Supply intelligence <b>↗</b></span></article>
+    <article class="service-float-card c4"><div class="service-top"><span class="service-no">04</span><span class="service-icon">↗</span></div><h2>Market potential</h2><p>Demand, applications, import substitution and commercialization opportunities.</p><span class="service-action">Market intelligence <b>↗</b></span></article>
+    <article class="service-float-card c5"><div class="service-top"><span class="service-no">05</span><span class="service-icon">◇</span></div><h2>IP &amp; ownership</h2><p>Patent status, ownership, licensing position and engagement restrictions.</p><span class="service-action">IP intelligence <b>↗</b></span></article>
+    <article class="service-float-card c6"><div class="service-top"><span class="service-no">06</span><span class="service-icon">⇄</span></div><h2>Engagement pathway</h2><p>Licensing, JV, contract research, investment, consultancy or technical partnership.</p><span class="service-action">Engagement intelligence <b>↗</b></span></article>
+  </div>
+  <div class="service-stage-foot"><span><b>CAPTURE</b> → <b>VALIDATE</b> → <b>DELIVER</b></span><small>RMRDC connects research evidence with industry and investment decisions.</small><a href="investor-portal.html">Enter Investor Portal →</a></div>
+</section>
+
+<section class="ri-section">
+  <div class="container">
+    <div class="section-heading">
+      <div><p class="section-tag">Research-to-industry matching</p><h2>From a business problem to relevant RMRDC knowledge</h2></div>
+      <div class="section-heading-actions"><p>A matching layer can combine business needs with research areas, raw materials, technology readiness and commercialization attributes.</p><a class="portal-entry-btn compact" href="researcher-portal.html"><span class="portal-entry-icon">↗</span> Researcher Portal</a></div>
+    </div>
+    <div class="match-demo">
+      <div class="match-input">
+        <label>Example industry need</label>
+        <div class="fake-search">Locally sourced packaging material with commercial-scale potential</div>
+        <div class="mini-tags"><span>Packaging</span><span>Import substitution</span><span>Agro-based</span></div>
+      </div>
+      <div class="match-arrow">→</div>
+      <div class="match-result">
+        <div class="match-score">92% relevance</div>
+        <h3>Matched RMRDC research opportunity</h3>
+        <p>Technology profile • Raw material availability • Pilot evidence • Research team • Engagement pathway</p>
+        <a href="#research-catalog">View research catalogue →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ri-section fabricator-match-section">
+  <div class="container">
+    <div class="section-heading">
+      <div><p class="section-tag">Fabrication & engineering matching</p><h2>From an engineering requirement to the right RMRDC technology</h2></div>
+      <div class="section-heading-actions"><p>Fabricators and engineering partners can discover technologies that need prototyping, equipment, process design, fabrication, installation or scale-up support.</p><a class="portal-entry-btn compact" href="fabricator-portal.html"><span class="portal-entry-icon">↗</span> Fabricator Portal</a></div>
+    </div>
+    <div class="fabricator-match-grid">
+      <div class="fabricator-need-card">
+        <div class="fabricator-card-head"><span class="fabricator-number">01</span><span class="fabricator-icon">⚙</span></div>
+        <span class="fabricator-kicker">ENGINEERING REQUIREMENT</span>
+        <h3>Prototype or pilot equipment</h3>
+        <p>Identify RMRDC technologies requiring equipment design, fabrication, assembly, testing or pilot-plant support.</p>
+        <div class="fabricator-tags"><span>Prototype</span><span>Pilot plant</span><span>Equipment</span></div>
+      </div>
+      <div class="fabricator-flow-card"><div class="flow-orb">→</div><strong>RMRDC matching layer</strong><span>Technology • TRL • fabrication requirement • capacity • location</span></div>
+      <div class="fabricator-result-card">
+        <div class="match-score">96% capability match</div>
+        <span class="fabricator-kicker">MATCHED OPPORTUNITY</span>
+        <h3>Natural Fibre Composite Panels</h3>
+        <p>Panel press + dryer fabrication • Pilot-scale deployment • RMRDC validated technology</p>
+        <div class="fabricator-result-meta"><span><b>TRL</b> 6</span><span><b>Stage</b> Engineering match</span><span><b>Need</b> Fabrication + commissioning</span></div>
+        <a href="dealroom-fabricator.html">Open Fabricator Deal Room →</a>
+      </div>
+    </div>
+    <div class="fabricator-match-footer"><span><b>DISCOVER</b> → <b>ASSESS</b> → <b>FABRICATE</b> → <b>SCALE</b></span><small>RMRDC connects engineering capacity with validated research and technology opportunities.</small></div>
+  </div>
+</section>
+
+<section class="ri-section ri-dark">
+  <div class="container">
+    <div class="section-heading light">
+      <div><p class="section-tag">Intelligence services</p><h2>Beyond a digital repository</h2></div>
+      <p>The platform delivers targeted intelligence services for research, investment and industrial development through connected research, raw-material, technology and market information.</p>
+    </div>
+    <div class="service-grid">
+      <div><h3>Selective Dissemination</h3><p>Deliver relevant research and technology updates based on an investor's or organisation's stated interests.</p></div>
+      <div><h3>Sector Intelligence</h3><p>Curate technology, raw-material and research developments by industrial sector.</p></div>
+      <div><h3>Technology Profiles</h3><p>Present decision-relevant technical, economic, IP and readiness information in a structured format.</p></div>
+      <div><h3>Research Matching</h3><p>Identify potential connections between industry needs and RMRDC research capabilities.</p></div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="popular-covers-section full-knowledge-base" id="full-knowledge-base">
+  <div class="container">
+    <div class="popular-head">
+      <div><p class="section-tag">Knowledge collection</p><h2>Explore the RMRDC Knowledge Base</h2><p class="knowledge-intro">All Research Outputs • Policy &amp; Strategy • Technical Intelligence • RMRDC Publications</p></div>
+      <a class="btn btn-secondary" href="#featured-knowledge">Back to featured knowledge ↑</a>
+    </div>
+    <div class="library-area-grid" aria-label="Research area groups">
+      <button class="library-area-card active" data-type="all"><span>All</span><strong>All Research Outputs</strong><small>Explore the RMRDC knowledge base</small></button>
+      <button class="library-area-card" data-type="Policy Brief"><span>01</span><strong>Policy &amp; Strategy</strong><small>Policy notes and decision-support outputs</small></button>
+      <button class="library-area-card" data-type="Technical Report"><span>02</span><strong>Technical Intelligence</strong><small>Technical reports, studies and project outputs</small></button>
+      <button class="library-area-card" data-type="RMRDC Publication"><span>03</span><strong>RMRDC Publications</strong><small>Books, monographs and institutional publications</small></button>
+    </div>
+    <section class="toolbar card">
+      <div class="toolbar-row">
+        <div class="field grow"><label for="searchInput">Search research intelligence</label><input id="searchInput" type="search" placeholder="Search technology, raw material, sector, author, keyword..."/></div>
+        <div class="field"><label for="typeFilter">Output type</label><select id="typeFilter"><option value="">All types</option></select></div>
+        <div class="field"><label for="yearFilter">Year</label><select id="yearFilter"><option value="">All years</option></select></div>
+        <div class="field"><label for="sortFilter">Sort</label><select id="sortFilter"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="title-asc">Title A–Z</option><option value="title-desc">Title Z–A</option><option value="popular">Most accessed</option></select></div>
+      </div>
+      <div class="toolbar-meta"><p id="resultsText">Loading research outputs...</p><button class="link-button" id="clearFilters" type="button">Clear filters</button></div>
+    </section>
+    <div class="knowledge-collection-label"><strong id="fullResultsCount">20 publications found</strong><span>Full research output shelf</span></div>
+    <section><div id="emptyState" class="empty-state hidden card"><h3>No research outputs found</h3><p>Try adjusting your search or filters.</p></div><div id="grid" class="publication-grid"></div></section>
+  </div>
+</section>
+
+<template id="publicationCardTemplate">
+  <article class="publication-card card lift"><a class="cover-link" href="#"><div class="cover-wrap"><img class="cover-image" alt="Research output cover" loading="lazy" decoding="async"/><div class="cover-overlay"><span>Open intelligence record</span></div></div><div class="card-body"><span class="pill type-pill"></span><h3 class="pub-title"></h3><p class="pub-meta"></p></div></a></article>
+</template>
+
+<footer class="site-footer">
+  <div class="container footer-row"><p>© <span id="yearNow"></span> RMRDC Research-to-Industry Intelligence Platform</p><p>Research • Raw Materials • Industry • Investment</p><button id="installAppBtn" class="btn btn-secondary hidden" type="button">Install App</button></div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/app.js"></script>
+<script src="js/site-menu.js"></script>
+<script src="js/user-enquiry.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/shelf-demarcation.js"></script>
+<script src="js/kpis.js"></script>
+<script src="js/popular-covers.js"></script>
+<script src="js/intelligence-demo.js"></script>
+<script src="js/subscription-ui.js"></script><script src="js/research-to-industry.js"></script><script src="js/landing-hero.js"></script>  <script src="js/scroll-reveal.js"></script>
+</body>
+</html>

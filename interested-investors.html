@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interested Investors | RMRDC</title>
+<link rel="stylesheet" href="portal.css?v=28"><link rel="stylesheet" href="css/research-to-industry.css">
+<style>
+:root{--ink:#17352d;--muted:#6d7b75;--line:#e4ebe7;--soft:#f6faf8;--accent:#087244}
+.investor-page{max-width:1180px;margin:0 auto;padding:30px 24px 60px}.hero{background:linear-gradient(135deg,#fff,#f6faf8);border:1px solid var(--line);border-radius:20px;padding:28px;margin-bottom:20px}.hero h1{margin:7px 0 8px;color:var(--ink);font-size:30px}.hero p{margin:0;max-width:760px;color:var(--muted);line-height:1.6}.hero-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.meta-pill{padding:7px 11px;border-radius:999px;background:#edf7f1;color:#176445;font-size:11px;font-weight:700}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}.summary-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px}.summary-card small{display:block;color:#7a8782;font-size:10px;text-transform:uppercase;letter-spacing:.07em}.summary-card strong{display:block;color:var(--ink);font-size:25px;margin-top:4px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.toolbar h2{margin:0;color:var(--ink);font-size:18px}.toolbar span{color:var(--muted);font-size:12px}.investor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.investor-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 7px 20px rgba(18,55,43,.045)}.card-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.identity{display:flex;gap:12px;align-items:center}.avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#e8f3ed;color:#176445;font-weight:800}.name{font-size:16px;font-weight:800;color:var(--ink)}.org{font-size:12px;color:var(--muted);margin-top:3px}.approved{padding:6px 9px;border-radius:999px;background:#e9f6ef;color:#087244;font-size:10px;font-weight:800;white-space:nowrap}.tech{margin:18px 0 14px;padding:13px 14px;background:var(--soft);border:1px solid #e7efeb;border-radius:12px}.tech small{display:block;color:#77857f;text-transform:uppercase;font-size:9px;letter-spacing:.06em}.tech strong{display:block;color:var(--ink);margin-top:4px}.details{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail{padding:10px 11px;border:1px solid #edf1ef;border-radius:10px}.detail small{display:block;color:#7c8984;font-size:9px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}.detail strong{display:block;color:#29443b;font-size:12px;word-break:break-word}.message{margin-top:12px;padding:12px;border-radius:10px;background:#fafcfb;color:#5e6c66;font-size:12px;line-height:1.55}.actions{display:flex;gap:8px;margin-top:16px}.actions button{flex:1}.empty{padding:55px 25px;text-align:center;background:#fff;border:1px dashed #cfdcd5;border-radius:18px}.empty .empty-icon{font-size:30px;margin-bottom:8px}.empty h3{margin:0 0 6px;color:var(--ink)}.empty p{margin:0;color:var(--muted);font-size:13px}.error{border-color:#efd2d2;background:#fff8f8}.error h3{color:#8d3b3b}.loading{padding:45px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:18px}@media(max-width:800px){.investor-grid,.summary{grid-template-columns:1fr}.investor-page{padding:20px 12px}.details{grid-template-columns:1fr}.toolbar{align-items:flex-start;flex-direction:column}}
+</style>
+  <link rel="stylesheet" href="css/layout-uniformity.css">
+  <link rel="stylesheet" href="css/scroll-reveal.css">
+</head>
+<body class="portal-body" data-portal="researcher">
+<div class="portal-shell">
+<aside class="portal-sidebar" id="sidebar"><div class="portal-brand"><img src="assets/rmrdc-logo.png" alt="RMRDC"><div><div class="portal-brand-title">RMRDC</div><div class="portal-brand-sub">Research to Industry<br>Information Intelligence Platform</div></div></div><div class="portal-side-scroll"><div class="side-section">Research Workspace</div><a class="side-link" href="researcher-portal.html"><span class="ico">⌂</span>Dashboard</a><a class="side-link" href="researcher-portal.html#technologies"><span class="ico">▤</span>My Technologies</a><a class="side-link active" href="interested-investors.html"><span class="ico">♧</span>Interested Investors</a><a class="side-link" href="researcher-portal.html#messages"><span class="ico">◌</span>Messages</a><a class="side-link" href="dealroom-researcher.html"><span class="ico">▣</span>Deal Room</a><div class="side-section">Account</div><a class="side-link" href="user-dashboard.html"><span class="ico">▦</span>User Dashboard</a><a class="side-link" href="researcher-portal.html#profile"><span class="ico">◎</span>My Profile</a></div></aside>
+<div class="portal-main"><header class="portal-topbar"><button class="mobile-menu" onclick="toggleSide()">☰</button><div></div><div class="profile-menu"><div class="avatar">R</div><strong>Researcher</strong></div></header>
+<main class="investor-page">
+<section class="hero"><span class="rti-badge">RMRDC APPROVED ENGAGEMENTS</span><h1>Interested Investors</h1><p>These are investors whose expressions of interest have been reviewed and approved by RMRDC for engagement with your technology. Review their details and continue approved discussions through the controlled Deal Room.</p><div class="hero-meta"><span class="meta-pill">✓ RMRDC Verified</span><span class="meta-pill">Controlled Engagement</span><span class="meta-pill">Deal Room Enabled After Approval</span></div></section>
+<section class="summary"><div class="summary-card"><small>Approved Interests</small><strong id="countAll">—</strong></div><div class="summary-card"><small>Technologies</small><strong id="countTech">—</strong></div><div class="summary-card"><small>Deal Rooms</small><strong id="countDeals">—</strong></div></section>
+<div class="toolbar"><h2>Investors approved by RMRDC</h2><span id="lastUpdated">Loading engagement records…</span></div>
+<div id="state" class="loading">Loading approved investor interests…</div>
+<section id="investorGrid" class="investor-grid" style="display:none"></section>
+</main></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script><script src="js/supabase-client.js"></script><script src="js/platform-auth.js"></script><script src="js/site-menu.js"></script>
+<script>
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initials=s=>(String(s||'Investor').trim().split(/\s+/).map(v=>v[0]).slice(0,2).join('').toUpperCase()||'IN');
+const fmtDate=s=>s?new Date(s).toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'}):'—';
+const state=document.getElementById('state'),grid=document.getElementById('investorGrid');
+async function openDeal(id){
+ try{
+  if(!window.db) throw new Error('Supabase is not configured. Update js/config.js and open the site through a local web server.');
+  const q=await db.from('investor_requests').select('id,opportunity_id,investor_user_id,researcher_user_id,status').eq('id',id).single();
+  if(q.error)throw q.error;
+  if(q.data.status!=='approved' && !['submitted_to_investor','viewed','investor_interested','engagement','deal'].includes(q.data.status)) throw new Error('Deal Room access is available only after RMRDC approval.');
+  if(!q.data.opportunity_id) throw new Error('RMRDC has approved the engagement, but a technology opportunity has not yet been assigned to it.');
+  const ex=await db.from('dealrooms').select('id').eq('opportunity_id',q.data.opportunity_id).eq('investor_user_id',q.data.investor_user_id).limit(1);
+  if(ex.error)throw ex.error;
+  if(ex.data?.length){location.href='dealroom-researcher.html?id='+ex.data[0].id;return;}
+  const d=await db.from('dealrooms').insert({opportunity_id:q.data.opportunity_id,investor_user_id:q.data.investor_user_id,researcher_user_id:q.data.researcher_user_id,stage:'investor_interested'}).select('id').single();
+  if(d.error)throw d.error; location.href='dealroom-researcher.html?id='+d.data.id;
+ }catch(e){alert(e.message||'Unable to open Deal Room.');}
+}
+async function load(){
+ try{
+  if(!window.db) throw new Error('Supabase is not configured. Please check js/config.js.');
+  const auth=await db.auth.getUser();
+  if(auth.error)throw auth.error;
+  const user=auth.data?.user;if(!user){state.className='empty';state.innerHTML='<div class="empty-icon">🔐</div><h3>Please sign in</h3><p>Sign in as a researcher to view RMRDC-approved investor engagements.</p><div style="margin-top:16px"><a class="primary-btn" href="login.html">Sign In</a></div>';return;}
+  const q=await db.from('investor_requests').select('id,technology_title,investor_name,organisation,contact_email,phone,interest_type,investment_range,preferred_next_step,message,status,opportunity_id,created_at,approved_at').eq('researcher_user_id',user.id).in('status',['approved','submitted_to_investor','viewed','investor_interested','engagement','deal']).order('approved_at',{ascending:false,nullsFirst:false}).order('created_at',{ascending:false});
+  if(q.error)throw q.error;
+  const rows=q.data||[];
+  document.getElementById('countAll').textContent=rows.length;
+  document.getElementById('countTech').textContent=new Set(rows.map(x=>x.technology_title).filter(Boolean)).size;
+  document.getElementById('countDeals').textContent=rows.filter(x=>x.opportunity_id).length;
+  document.getElementById('lastUpdated').textContent=rows.length?`Last refreshed ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`:'No approved engagements yet';
+  if(!rows.length){state.className='empty';state.innerHTML='<div class="empty-icon">♧</div><h3>No approved investor interests yet</h3><p>When RMRDC approves an investor expression of interest and assigns it to your technology, the investor will appear here.</p>';return;}
+  state.style.display='none';grid.style.display='grid';
+  grid.innerHTML=rows.map(x=>`<article class="investor-card"><div class="card-top"><div class="identity"><div class="avatar">${esc(initials(x.investor_name))}</div><div><div class="name">${esc(x.investor_name||'Investor')}</div><div class="org">${esc(x.organisation||'Organisation not provided')}</div></div></div><span class="approved">✓ RMRDC APPROVED</span></div><div class="tech"><small>Technology of Interest</small><strong>${esc(x.technology_title||'RMRDC Technology')}</strong></div><div class="details"><div class="detail"><small>Interest Type</small><strong>${esc(x.interest_type||'Expression of Interest')}</strong></div><div class="detail"><small>Status</small><strong>${esc(x.status||'approved')}</strong></div><div class="detail"><small>Email</small><strong>${esc(x.contact_email||'Not provided')}</strong></div><div class="detail"><small>Phone</small><strong>${esc(x.phone||'Not provided')}</strong></div><div class="detail"><small>Investment Range</small><strong>${esc(x.investment_range||'Not specified')}</strong></div><div class="detail"><small>Preferred Next Step</small><strong>${esc(x.preferred_next_step||'RMRDC engagement')}</strong></div><div class="detail"><small>Approved Date</small><strong>${esc(fmtDate(x.approved_at||x.created_at))}</strong></div><div class="detail"><small>Deal Room</small><strong>${x.opportunity_id?'Ready to open':'Pending RMRDC assignment'}</strong></div></div>${x.message?`<div class="message"><strong>Investor message</strong><br>${esc(x.message)}</div>`:''}<div class="actions"><button class="outline-btn" onclick="viewInterest('${esc(x.id)}')">View Interest</button><button class="primary-btn" onclick="openDeal('${esc(x.id)}')" ${x.opportunity_id?'':'disabled'}>Open Deal Room ↗</button></div></article>`).join('');
+ }catch(e){state.className='empty error';state.innerHTML='<div class="empty-icon">⚠</div><h3>Unable to load investor interests</h3><p>'+esc(e.message||'An unexpected error occurred.')+'</p><div style="margin-top:10px;font-size:11px;color:#8d3b3b">Make sure the Supabase project is configured and the researcher account is signed in.</div>';}
+}
+function viewInterest(id){const card=[...grid.querySelectorAll('.investor-card')].find(c=>c.querySelector(`[onclick*="${id}"]`));if(card)card.scrollIntoView({behavior:'smooth',block:'center'});}
+document.addEventListener('DOMContentLoaded',load);
+</script>
+  <script src="js/scroll-reveal.js"></script>
+</body></html>

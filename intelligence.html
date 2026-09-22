@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Investor Intelligence | RMRDC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css"/><link rel="stylesheet" href="css/intelligence.css"/>
+<meta name="theme-color" content="#0f5a2d"/>
+<link rel="stylesheet" href="css/research-to-industry.css"/>  <link rel="stylesheet" href="css/layout-uniformity.css">
+  <link rel="stylesheet" href="css/scroll-reveal.css">
+</head>
+<body>
+<header class="site-header compact"><div class="container nav-row">
+<div class="brand-wrap small"><img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC logo"/><div><p class="eyebrow">RMRDC Research-to-Industry Intelligence</p><h1>Investor Intelligence</h1></div></div>
+      <nav class="top-nav" aria-label="Primary navigation">
+        <button class="site-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-haspopup="true"><span aria-hidden="true">☰</span></button>
+      <a href="index.html">Intelligence Hub</a>
+      <a href="researcher-portal.html">Researcher Portal</a>
+      <a href="investor-portal.html">Investor Portal</a>
+      <a href="fabricator-portal.html">Fabricator / Engineer</a>
+      <a href="subscribe.html">Sign In / Register</a>
+      <a href="ai-librarian.html">AI Research Assistant</a>
+    <a href="user-dashboard.html">User Dashboard</a>
+      </nav>
+</div></header>
+<main>
+<section class="intelligence-hero"><div class="container"><p class="section-tag">PROPOSED INTELLIGENCE LAYER</p><h2>Find the information behind an investment decision.</h2><p>Explore the proposed structure for presenting RMRDC technologies and research in a way that answers the questions investors and industrial organisations actually ask.</p></div></section>
+<section class="ri-section"><div class="container">
+<div class="section-heading"><div><p class="section-tag">Decision filters</p><h2>Search by what matters to industry</h2></div><p>These filters are examples for validation with the Investment Department and selected investors.</p></div>
+<div class="filter-pills"><button class="active">All opportunities</button><button>Technology readiness</button><button>Raw-material availability</button><button>Import substitution</button><button>Market potential</button><button>IP / licensing</button></div>
+<div class="opportunity-grid">
+<article class="opportunity-card"><div class="opp-top"><span class="pill">Illustrative record</span><span class="score">High relevance</span></div><h3>Technology opportunity profile</h3><p>Structured record showing technology description, TRL, production capacity, raw-material inputs, pilot evidence and commercialization pathway.</p><div class="opp-metrics"><span><b>TRL</b> 6</span><span><b>Scale</b> Pilot</span><span><b>IP</b> Available</span></div><button class="btn btn-primary" type="button" onclick="showDemo()">View decision profile</button></article>
+<article class="opportunity-card"><div class="opp-top"><span class="pill">Illustrative record</span><span class="score">Sector match</span></div><h3>Raw-material opportunity</h3><p>Connect available Nigerian raw materials to industries seeking local inputs, processing opportunities or import-substitution alternatives.</p><div class="opp-metrics"><span><b>Supply</b> Mapped</span><span><b>Sector</b> Manufacturing</span><span><b>Location</b> Nigeria</span></div><a class="btn btn-secondary" href="raw-materials/index.html">Explore raw materials</a></article>
+</div>
+</div></section>
+<section class="ri-section ri-light"><div class="container">
+<div class="section-heading"><div><p class="section-tag">Investor information profile</p><h2>Example of the information structure</h2></div></div>
+<div class="profile-grid">
+<div class="profile-main"><span class="profile-label">Technology overview</span><h3>What problem does the technology solve?</h3><p>Plain-language description of the technology, its application, key innovation and target industry.</p><div class="profile-blocks"><div><b>Technology readiness</b><strong>TRL 6</strong><small>Validated pilot environment</small></div><div><b>Production</b><strong>1,000 kg/day</strong><small>Illustrative capacity field</small></div><div><b>Raw material</b><strong>Locally available</strong><small>Supply information</small></div><div><b>Engagement</b><strong>Licensing / JV</strong><small>Potential pathways</small></div></div></div>
+<aside class="profile-side"><h3>Decision information</h3><ul><li>Estimated production cost</li><li>Capital required for scale-up</li><li>Market / demand indicators</li><li>Patent & ownership status</li><li>Regulatory requirements</li><li>Research team & support</li></ul><button class="btn btn-primary" onclick="showDemo()">Request detailed profile</button></aside>
+</div>
+</div></section>
+<section class="ri-section"><div class="container validation-callout"><div><p class="section-tag">Before full development</p><h2>Validate the information with investors first.</h2><p>The next institutional step is to work with the Investment Department to document real investor questions, decision factors and information gaps. Those findings become the requirements for the eventual platform.</p></div><a class="btn btn-primary" href="cas-bulletin.html">Open intelligence workflow</a></div></section>
+</main>
+<div id="demoModal" class="demo-modal hidden"><div class="demo-modal-card"><button onclick="hideDemo()" aria-label="Close">×</button><p class="section-tag">Illustrative decision profile</p><h2>Detailed technology intelligence</h2><div class="demo-list"><span>Technology readiness & pilot evidence</span><span>Production economics & scale-up requirements</span><span>Raw-material availability & supply chain</span><span>Market and import-substitution potential</span><span>IP, licensing and ownership</span><span>Researcher / technology-owner engagement</span></div><p class="muted">This is a prototype information structure. Actual fields should be validated with the Investment Department and investors.</p></div></div>
+<script src="js/intelligence-demo.js"></script><script src="js/site-menu.js"></script>
+<script src="js/subscription-ui.js"></script><script src="js/research-to-industry.js"></script>  <script src="js/scroll-reveal.js"></script>
+</body></html>

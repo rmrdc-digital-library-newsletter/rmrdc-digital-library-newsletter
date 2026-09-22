@@ -1,0 +1,5 @@
+[33m0d84a52[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Refactor user features for Supabase integration
+[33mb1ea861[m Refactor renderLocal to use async data loading
+[33mc378393[m Revise summary and key details structure
+[33mbf1258c[m Enhance user dashboard with personalized content
+[33mc50a860[m Refactor dashboard to include user authentication
