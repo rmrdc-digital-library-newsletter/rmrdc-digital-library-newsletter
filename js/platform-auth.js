@@ -69,8 +69,17 @@
 
     const legacyProfile = await getSafeProfileRow('profiles', 'id', user.id);
     const platformProfile = await getSafeProfileRow('platform_profiles', 'user_id', user.id);
-    if(!legacyProfile && !platformProfile) throw new Error('Your account profile is missing or inaccessible. Please contact RMRDC support.');
+    const rawMetadataRole = user.user_metadata?.role;
+    const metadataRole = safeRole(rawMetadataRole);
+    if(!legacyProfile && !platformProfile && !['researcher','investor','fabricator','library_user'].includes(rawMetadataRole)) throw new Error('Your account profile is missing or inaccessible. Please contact RMRDC support.');
     const baseProfile = {...(legacyProfile || {}), ...(platformProfile || {})};
+    if(!legacyProfile && !platformProfile) {
+      baseProfile.id = user.id;
+      baseProfile.full_name = user.user_metadata?.full_name || user.email;
+      baseProfile.role = metadataRole;
+      baseProfile.organisation = user.user_metadata?.organisation || '';
+      baseProfile.research_areas = user.user_metadata?.interests || [];
+    }
     if(platformProfile?.role) {
       baseProfile.id = user.id;
       baseProfile.full_name = platformProfile.full_name || baseProfile.full_name;
@@ -78,7 +87,7 @@
       baseProfile.research_areas = Array.isArray(platformProfile.interest_data) ? platformProfile.interest_data : baseProfile.research_areas;
     }
     if(!platformProfile && legacyProfile?.role === 'viewer') throw new Error('Your account setup is incomplete. Please sign in again or contact RMRDC support.');
-    let role = safeRole(platformProfile?.role || legacyProfile?.role);
+    let role = safeRole(platformProfile?.role || legacyProfile?.role || metadataRole);
 
     let detail=null;
     const roleTables={researcher:['researcher_profiles','user_id'],investor:['investor_profiles','profile_id'],library_user:['library_user_profiles','user_id'],fabricator:['fabricator_profiles','profile_id']};
