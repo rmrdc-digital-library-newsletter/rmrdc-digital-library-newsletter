@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rmrdc-cas-mobile-v10';
+const CACHE_NAME = 'rmrdc-cas-mobile-v12';
 const APP_SHELL = [
   './',
   './index.html',
