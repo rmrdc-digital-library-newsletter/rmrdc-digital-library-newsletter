@@ -9,6 +9,17 @@
     message.classList.toggle('error', isError);
   }
 
+  async function openExistingResearcherSession() {
+    if (!window.db) return;
+    const { data: { session } } = await window.db.auth.getSession();
+    if (!session?.user) return;
+    const { data: profile } = await window.db.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
+    if (profile?.role === 'researcher') {
+      sessionStorage.setItem('rmrdc_researcher_verified', 'true');
+      window.location.replace('researcher-portal.html');
+    }
+  }
+
   form?.addEventListener('submit', async event => {
     event.preventDefault();
     if (!window.db) return showMessage('Authentication service is not configured.', true);
@@ -32,6 +43,7 @@
         throw new Error('This account is not registered as a researcher.');
       }
 
+      sessionStorage.setItem('rmrdc_researcher_verified', 'true');
       window.location.replace('researcher-portal.html');
     } catch (error) {
       console.error('Researcher sign-in failed:', error);
@@ -40,4 +52,6 @@
       submit.disabled = false;
     }
   });
+
+  openExistingResearcherSession().catch(error => console.warn('Existing researcher session check failed:', error));
 })();

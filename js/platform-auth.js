@@ -198,7 +198,7 @@
     const currentPath=window.location.pathname.split('/').pop()||'index.html';
     if(!identity){window.location.href=`login.html?next=${encodeURIComponent(currentPath+window.location.search+window.location.hash)}`;return null;}
     if(currentPath==='library-user-portal.html'&&['admin','editor'].includes(identity.role))return identity;
-    if(allowedRoles&&!allowedRoles.includes(identity.role)){window.location.href=ROLE_ROUTES[identity.role]||'user-dashboard.html';return null;}
+    if(allowedRoles&&!allowedRoles.includes(identity.role)){window.location.href=ROLE_ROUTES[identity.role]||'researcher-login.html';return null;}
     return identity;
   }
   window.RMRDCAuth={ROLE_ROUTES,getPlatformIdentity,ensureProfileFromMetadata,routeAuthenticatedUser,guardPage,routeAfterLogin};

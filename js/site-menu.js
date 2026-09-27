@@ -22,7 +22,6 @@
             <button type="button" id="closeSiteMenu">×</button>
           </div>
           <a href="${p}raw-materials/index.html">Raw Materials</a>
-          <a href="${p}user-dashboard.html">User Dashboard</a>
           <a href="${p}about.html">About the Platform</a>
           <a href="${p}contact.html">Contact Us</a>
           <a href="${p}help.html">Help / How to Use</a>

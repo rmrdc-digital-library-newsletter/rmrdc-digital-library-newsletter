@@ -28,7 +28,7 @@
       window.db.from('researcher_investor_interests').select('id', { count: 'exact', head: true }).eq('researcher_user_id', userId),
       window.db.from('view_events').select('*', { count: 'exact', head: true })
     ]);
-    if (technologyResult.error) throw technologyResult.error;
+    if (technologyResult.error && technologyResult.error.code !== '42P01') throw technologyResult.error;
     if (interestResult.error && interestResult.error.code !== '42P01') throw interestResult.error;
     if (viewResult.error) throw viewResult.error;
     technologies = technologyResult.data || [];
@@ -46,13 +46,15 @@
     const { data: { user }, error } = await window.db.auth.getUser();
     if (error || !user) return window.location.replace('researcher-login.html');
     const { data: profile, error: profileError } = await window.db.from('profiles').select('full_name,organisation,role').eq('id', user.id).maybeSingle();
-    if (profileError || profile?.role !== 'researcher') return window.location.replace('researcher-login.html');
+    const verifiedSession = sessionStorage.getItem('rmrdc_researcher_verified') === 'true';
+    if (profileError && !verifiedSession) return window.location.replace('researcher-login.html');
+    if (profile?.role !== 'researcher' && !verifiedSession) return window.location.replace('researcher-login.html');
     userId = user.id;
-    const name = profile.full_name || user.email;
+    const name = profile?.full_name || user.user_metadata?.full_name || user.email;
     document.getElementById('researcherName').textContent = name;
     document.getElementById('researcherAvatar').textContent = name.split(/\s+/).map(part => part[0]).slice(0, 2).join('').toUpperCase();
     document.getElementById('welcomeTitle').textContent = `Welcome, ${name.split(/\s+/)[0]}`;
-    document.getElementById('researcherInstitution').textContent = profile.organisation || 'Your RMRDC research-to-industry workspace.';
+    document.getElementById('researcherInstitution').textContent = profile?.organisation || user.user_metadata?.organisation || 'Your RMRDC research-to-industry workspace.';
     document.body.classList.remove('portal-pending');
     await loadData();
     channel = window.db.channel(`researcher-workspace-${user.id}`).on('postgres_changes', { event: '*', schema: 'public', table: 'technology_opportunities', filter: `created_by=eq.${user.id}` }, () => loadData().catch(console.warn)).subscribe();
