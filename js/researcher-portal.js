@@ -1,66 +1,83 @@
-/* RMRDC Researcher Portal personalization — database aligned */
-(function(){
-  let currentUserId = null;
-  let liveChannel = null;
-  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+(function () {
+  const rows = document.getElementById('technologyRows');
+  const message = document.getElementById('technologyMessage');
+  const form = document.getElementById('technologyForm');
+  const search = document.getElementById('technologySearch');
+  const status = document.getElementById('technologyStatus');
+  let userId = null;
+  let technologies = [];
+  let channel = null;
 
-  async function getProfile(){
-    if(window.db){try{const identity=await window.RMRDCAuth?.getPlatformIdentity();if(identity){currentUserId=identity.user.id;const detail=identity.detail||{};return {role:identity.role,full_name:identity.baseProfile?.full_name,organisation:identity.baseProfile?.organisation,location:detail.location||'',interests:identity.baseProfile?.research_areas||[],role_data:detail,email:identity.user.email};}}catch(e){console.warn('Researcher profile lookup failed',e)}}
-    return null;
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+  const showMessage = (text, error = false) => { message.textContent = text; message.classList.remove('hidden'); message.classList.toggle('error', error); };
+
+  function render() {
+    const query = search.value.trim().toLowerCase();
+    const filter = status.value;
+    const visible = technologies.filter(item => (!filter || item.visibility === filter) && (!query || `${item.title} ${item.sector}`.toLowerCase().includes(query)));
+    if (!visible.length) {
+      rows.innerHTML = '<tr><td colspan="5" class="portal-empty">No technologies have been submitted yet.</td></tr>';
+      return;
+    }
+    rows.innerHTML = visible.map(item => `<tr><td><strong>${escapeHtml(item.title)}</strong><br /><small>${escapeHtml(item.short_summary || '')}</small></td><td>${escapeHtml(item.sector || '—')}</td><td>${item.trl ? `TRL ${escapeHtml(item.trl)}` : '—'}</td><td><span class="pill ${item.visibility === 'approved' ? 'green' : 'blue'}">${escapeHtml(item.visibility || 'draft')}</span></td><td>${escapeHtml(new Date(item.created_at).toLocaleDateString())}</td></tr>`).join('');
   }
-  const firstName=n=>String(n||'').trim().split(/\s+/)[0]||'Researcher';
-  const initials=n=>(String(n||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('')||'R').toUpperCase();
-  async function personalize(){const p=await getProfile();if(!p)return;const name=p.full_name||p.email||'Researcher';document.querySelectorAll('.profile-menu strong').forEach(el=>el.textContent=name);document.querySelectorAll('.profile-menu .avatar').forEach(el=>el.textContent=initials(name));document.querySelectorAll('.welcome-row h2').forEach(el=>el.textContent=`Welcome back, ${firstName(name)}! 👋`);document.querySelectorAll('[data-user-name]').forEach(el=>el.textContent=name);document.querySelectorAll('[data-user-organisation]').forEach(el=>el.textContent=p.organisation||'');}
-  const fieldValue=(modal,label)=>{const field=[...modal.querySelectorAll('.form-field')].find(x=>(x.querySelector('label')?.textContent||'').trim().toLowerCase().includes(label));return field?.querySelector('input,textarea,select')?.value?.trim()||'';};
-  const listValue=value=>value.split(',').map(x=>x.trim()).filter(Boolean);
-  async function submitTechnology(modal){
-    const user=await window.db?.auth.getUser();
-    if(!user?.data?.user)throw new Error('Please sign in before submitting a technology.');
-    const title=fieldValue(modal,'technology title');
-    if(!title)throw new Error('Technology title is required.');
-    const trlText=fieldValue(modal,'technology readiness level');
-    const trlMatch=trlText.match(/TRL\s+(\d+)/i);
-    const payload={title,sector:fieldValue(modal,'industrial sector'),trl:trlMatch?Number(trlMatch[1]):null,short_summary:fieldValue(modal,'problem solved'),problem_addressed:fieldValue(modal,'problem solved'),technical_specifications:fieldValue(modal,'machinery / equipment'),raw_materials:listValue(fieldValue(modal,'raw materials required')),raw_material_locations:listValue(fieldValue(modal,'states / locations')),raw_material_availability:fieldValue(modal,'availability'),production_cost:Number(fieldValue(modal,'estimated production cost').replace(/[^0-9.]/g,''))||null,estimated_investment:Number(fieldValue(modal,'capital required').replace(/[^0-9.]/g,''))||null,market_size:Number(fieldValue(modal,'market size').replace(/[^0-9.]/g,''))||null,patent_ip_status:fieldValue(modal,'ip / patent status'),engagement_models:listValue(fieldValue(modal,'engagement preferences')),researcher_name:fieldValue(modal,'principal investigator'),created_by:user.data.user.id,visibility:'under_review'};
-    const {data,error}=await window.db.from('technology_opportunities').insert(payload).select('id').single();
-    if(error)throw error;
-    await window.db.functions.invoke('notify-technology-workflow',{body:{event:'submitted',opportunity_id:data.id}}).catch(error=>console.warn('Staff email notification failed',error));
-    return data;
-  }
-  async function loadResearcherData(){
-    if(!window.db||!currentUserId)return;
-    const [opportunitiesResult, interestsResult, viewsResult] = await Promise.all([
-      window.db.from('technology_opportunities').select('id,title,sector,trl,visibility,created_at,updated_at').eq('created_by',currentUserId).order('created_at',{ascending:false}),
-      window.db.from('researcher_investor_interests').select('id,status,created_at').eq('researcher_user_id',currentUserId),
-      window.db.from('view_events').select('*',{count:'exact',head:true})
+
+  async function loadData() {
+    const [technologyResult, interestResult, viewResult] = await Promise.all([
+      window.db.from('technology_opportunities').select('id,title,sector,trl,visibility,short_summary,created_at').eq('created_by', userId).order('created_at', { ascending: false }),
+      window.db.from('researcher_investor_interests').select('id', { count: 'exact', head: true }).eq('researcher_user_id', userId),
+      window.db.from('view_events').select('*', { count: 'exact', head: true })
     ]);
-    if(opportunitiesResult.error)throw opportunitiesResult.error;
-    if(interestsResult.error && interestsResult.error.code!=='42P01')throw interestsResult.error;
-    if(viewsResult.error)throw viewsResult.error;
-    const opportunities=opportunitiesResult.data||[];
-    const interests=interestsResult.data||[];
-    const published=opportunities.filter(item=>item.visibility==='approved').length;
-    const underReview=opportunities.filter(item=>item.visibility==='under_review').length;
-    document.getElementById('researcherSubmissionCount').textContent=opportunities.length.toLocaleString();
-    document.getElementById('researcherSubmissionHint').textContent=`${published} Published • ${underReview} Under Review`;
-    document.getElementById('researcherViewCount').textContent=(viewsResult.count||0).toLocaleString();
-    document.getElementById('researcherInterestCount').textContent=interests.length.toLocaleString();
-    document.getElementById('researcherOpportunityCount').textContent=opportunities.filter(item=>item.visibility==='approved').length.toLocaleString();
-    renderTechnologies(opportunities);
+    if (technologyResult.error) throw technologyResult.error;
+    if (interestResult.error && interestResult.error.code !== '42P01') throw interestResult.error;
+    if (viewResult.error) throw viewResult.error;
+    technologies = technologyResult.data || [];
+    const published = technologies.filter(item => item.visibility === 'approved').length;
+    document.getElementById('submissionCount').textContent = technologies.length.toLocaleString();
+    document.getElementById('publishedCount').textContent = published.toLocaleString();
+    document.getElementById('interestCount').textContent = (interestResult.count || 0).toLocaleString();
+    document.getElementById('viewCount').textContent = (viewResult.count || 0).toLocaleString();
+    document.getElementById('submissionHint').textContent = technologies.length ? `${technologies.length - published} awaiting review` : 'No submissions yet';
+    render();
   }
-  function subscribeToResearcherChanges(){
-    if(!window.db||!currentUserId)return;
-    liveChannel=window.db.channel(`researcher-portal-${currentUserId}`)
-      .on('postgres_changes',{event:'*',schema:'public',table:'technology_opportunities',filter:`created_by=eq.${currentUserId}`},()=>loadResearcherData().catch(console.warn))
-      .on('postgres_changes',{event:'*',schema:'public',table:'researcher_investor_interests',filter:`researcher_user_id=eq.${currentUserId}`},()=>loadResearcherData().catch(console.warn))
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'view_events'},()=>loadResearcherData().catch(console.warn))
-      .subscribe();
+
+  async function init() {
+    if (!window.db) return window.location.replace('researcher-login.html');
+    const { data: { user }, error } = await window.db.auth.getUser();
+    if (error || !user) return window.location.replace('researcher-login.html');
+    const { data: profile, error: profileError } = await window.db.from('profiles').select('full_name,organisation,role').eq('id', user.id).maybeSingle();
+    if (profileError || profile?.role !== 'researcher') return window.location.replace('researcher-login.html');
+    userId = user.id;
+    const name = profile.full_name || user.email;
+    document.getElementById('researcherName').textContent = name;
+    document.getElementById('researcherAvatar').textContent = name.split(/\s+/).map(part => part[0]).slice(0, 2).join('').toUpperCase();
+    document.getElementById('welcomeTitle').textContent = `Welcome, ${name.split(/\s+/)[0]}`;
+    document.getElementById('researcherInstitution').textContent = profile.organisation || 'Your RMRDC research-to-industry workspace.';
+    document.body.classList.remove('portal-pending');
+    await loadData();
+    channel = window.db.channel(`researcher-workspace-${user.id}`).on('postgres_changes', { event: '*', schema: 'public', table: 'technology_opportunities', filter: `created_by=eq.${user.id}` }, () => loadData().catch(console.warn)).subscribe();
   }
-  function renderTechnologies(items){
-    const rows=document.getElementById('techRows');if(!rows)return;
-    if(!items.length){rows.innerHTML='<tr><td colspan="7">No technologies have been submitted from this account yet.</td></tr>';return;}
-    rows.innerHTML=items.map(item=>{const status=item.visibility==='approved'?'Published':item.visibility==='under_review'?'Under Review':item.visibility||'Draft';return `<tr data-status="${escapeHtml(status)}"><td><div class="tech-cell"><div class="tech-thumb"></div><div><div class="tech-title">${escapeHtml(item.title)}</div><div class="tech-sub">${escapeHtml(item.sector||'Research technology')}</div></div></div></td><td><span class="pill green">${item.trl?`TRL ${escapeHtml(item.trl)}`:'Not set'}</span></td><td><span class="pill ${status==='Published'?'green':'blue'}"><i class="dot"></i>${escapeHtml(status)}</span></td><td>—</td><td>—</td><td>${escapeHtml(new Date(item.created_at).toLocaleDateString())}</td><td><a class="ghost-btn" href="intelligence.html?id=${encodeURIComponent(item.id)}">View</a></td></tr>`;}).join('');
-  }
-  function bindSubmission(){const modal=document.getElementById('researchModal');if(!modal)return;const submit=[...modal.querySelectorAll('button')].find(x=>x.textContent.trim().toLowerCase()==='submit for review');if(!submit)return;submit.addEventListener('click',async event=>{event.preventDefault();if(submit.disabled)return;submit.disabled=true;try{await submitTechnology(modal);closeResearchModal();await loadResearcherData();if(typeof showToast==='function')showToast('Technology submitted to RMRDC for approval.');}catch(error){alert(error.message||'Unable to submit technology.');}finally{submit.disabled=false;}});}
-  async function init(){const profile=await getProfile();if(!profile)return;personalize();bindSubmission();try{await loadResearcherData();subscribeToResearcherChanges();}catch(error){console.error('Researcher data lookup failed',error);document.getElementById('researcherSubmissionHint').textContent='Unable to load live data.';}}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const submit = document.getElementById('submitTechnology');
+    submit.disabled = true;
+    showMessage('Submitting for RMRDC review...');
+    try {
+      const data = Object.fromEntries(new FormData(form));
+      const { error } = await window.db.from('technology_opportunities').insert({ ...data, trl: data.trl ? Number(data.trl) : null, raw_materials: String(data.raw_materials || '').split(',').map(item => item.trim()).filter(Boolean), created_by: userId, visibility: 'under_review' });
+      if (error) throw error;
+      form.reset();
+      showMessage('Technology submitted for RMRDC review.');
+      await loadData();
+    } catch (error) {
+      showMessage(error.message || 'Submission failed.', true);
+    } finally { submit.disabled = false; }
+  });
+  search.addEventListener('input', render);
+  status.addEventListener('change', render);
+  document.getElementById('researcherSignOut')?.addEventListener('click', async event => { event.preventDefault(); await window.db.auth.signOut(); window.location.replace('researcher-login.html'); });
+  document.getElementById('openSubmit')?.addEventListener('click', () => document.getElementById('submit').scrollIntoView({ behavior: 'smooth' }));
+  document.getElementById('openSubmitSecondary')?.addEventListener('click', () => document.getElementById('submit').scrollIntoView({ behavior: 'smooth' }));
+  init().catch(error => { console.error('Researcher portal failed to load:', error); window.location.replace('researcher-login.html'); });
 })();
