@@ -3,6 +3,7 @@
   const ROLE_ROUTES={researcher:'researcher-portal.html',investor:'investor-portal.html',fabricator:'fabricator-portal.html',library_user:'library-user-portal.html',admin:'admin/index.html',editor:'admin/index.html'};
   const USER_ROLES=['researcher','investor','fabricator','library_user','admin','editor'];
   const safeRole=r=>USER_ROLES.includes(r)?r:'library_user';
+  let routePromise = null;
 
   function getCachedProfile(){
     try {
@@ -159,6 +160,12 @@
   }
 
   async function routeAfterLogin(){
+    if(routePromise) return routePromise;
+    routePromise = routeAfterLoginOnce();
+    try { return await routePromise; } finally { routePromise = null; }
+  }
+
+  async function routeAfterLoginOnce(){
     if(!window.db || !window.db.auth || !window.db.auth.getUser){
       window.location.href='subscribe.html';
       return null;
