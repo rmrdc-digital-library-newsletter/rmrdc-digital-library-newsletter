@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rmrdc-cas-mobile-v12';
+const CACHE_NAME = 'rmrdc-cas-mobile-v14';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,7 +10,6 @@ const APP_SHELL = [
   './subscribe.html',
   './researcher-register.html',
   './technology-opportunity.html',
-  './user-dashboard.html',
   './investor-portal.html',
   './researcher-portal.html',
   './researcher-login.html',
