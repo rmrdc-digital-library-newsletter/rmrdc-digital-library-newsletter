@@ -61,7 +61,7 @@
     if(error)throw error;
     const rd=profile.role_data||{};
     let result;
-    if(profile.role==='researcher')result=await window.db.from('researcher_profiles').upsert({profile_id:user.id,institution:rd.institution,position:rd.position,research_stage:rd.researchStage,orcid:rd.orcid,biography:rd.bio,location:profile.location,raw_materials_of_interest:[]},{onConflict:'profile_id'});
+    if(profile.role==='researcher')result=await window.db.from('researcher_profiles').upsert({profile_id:user.id,institution:rd.institution,position:rd.position,research_areas:profile.interests.join(', '),orcid:rd.orcid,bio:rd.bio},{onConflict:'profile_id'});
     if(profile.role==='investor')result=await window.db.from('investor_profiles').upsert({profile_id:user.id,organisation_type:rd.orgType,position:rd.position,location:profile.location,preferred_trl_min:rd.preferredTrl?Number(rd.preferredTrl.match(/\d+/)?.[0]||0)||null:null,preferred_trl_max:rd.preferredTrl?Number(rd.preferredTrl.match(/\d+$/)?.[0]||0)||null:null,investment_stage:rd.investmentStage?[rd.investmentStage]:[],engagement_preferences:rd.engagementModels?rd.engagementModels.split(',').map(x=>x.trim()).filter(Boolean):[]},{onConflict:'profile_id'});
     if(profile.role==='library_user')result=await window.db.from('library_user_profiles').upsert({profile_id:user.id,user_category:rd.userCategory,location:profile.location,subject_areas:rd.subjectAreas?rd.subjectAreas.split(',').map(x=>x.trim()).filter(Boolean):[],preferred_cas_topics:profile.interests,alert_frequency:rd.alertFrequency||'weekly'},{onConflict:'profile_id'});
     if(profile.role==='fabricator')result=await window.db.from('fabricator_profiles').upsert({profile_id:user.id,location:profile.location,fabrication_specialisation:rd.fabricationSpecialisation?rd.fabricationSpecialisation.split(',').map(x=>x.trim()).filter(Boolean):[],equipment_categories:rd.equipmentCategories?rd.equipmentCategories.split(',').map(x=>x.trim()).filter(Boolean):[],manufacturing_capacity:rd.capacity,geographic_coverage:rd.coverage?rd.coverage.split(',').map(x=>x.trim()).filter(Boolean):[],certifications:rd.certifications?rd.certifications.split(',').map(x=>x.trim()).filter(Boolean):[],services_offered:rd.servicesOffered?rd.servicesOffered.split(',').map(x=>x.trim()).filter(Boolean):[]},{onConflict:'profile_id'});
@@ -92,14 +92,14 @@
     try{
       if(!window.db)throw new Error('Authentication service is not configured.');
       button.disabled=true;button.textContent='Creating account…';
-      const {data,error}=await window.db.auth.signUp({email:profile.email,password,options:{data:{full_name:profile.full_name,role:profile.role,organisation:profile.organisation,phone:profile.phone,location:profile.location,interests:profile.interests,email_alerts:profile.email_alerts,whatsapp_alerts:profile.whatsapp_alerts,role_data:profile.role_data}}});
+      const emailRedirectTo=new URL('login.html',window.location.href).href;
+      const {data,error}=await window.db.auth.signUp({email:profile.email,password,options:{emailRedirectTo,data:{full_name:profile.full_name,role:profile.role,organisation:profile.organisation,phone:profile.phone,location:profile.location,interests:profile.interests,email_alerts:profile.email_alerts,whatsapp_alerts:profile.whatsapp_alerts,role_data:profile.role_data}}});
       if(error)throw error;
       if(!data?.user)throw new Error('Account could not be created.');
       if(Array.isArray(data.user.identities)&&data.user.identities.length===0)throw new Error('An account with this email already exists. Please sign in instead.');
-      localStorage.setItem('rmrdc_platform_profile',JSON.stringify(profile));
       if(data.session)await saveProfile(profile,data.user);
-      if(data.session){notify(message,'Account created successfully. Opening your workspace…');setTimeout(()=>window.RMRDCAuth?.routeAfterLogin(),400);}
-      else notify(message,'Account created. Please confirm your email, then sign in to open your correct workspace.');
+      if(data.session){notify(message,'Account created successfully. Opening your workspace…');await window.RMRDCAuth.routeAfterLogin();}
+      else notify(message,'Account created. Please confirm your email, then sign in to open your workspace.');
     }catch(err){console.error(err);notify(message,err.message||'Registration could not be completed.',true)}finally{button.disabled=false;button.textContent='Create RMRDC Intelligence Account';}
   });
   loginForm?.addEventListener('submit',async e=>{e.preventDefault();try{const email=document.getElementById('loginEmail').value.trim().toLowerCase(),password=document.getElementById('loginPassword').value;if(!window.db)throw new Error('Authentication service is not configured.');const {data,error}=await window.db.auth.signInWithPassword({email,password});if(error)throw error;if(!data?.session)throw new Error('Please confirm your email address before signing in.');notify(loginMessage,'Sign in successful. Opening your personalised workspace.');await window.RMRDCAuth?.routeAfterLogin();}catch(err){notify(loginMessage,err.message||'Sign in failed.',true)}});

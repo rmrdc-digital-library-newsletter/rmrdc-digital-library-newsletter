@@ -28,7 +28,12 @@ loginForm?.addEventListener('submit', async (e)=>{
   if (error) return showLoginMessage(error.message, true);
   if (!data?.session) return showLoginMessage('Please confirm your email address before signing in.', true);
   showLoginMessage('Sign in successful. Opening your workspace...');
-  await window.RMRDCAuth.routeAfterLogin();
+  try {
+    await window.RMRDCAuth.routeAfterLogin();
+  } catch (error) {
+    console.error('Post-login routing failed:', error);
+    showLoginMessage(error.message || 'Sign-in succeeded, but your workspace could not be opened.', true);
+  }
 });
 
 document.getElementById('resetPasswordBtn')?.addEventListener('click', async ()=>{
