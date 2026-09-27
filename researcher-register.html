@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Researcher Registration | RMRDC</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/layout-uniformity.css" />
+  <link rel="stylesheet" href="css/scroll-reveal.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header compact">
+    <div class="container nav-row">
+      <div class="brand-wrap small">
+        <img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC Logo" />
+        <div>
+          <p class="eyebrow">Research-to-Industry Intelligence Platform</p>
+          <h1>Researcher Registration</h1>
+        </div>
+      </div>
+      <nav class="top-nav" aria-label="Account navigation">
+        <a href="researcher-portal.html">Researcher Portal</a>
+        <a href="researcher-login.html">Sign in</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container cas-page-layout role-registration">
+    <section class="subscription-access-hero">
+      <span class="subscription-kicker">RMRDC RESEARCHER ACCESS</span>
+      <h2>Create your researcher account</h2>
+      <p>Register your research identity to submit technology profiles and follow RMRDC review and engagement activity.</p>
+    </section>
+
+    <section class="v3-card" style="margin-top:22px">
+      <div class="section-head">
+        <div>
+          <p class="section-tag">Research identity</p>
+          <h2>Account details</h2>
+        </div>
+      </div>
+      <div id="researcherRegistrationMessage" class="notice hidden" role="status" aria-live="polite"></div>
+      <form id="researcherRegistrationForm" class="stack-form" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="researcherName">Full name</label><input id="researcherName" required autocomplete="name" /></div>
+          <div class="field"><label for="researcherEmail">Email</label><input id="researcherEmail" type="email" required autocomplete="email" /></div>
+          <div class="field"><label for="researcherInstitution">Institution</label><input id="researcherInstitution" required autocomplete="organization" /></div>
+          <div class="field"><label for="researcherPosition">Position</label><input id="researcherPosition" required /></div>
+          <div class="field"><label for="researcherLocation">Location</label><input id="researcherLocation" autocomplete="address-level2" /></div>
+          <div class="field"><label for="researcherOrcid">ORCID</label><input id="researcherOrcid" placeholder="0000-0000-0000-0000" /></div>
+          <div class="field"><label for="researcherPassword">Password</label><input id="researcherPassword" type="password" minlength="8" required autocomplete="new-password" /></div>
+          <div class="field"><label for="researcherPasswordConfirm">Confirm password</label><input id="researcherPasswordConfirm" type="password" minlength="8" required autocomplete="new-password" /></div>
+          <div class="field span-two"><label for="researcherAreas">Research areas</label><input id="researcherAreas" placeholder="e.g. biotechnology, agro-processing, materials" /></div>
+          <div class="field span-two"><label for="researcherBio">Professional biography</label><textarea id="researcherBio" rows="4" placeholder="Briefly describe your expertise and research focus."></textarea></div>
+        </div>
+        <div class="form-actions"><button id="researcherRegistrationSubmit" class="btn btn-primary" type="submit">Create researcher account</button></div>
+      </form>
+      <p class="subscription-note">Already registered? <a href="researcher-login.html">Sign in to your researcher portal</a>.</p>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/researcher-register.js"></script>
+  <script src="js/site-menu.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
