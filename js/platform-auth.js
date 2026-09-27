@@ -51,8 +51,9 @@
     }
   }
 
-  async function getRoleProfile(tableName, value){
-    return await getSafeProfileRow(tableName, 'user_id', value) || await getSafeProfileRow(tableName, 'profile_id', value);
+  async function getRoleProfile(tableName, value, preferredKey = 'profile_id'){
+    const alternateKey = preferredKey === 'profile_id' ? 'user_id' : 'profile_id';
+    return await getSafeProfileRow(tableName, preferredKey, value) || await getSafeProfileRow(tableName, alternateKey, value);
   }
 
   async function getPlatformIdentity(){
@@ -68,7 +69,9 @@
     }
 
     const legacyProfile = await getSafeProfileRow('profiles', 'id', user.id);
-    const platformProfile = await getSafeProfileRow('platform_profiles', 'user_id', user.id);
+    const platformProfile = legacyProfile && legacyProfile.role !== 'viewer'
+      ? null
+      : await getSafeProfileRow('platform_profiles', 'user_id', user.id);
     const rawMetadataRole = user.user_metadata?.role;
     const metadataRole = safeRole(rawMetadataRole);
     if(!legacyProfile && !platformProfile && !['researcher','investor','fabricator','library_user'].includes(rawMetadataRole)) throw new Error('Your account profile is missing or inaccessible. Please contact RMRDC support.');
@@ -90,8 +93,8 @@
     let role = safeRole(platformProfile?.role || legacyProfile?.role || metadataRole);
 
     let detail=null;
-    const roleTables={researcher:['researcher_profiles','user_id'],investor:['investor_profiles','profile_id'],library_user:['library_user_profiles','user_id'],fabricator:['fabricator_profiles','profile_id']};
-    if(roleTables[role]) detail = await getRoleProfile(roleTables[role][0], user.id);
+    const roleTables={researcher:['researcher_profiles','profile_id'],investor:['investor_profiles','profile_id'],library_user:['library_user_profiles','user_id'],fabricator:['fabricator_profiles','profile_id']};
+    if(roleTables[role]) detail = await getRoleProfile(roleTables[role][0], user.id, roleTables[role][1]);
 
     const identity={user,baseProfile,detail,role};
     setCachedProfile(identity, user);
