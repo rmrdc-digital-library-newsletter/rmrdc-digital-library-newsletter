@@ -12,7 +12,14 @@ function showLoginMessage(message, isError=false) {
   if (!window.db) return showLoginMessage('Update js/config.js with your Supabase credentials.', true);
   try {
     const { data: { session } } = await window.db.auth.getSession();
-    if (session?.user && window.RMRDCAuth) await window.RMRDCAuth.routeAfterLogin();
+    if (session?.user && window.RMRDCAuth) {
+      try {
+        await window.RMRDCAuth.routeAfterLogin();
+      } catch (error) {
+        console.error('Existing session routing failed:', error);
+        showLoginMessage(error.message || 'Your existing session could not be opened. Please sign in again.', true);
+      }
+    }
   } catch (e) {
     console.warn('Existing session check failed:', e);
   }

@@ -154,7 +154,7 @@
 
   async function routeAuthenticatedUser(){
     const identity=await getPlatformIdentity();
-    if(!identity){window.location.href='subscribe.html';return null;}
+    if(!identity) throw new Error('No authenticated account was found. Please sign in again.');
     const cached = setCachedProfile(identity, identity.user);
     localStorage.setItem('rmrdc_platform_profile', JSON.stringify(cached));
     return identity;
@@ -168,15 +168,13 @@
 
   async function routeAfterLoginOnce(){
     if(!window.db || !window.db.auth || !window.db.auth.getUser){
-      window.location.href='subscribe.html';
-      return null;
+      throw new Error('Authentication service is not configured.');
     }
     const {data:{user},error}=await window.db.auth.getUser();
     if(error)throw error;
     if(!user){
       try { localStorage.removeItem('rmrdc_platform_profile'); } catch (e) { console.warn('Unable to clear stale platform profile cache:', e); }
-      window.location.href='subscribe.html';
-      return null;
+      throw new Error('Your session has expired. Please sign in again.');
     }
     await ensureProfileFromMetadata(user);
     const identity=await routeAuthenticatedUser();
@@ -191,6 +189,7 @@
         window.location.href=ROLE_ROUTES[identity.role];
       }
     }
+    if(!identity || !ROLE_ROUTES[identity.role]) throw new Error('Your account role is not configured for a portal.');
     return identity;
   }
 
