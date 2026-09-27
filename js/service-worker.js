@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rmrdc-cas-mobile-v5';
+const CACHE_NAME = 'rmrdc-cas-mobile-v10';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,10 +8,12 @@ const APP_SHELL = [
   './help.html',
   './login.html',
   './subscribe.html',
+  './researcher-register.html',
   './technology-opportunity.html',
   './user-dashboard.html',
   './investor-portal.html',
   './researcher-portal.html',
+  './researcher-login.html',
   './fabricator-portal.html',
   './manifest.webmanifest',
   './css/styles.css',
@@ -20,6 +22,8 @@ const APP_SHELL = [
   './js/config.js',
   './js/supabase-client.js',
   './js/platform-auth.js',
+  './js/researcher-register.js',
+  './js/researcher-login.js',
   './js/site-menu.js',
   './js/pwa.js',
   './assets/rmrdc-logo.png'
