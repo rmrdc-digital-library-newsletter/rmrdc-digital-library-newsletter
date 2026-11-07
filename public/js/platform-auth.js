@@ -7,6 +7,10 @@
     // Staff roles are stored in the legacy profiles table. Keep them authoritative
     // if an old or duplicate platform_profiles row also exists for that user.
     if(['admin','editor'].includes(legacyProfile?.role))return legacyProfile.role;
+    // A role-specific profile is evidence that the account belongs to that portal.
+    // Prefer it when a stale central profile contains a default or different role.
+    if(researcherProfile&&['library_user','viewer',undefined].includes(platformProfile?.role||legacyProfile?.role))return 'researcher';
+    if(legacyProfile?.role==='researcher')return 'researcher';
     return safeRole(platformProfile?.role||legacyProfile?.role||(researcherProfile?'researcher':''));
   };
   let routePromise = null;
@@ -139,7 +143,7 @@
     if(identity && ROLE_ROUTES[identity.role]) {
       const currentPath = window.location.pathname.split('/').pop() || 'index.html';
       if(['login.html','subscribe.html','index.html'].includes(currentPath)) {
-        window.location.href=ROLE_ROUTES[identity.role];
+        window.location.replace(ROLE_ROUTES[identity.role]);
       }
     }
     if(!identity || !ROLE_ROUTES[identity.role]) throw new Error('Your account role is not configured for a portal.');
