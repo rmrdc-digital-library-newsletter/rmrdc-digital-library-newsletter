@@ -1,0 +1,122 @@
+.viewer-main:fullscreen,
+.viewer-main.reader-expanded {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  max-width: none;
+  margin: 0;
+  padding: 12px;
+  border: 0;
+  border-radius: 0;
+  background: #f4f6f1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.viewer-main.reader-expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+}
+
+body.reader-expanded-open { overflow: hidden; }
+
+#toggleDarkBackground { display: none; }
+
+.viewer-main:fullscreen #toggleDarkBackground,
+.viewer-main.reader-expanded #toggleDarkBackground { display: inline-flex; }
+
+.viewer-main.reader-dark-background .flipbook-stage { background: #171a18; }
+.viewer-main.reader-dark-background .flipbook-stage::before,
+.viewer-main.reader-dark-background .flipbook-stage::after { display: none; }
+
+.viewer-main:fullscreen .viewer-toolbar,
+.viewer-main.reader-expanded .viewer-toolbar {
+  flex: 0 0 auto;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.viewer-main:fullscreen .flipbook-stage,
+.viewer-main.reader-expanded .flipbook-stage {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 12px 54px;
+  overflow: hidden;
+}
+
+.viewer-main:fullscreen .ebook-shell,
+.viewer-main.reader-expanded .ebook-shell {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.viewer-page #flipbook {
+  touch-action: none;
+  transform-origin: center center;
+}
+
+@media (max-width: 760px) {
+  .viewer-main:fullscreen,
+  .viewer-main.reader-expanded { padding: 8px; }
+  .viewer-main:fullscreen .flipbook-stage,
+  .viewer-main.reader-expanded .flipbook-stage { padding: 8px 38px; }
+  .viewer-main:fullscreen .viewer-toolbar p,
+  .viewer-main.reader-expanded .viewer-toolbar p { display: none; }
+}
+
+/* Keep the document in view when a narrow window or DevTools triggers the
+   site's mobile rule that makes every .btn take the full row. */
+@media (max-width: 980px) {
+  .viewer-page .viewer-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .viewer-page .viewer-toolbar h3 { margin: 0; }
+  .viewer-page .viewer-toolbar p { margin: 2px 0 0; }
+
+  .viewer-page .viewer-controls {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .viewer-page .viewer-controls .btn {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 42px;
+    min-height: 40px;
+    padding: 7px 10px;
+  }
+
+  .viewer-page .viewer-controls .page-status {
+    flex: 0 0 auto;
+    min-width: 92px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .viewer-page .flipbook-stage { min-height: 55vh; }
+
+  .viewer-main:fullscreen .viewer-toolbar,
+  .viewer-main.reader-expanded .viewer-toolbar {
+    flex: 0 0 auto;
+  }
+
+  .viewer-main:fullscreen .flipbook-stage,
+  .viewer-main.reader-expanded .flipbook-stage {
+    min-height: 0;
+  }
+}

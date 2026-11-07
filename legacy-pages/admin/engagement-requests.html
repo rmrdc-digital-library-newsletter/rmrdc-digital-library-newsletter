@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RMRDC Engagement Review</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../portal.css">
+  <link rel="stylesheet" href="../css/research-to-industry.css">
+  <link rel="stylesheet" href="../css/layout-uniformity.css">
+  <link rel="stylesheet" href="../css/scroll-reveal.css">
+  <style>
+    .review-card{background:#fff;border:1px solid #e1e9e4;border-radius:14px;padding:18px;margin-bottom:14px}
+    .review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .review-grid label{font-size:11px;color:#68756f;font-weight:700;display:block}
+    .review-grid input,.review-grid select,.review-grid textarea{width:100%;padding:10px;border:1px solid #d9e2dc;border-radius:8px;margin-top:5px}
+    .review-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+    .status{font-weight:700}
+    .approved{color:#1b6b42}
+    .received{color:#9a6a14}
+    @media(max-width:760px){.review-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <main class="container" style="padding:30px">
+    <div class="v3-card">
+      <span class="v3-label">RMRDC Staff Admin</span>
+      <h1>Investor Engagement Review</h1>
+      <p>RMRDC receives investor expressions of interest, validates them, assigns the relevant researcher where required, and approves the engagement before the researcher and investor can proceed to a Deal Room.</p>
+    </div>
+    <section class="v3-card" style="margin-top:16px">
+      <h2>Investor Expressions of Interest</h2>
+      <div id="requests">Loading…</div>
+    </section>
+    <section class="v3-card" style="margin-top:16px">
+      <h2>Fabrication / Scale-up Requests</h2>
+      <div id="fab">Loading…</div>
+    </section>
+  </main>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/platform-auth.js"></script>
+  <script>
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[char]));
+
+    async function init() {
+      try {
+        await RMRDCAuth.guardPage(['admin', 'editor']);
+      } catch (error) {
+        console.error('Staff authorization failed:', error);
+        return;
+      }
+      await load();
+    }
+
+    async function load() {
+      const requestsBox = document.getElementById('requests');
+      const result = await db.from('investor_requests')
+        .select('*')
+        .eq('request_type', 'expression_of_interest')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (result.error) {
+        console.error('Could not load investor requests:', result.error);
+        requestsBox.textContent = 'Could not load investor requests. Please try again later.';
+        return;
+      }
+
+      requestsBox.innerHTML = (result.data || []).map(request => `
+        <div class="review-card">
+          <div class="review-grid">
+            <div><label>Technology</label><strong>${esc(request.technology_title || request.opportunity_id || 'RMRDC asset')}</strong></div>
+            <div><label>Status</label><span class="status ${request.status === 'received' ? 'received' : 'approved'}">${esc(request.status)}</span></div>
+            <div><label>Investor</label><strong>${esc(request.investor_name || '')}</strong><small>${esc(request.organisation || '')}</small></div>
+            <div><label>Contact</label><strong>${esc(request.contact_email || '')}</strong><small>${esc(request.phone || '')}</small></div>
+            <div><label>Interest</label><strong>${esc(request.interest_type || '')}</strong></div>
+            <div><label>Investment range</label><strong>${esc(request.investment_range || '')}</strong></div>
+            <div><label>Preferred next step</label><strong>${esc(request.preferred_next_step || '')}</strong></div>
+            <div><label>Researcher</label><select id="res-${esc(request.id)}" data-current="${esc(request.researcher_user_id || '')}"><option value="">Select researcher</option></select></div>
+            <div style="grid-column:1/-1"><label>Investor message</label><p>${esc(request.message || '')}</p></div>
+          </div>
+          <div class="review-actions">
+            <button class="outline-btn" onclick="setStatus('${esc(request.id)}','rejected')">Reject</button>
+            <button class="primary-btn" onclick="approve('${esc(request.id)}')">Approve & Notify Researcher</button>
+          </div>
+        </div>
+      `).join('') || '<p>No investor expressions of interest received.</p>';
+
+      const researchers = await db.from('profiles').select('id,full_name,email').eq('role', 'researcher').order('full_name');
+      if (researchers.error) console.error('Could not load researchers:', researchers.error);
+      (researchers.data || []).forEach(researcher => {
+        document.querySelectorAll('select[id^="res-"]').forEach(select => {
+          const option = document.createElement('option');
+          option.value = researcher.id;
+          option.textContent = researcher.full_name || researcher.email || researcher.id;
+          if (select.dataset.current === researcher.id) option.selected = true;
+          select.appendChild(option);
+        });
+      });
+
+      const fabrication = await db.from('fabrication_requests').select('*').order('created_at', { ascending: false }).limit(30);
+      if (fabrication.error) console.error('Could not load fabrication requests:', fabrication.error);
+      document.getElementById('fab').innerHTML = (fabrication.data || []).map(request => `
+        <div class="review-card">
+          <strong>${esc(request.opportunity_id || 'RMRDC technology')}</strong>
+          <p>${esc(request.requirements || '')}</p>
+          <span class="status">${esc(request.status)}</span>
+        </div>
+      `).join('') || '<p>No fabrication requests.</p>';
+    }
+
+    async function setStatus(id, status) {
+      const { error } = await db.from('investor_requests').update({ status }).eq('id', id);
+      if (error) {
+        console.error('Could not update investor request:', error);
+        alert('Could not update this request. Please try again later.');
+        return;
+      }
+      await load();
+    }
+
+    async function approve(id) {
+      const researcherId = document.getElementById(`res-${id}`)?.value.trim() || null;
+      const { data: currentRequest, error: requestError } = await db.from('investor_requests')
+        .select('opportunity_id,researcher_user_id')
+        .eq('id', id)
+        .single();
+      if (requestError) {
+        console.error('Could not load investor request:', requestError);
+        alert('Could not load this request. Please try again later.');
+        return;
+      }
+      if (!researcherId && !currentRequest?.researcher_user_id && !currentRequest?.opportunity_id) {
+        alert('Select a researcher before approving this request.');
+        return;
+      }
+
+      const { data: userData } = await db.auth.getUser();
+      const payload = {
+        status: 'approved',
+        approved_by: userData?.user?.id || null,
+        approved_at: new Date().toISOString(),
+      };
+      if (researcherId) payload.researcher_user_id = researcherId;
+      const { error } = await db.from('investor_requests').update(payload).eq('id', id);
+      if (error) {
+        console.error('Could not approve investor request:', error);
+        alert('Could not approve this request. Please try again later.');
+        return;
+      }
+
+      await db.from('platform_notifications').insert({
+        user_id: researcherId,
+        notification_type: 'investor_interest_approved',
+        title: 'Investor interest approved',
+        message: 'RMRDC has approved an investor expression of interest in your technology. Open your Researcher Portal to review the engagement.',
+        link_url: 'researcher-portal.html',
+        entity_type: 'investor_request',
+        entity_id: id,
+      }).then(() => {});
+      alert('Approved. The assigned researcher has been notified.');
+      await load();
+    }
+
+    init();
+  </script>
+  <script src="../js/scroll-reveal.js"></script>
+</body>
+</html>

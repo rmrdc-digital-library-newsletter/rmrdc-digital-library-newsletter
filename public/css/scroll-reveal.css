@@ -1,0 +1,55 @@
+/* RMRDC modern scroll motion
+   Elements rise, briefly overshoot upward, then settle into place. */
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 72px, 0);
+  will-change: transform, opacity;
+}
+
+.scroll-reveal.is-visible {
+  animation: rmrdc-scroll-bounce 820ms cubic-bezier(.22,.61,.36,1) both;
+}
+
+@keyframes rmrdc-scroll-bounce {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 72px, 0);
+  }
+  58% {
+    opacity: 1;
+    transform: translate3d(0, -11px, 0);
+  }
+  76% {
+    transform: translate3d(0, 4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Staggered entrance for shelves, cards and grouped content. */
+.scroll-reveal-group > .scroll-reveal:nth-child(1) { animation-delay: 0ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(2) { animation-delay: 70ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(3) { animation-delay: 140ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(4) { animation-delay: 210ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(5) { animation-delay: 280ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(6) { animation-delay: 350ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(7) { animation-delay: 420ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(8) { animation-delay: 490ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(9) { animation-delay: 560ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(10) { animation-delay: 630ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(11) { animation-delay: 700ms; }
+.scroll-reveal-group > .scroll-reveal:nth-child(12) { animation-delay: 770ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

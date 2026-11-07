@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Publication Viewer | RMRDC Digital Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+  <link rel="stylesheet" href="css/layout-uniformity.css">
+  <link rel="stylesheet" href="css/viewer-fix.css">
+  <link rel="stylesheet" href="css/scroll-reveal.css">
+  <link rel="stylesheet" href="css/viewer-fullscreen.css">
+</head>
+<body class="viewer-page">
+  <header class="site-header compact">
+    <div class="container nav-row">
+      <div class="brand-wrap small">
+        <img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC Logo" />
+        <div>
+          <p class="eyebrow">Document Viewer</p>
+          <h1>RMRDC Digital Library</h1>
+        </div>
+      </div>
+            <nav class="top-nav" aria-label="Primary navigation">
+        <button class="site-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-haspopup="true"><span aria-hidden="true">☰</span></button>
+      <a href="index.html">Intelligence Hub</a>
+      <a href="researcher-portal.html">Researcher Portal</a>
+      <a href="investor-portal.html">Investor Portal</a>
+      <a href="fabricator-portal.html">Fabricator / Engineer</a>
+      <a href="subscribe.html">Sign In / Register</a>
+      <a href="ai-librarian.html">AI Research Assistant</a>
+    </nav>
+    </div>
+  </header>
+
+  <main class="container viewer-layout viewer-layout-wide">
+    <aside class="viewer-sidebar card">
+      <img id="detailCover" class="detail-cover" alt="Publication cover" />
+      <span id="detailType" class="pill"></span>
+      <h2 id="detailTitle">Loading...</h2>
+      <p id="detailAuthors" class="muted"></p>
+      <div class="meta-list">
+        <div><span>Year</span><strong id="detailYear">—</strong></div>
+        <div><span>Price</span><strong id="detailPrice">Free</strong></div>
+        <div><span>Views</span><strong id="detailViews">0</strong></div>
+        <div><span>Downloads</span><strong id="detailDownloads">0</strong></div>
+      </div>
+      <p id="detailAbstract" class="abstract-block"></p>
+      <section id="researchIntelligencePanel" class="research-intelligence-panel" aria-label="Research intelligence">
+        <div class="ri-heading"><span>Research intelligence</span><small>Why this output matters</small></div>
+        <div id="researchIntelligenceContent" class="ri-content"></div>
+      </section>
+      <div class="sidebar-actions viewer-actions-secondary">
+        <button id="savePublicationBtn" class="btn btn-secondary" type="button">Save to dashboard</button>
+        <button id="aiSummaryBtn" class="btn btn-secondary" type="button" aria-controls="viewerAiChatPanel" aria-expanded="false">Chat with AI</button>
+      </div>
+      <div class="sidebar-actions">
+        <a id="viewFullBtn" class="btn btn-secondary" target="_blank" rel="noopener">View Full</a>
+        <button id="downloadBtn" class="btn btn-primary" type="button">Download PDF</button>
+      </div>
+      <form id="purchaseForm" class="purchase-form hidden">
+        <label class="field" for="purchaseEmail">Email for your Paystack receipt
+          <input id="purchaseEmail" type="email" autocomplete="email" required />
+        </label>
+        <button id="purchaseButton" class="btn btn-primary" type="submit">Pay with Paystack</button>
+        <p id="purchaseMessage" class="notice hidden" role="status"></p>
+      </form>
+    </aside>
+
+    <section class="viewer-main card viewer-main-fill flipbook-viewer-card">
+      <div class="viewer-toolbar viewer-toolbar-wrap flipbook-toolbar">
+        <div>
+          <h3>Document View</h3>
+          <p class="muted">Interactive flipbook reader with double-page view, zoom and fullscreen.</p>
+        </div>
+        <div class="viewer-controls viewer-controls-wrap">
+          <button id="prevPage" class="btn btn-secondary icon-btn" type="button" title="Previous page">‹</button>
+          <span id="pageStatus" class="page-status">Page 0 / 0</span>
+          <button id="nextPage" class="btn btn-secondary icon-btn" type="button" title="Next page">›</button>
+          <button id="zoomOut" class="btn btn-secondary icon-btn" type="button" title="Zoom out">−</button>
+          <button id="zoomIn" class="btn btn-secondary icon-btn" type="button" title="Zoom in">+</button>
+          <button id="toggleDarkBackground" class="btn btn-secondary" type="button" aria-pressed="false">Dark background</button>
+          <button id="fullscreenBtn" class="btn btn-secondary" type="button">Fullscreen</button>
+        </div>
+      </div>
+      <div id="flipbookShell" class="flipbook-shell fill-shell flipbook-stage">
+        <button id="stagePrev" class="stage-arrow stage-arrow-left" type="button" aria-label="Previous page">‹</button>
+        <div id="flipbook" class="flipbook fill-book"></div>
+        <button id="stageNext" class="stage-arrow stage-arrow-right" type="button" aria-label="Next page">›</button>
+        <div id="viewerLoader" class="viewer-loader">Loading flipbook…</div>
+      </div>
+      <div id="ebookShell" class="ebook-shell hidden">
+        <div id="ebookExternalFallback" class="ebook-external-fallback hidden">
+          <p class="section-tag">RMRDC Digital Library</p>
+          <h3 id="ebookExternalTitle">Open this publication at its source</h3>
+          <p>This publication is hosted by the RMRDC Digital Library.</p>
+          <a id="ebookExternalLink" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Open publication at RMRDC Library</a>
+        </div>
+        <iframe id="ebookFrame" title="HTML eBook" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
+      </div>
+      <div id="viewerMessage" class="viewer-message hidden"></div>
+    </section>
+  </main>
+
+  <section id="viewerAiChatPanel" class="container viewer-ai-chat-panel hidden" aria-labelledby="viewerAiChatTitle" aria-hidden="true">
+    <div class="viewer-ai-chat-card card">
+      <div class="section-head">
+        <div><p class="section-tag">AI Assistant</p><h2 id="viewerAiChatTitle">Ask about this publication</h2></div>
+        <button id="viewerAiClose" class="btn btn-secondary" type="button">Close chat</button>
+      </div>
+      <p id="viewerAiContext" class="muted">Questions are answered using indexed RMRDC research evidence.</p>
+      <div id="viewerAiMessages" class="viewer-ai-messages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+      <form id="viewerAiForm" class="viewer-ai-form">
+        <label class="visually-hidden" for="viewerAiInput">Ask a question about this publication</label>
+        <input id="viewerAiInput" type="text" maxlength="1000" placeholder="Ask a question about this publication…" autocomplete="off" required>
+        <button class="btn btn-primary" type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>RMRDC Digital Library</p>
+      <p>Raw Materials Research and Development Council • Nigeria</p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/user-features.js"></script>
+  <script type="module" src="js/viewer.js"></script>
+  <script src="js/scroll-reveal.js"></script>
+</body>
+</html>
