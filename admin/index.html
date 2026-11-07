@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | RMRDC Current Awareness Service (CAS)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+<meta name="theme-color" content="#0f5a2d" />
+<link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="../css/layout-uniformity.css">
+  <link rel="stylesheet" href="css/scroll-reveal.css">
+</head>
+<body class="admin-ui-body">
+  <div class="admin-shell-v2">
+    <aside class="admin-sidebar-v2">
+      <div class="admin-logo-row">
+        <div class="admin-avatar">
+    <img src="../assets/rmrdc-logo.png" alt="RMRDC Logo">
+</div>
+        <div>
+          <h1>RMRDC</h1>
+          <p>CAS Platform</p>
+        </div>
+      </div>
+
+      <div class="admin-profile-card">
+        <div class="admin-profile-icon">◆</div>
+        <div>
+          <strong id="sidebarUserName">Welcome, Admin</strong>
+          <span id="sidebarRole">Administrator</span>
+        </div>
+      </div>
+
+      <nav class="admin-menu-v2" aria-label="Admin navigation">
+        <a href="#dashboard" data-admin-section="dashboard" class="active"><span>▦</span>Dashboard</a>
+        <a href="#upload" data-admin-section="upload"><span>⇧</span>Upload Publication</a>
+        <a href="#researchIntelligence" data-admin-section="researchIntelligence"><span>✦</span>Research Intelligence</a>
+        <a href="#technologyUpload" data-admin-section="technologyUpload"><span>⚗</span>Add Technology</a>
+        <a href="#register" data-admin-section="register"><span>＋</span>Register User</a>
+        <a href="#publications" data-admin-section="publications"><span>▤</span>Manage Publications</a>
+        <a href="#subscribers" data-admin-section="subscribers"><span>👥</span>Subscribers</a>
+        <a href="#rawMaterials" data-admin-section="rawMaterials"><span>⛏</span>Raw Materials Admin</a><a href="technology-opportunities.html"><span>◇</span>Technology Opportunities</a><a href="engagement-requests.html"><span>↔</span>Engagement Requests</a>
+        <a href="#emailNotifications" data-admin-section="emailNotifications"><span>✉</span>Alert Notifications</a>
+        <a href="#analytics" data-admin-section="analytics"><span>▥</span>Analytics</a>
+        <a href="#settings" data-admin-section="settings"><span>⚙</span>Settings</a>
+        <a href="#activityLogs" data-admin-section="activityLogs"><span>☷</span>Activity Logs</a>
+              <button class="admin-nav-btn" type="button" data-section="bulletins">CAS Bulletin</button>
+      </nav>
+
+      <div class="admin-sidebar-footer-v2">
+        <a class="admin-view-library-v2" href="../index.html"><span>↗</span> View Library</a>
+        <button id="signOutBtn" class="admin-logout-v2" type="button">↪ Logout</button>
+      </div>
+    </aside>
+
+    <div class="admin-main-v2">
+      <header class="admin-topbar-v2">
+        <button class="menu-toggle-v2" type="button" aria-label="Toggle menu">☰</button>
+        <div>
+          <p class="admin-kicker">Raw Materials Research and Development Council</p>
+          <h2>Admin Dashboard</h2>
+        </div>
+        <div class="admin-top-actions">
+          <a class="btn btn-secondary" href="../index.html">Library</a>
+          <a class="btn btn-secondary" href="../raw-materials/index.html">Raw Materials</a>
+          <div class="admin-avatar">
+    <img src="../assets/rmrdc-logo.png" alt="RMRDC Logo">
+</div>
+        </div>
+      </header>
+
+      <main id="dashboard" class="admin-content-v2">
+        <section class="admin-auth-panel card">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Authentication</p>
+              <h2>Staff login</h2>
+            </div>
+          </div>
+          <div id="authStatus" class="notice">Not signed in.</div>
+          <form id="authForm" class="admin-login-grid">
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="staff@rmrdc.gov.ng" required />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" type="password" placeholder="••••••••" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Sign in</button>
+          </form>
+        </section>
+
+        <section id="statsSection" class="stats-grid-v2 hidden" aria-label="Dashboard statistics">
+          <article class="stat-card-v2">
+            <div class="stat-icon green">📖</div>
+            <div><p>Total Publications</p><strong id="statPublications">0</strong><span id="statPublicationsHint">Library records</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon blue">👥</div>
+            <div><p>Total Users</p><strong id="statUsers">0</strong><span>Registered profiles</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon purple">💌</div>
+            <div><p>Subscribers</p><strong id="statSubscribers">0</strong><span>Research interests</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon orange">👁</div>
+            <div><p>Total Views</p><strong id="statViews">0</strong><span>Reader activity</span></div>
+          </article>
+          <article class="stat-card-v2">
+            <div class="stat-icon red">⬇</div>
+            <div><p>Total Downloads</p><strong id="statDownloads">0</strong><span>PDF downloads</span></div>
+          </article>
+        </section>
+
+        <section id="registerUploadGrid" class="admin-two-col-v2 hidden">
+          <article id="register" class="admin-panel-v2 card">
+            <div class="section-head">
+              <div>
+                <p class="section-tag">User Registration</p>
+                <h2>Register New User / Subscriber</h2>
+              </div>
+            </div>
+            <form id="registerUserForm" class="admin-form-stack">
+              <div class="field">
+                <label for="regName">Full Name <span class="required">*</span></label>
+                <input id="regName" type="text" placeholder="Enter full name" required />
+              </div>
+              <div class="field">
+                <label for="regEmail">Email Address <span class="required">*</span></label>
+                <input id="regEmail" type="email" placeholder="Enter email address" required />
+              </div>
+              <div class="field">
+                <label for="regPhone">WhatsApp Phone Number</label>
+                <input id="regPhone" type="tel" placeholder="2348012345678 (no + sign)" inputmode="numeric" />
+              </div>
+              <div class="field">
+                <label for="regOrganisation">Organisation</label>
+                <input id="regOrganisation" type="text" placeholder="Enter organisation" />
+              </div>
+              <div class="field">
+                <label for="regPassword">Temporary Password</label>
+                <input id="regPassword" type="text" placeholder="Optional, e.g. rmrdc123" />
+              </div>
+              <div class="field">
+                <label for="regResearchAreas">Research Areas / Preferences <span class="required">*</span></label>
+                <input id="regResearchAreas" type="text" placeholder="cassava, biotechnology, agronomy" required />
+                <div class="tag-preview" id="regTagPreview"></div>
+              </div>
+              <div class="alert-choice-grid">
+                <label class="check-row-v2"><input id="regEmailNotifications" type="checkbox" checked /> Send email notifications for relevant publications</label>
+                <label class="check-row-v2"><input id="regWhatsappAlerts" type="checkbox" checked /> Send WhatsApp alerts for relevant publications</label>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">＋ Register User</button>
+                <button class="btn btn-secondary" type="reset">Reset</button>
+              </div>
+            </form>
+            <div id="registerMessage" class="notice hidden"></div>
+          </article>
+
+          <article id="subscribers" class="admin-panel-v2 card">
+            <div class="section-head">
+              <div>
+                <p class="section-tag">Subscribers</p>
+                <h2>Recent Subscriptions</h2>
+              </div>
+              <button id="refreshSubscribersBtn" class="btn btn-secondary" type="button">View All</button>
+            </div>
+            <div class="table-scroll-v2">
+              <table class="admin-table-v2">
+                <thead><tr><th>Name</th><th>Email</th><th>Organisation</th><th>Research Areas</th><th>Joined</th></tr></thead>
+                <tbody id="subscribersTable"><tr><td colspan="5">No subscribers loaded.</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section id="upload" class="admin-panel-v2 card hidden">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Content Management</p>
+              <h2>Upload Publication</h2>
+            </div>
+          </div>
+          <form id="publicationForm" class="grid-two">
+            <div class="field span-two"><label for="title">Title</label><input id="title" type="text" required /></div>
+            <div class="field span-two"><label for="authors">Author(s)</label><input id="authors" type="text" placeholder="Separate multiple authors with commas" required /></div>
+            <div class="field"><label for="type">Publication Type</label><select id="type" required><option value="">Select type</option><option>Policy Brief</option><option>Technical Report</option><option>Technical Brief</option><option>RMRDC Publication</option><option>Journal Article</option><option>Conference Paper</option><option>Book</option><option>Monograph</option><option>Other</option></select></div>
+            <div class="field"><label for="year">Year</label><input id="year" type="number" min="1900" max="2100" required /></div>
+            <div class="field"><label for="isbn">ISBN</label><input id="isbn" type="text" placeholder="978-..." /></div>
+            <div class="isbn-lookup-panel span-two">
+              <div>
+                <strong>Multi-Source Metadata Lookup</strong>
+                <p>Enter an ISBN, then fetch metadata from Open Library, Google Books, CrossRef and Library of Congress. Review before uploading.</p>
+              </div>
+              <div class="isbn-actions"><button id="isbnLookupBtn" class="btn btn-secondary" type="button">Lookup Metadata</button><button id="scanIsbnBtn" class="btn btn-primary" type="button">Scan ISBN Barcode</button></div>
+            </div>
+            <div id="isbnLookupStatus" class="notice hidden span-two"></div>
+            <div class="field"><label for="doi">DOI</label><input id="doi" type="text" placeholder="10.xxxx/xxxxx" /></div>
+            <div class="field"><label for="price">Price (₦)</label><input id="price" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+            <div class="field"><label for="researchAreas">Research Areas / Topics</label><input id="researchAreas" type="text" placeholder="cassava, food science, biotechnology" /></div>
+            <div class="field span-two"><label for="abstract">Abstract / Description</label><textarea id="abstract" rows="5" required></textarea></div>
+
+            <div class="intelligence-form-banner span-two">
+              <div><strong>Research Intelligence Profile</strong><p>Go beyond bibliographic metadata. Add the signals that help researchers quickly decide why this work matters, what it found, how it can be reused and where the research gaps remain.</p></div>
+              <span>For researchers</span>
+            </div>
+            <div class="field span-two"><label for="researchSignificance">Why this research matters</label><textarea id="researchSignificance" rows="4" placeholder="What important scientific, technical, policy or societal problem does this work address? Why should a researcher pay attention?"></textarea></div>
+            <div class="field span-two"><label for="keyFindings">Key findings / evidence</label><textarea id="keyFindings" rows="5" placeholder="Summarise the most important findings, results, measurements, discoveries or conclusions."></textarea></div>
+            <div class="field"><label for="methodology">Methodology / approach</label><textarea id="methodology" rows="4" placeholder="Methods, study design, experimental approach, models or analytical techniques."></textarea></div>
+            <div class="field"><label for="dataResources">Data / research resources</label><textarea id="dataResources" rows="4" placeholder="Datasets, instruments, samples, software, protocols, repositories or other reusable resources."></textarea></div>
+            <div class="field"><label for="researchGap">Research gaps / unanswered questions</label><textarea id="researchGap" rows="4" placeholder="What remains unresolved? What should future researchers investigate?"></textarea></div>
+            <div class="field"><label for="researchImplications">Research implications</label><textarea id="researchImplications" rows="4" placeholder="Implications for future research, methods, policy, practice or technology development."></textarea></div>
+            <div class="field"><label for="contextGeography">Study context / geography</label><input id="contextGeography" placeholder="Nigeria, Northern Nigeria, specific sector, population or study setting" /></div>
+            <div class="field"><label for="keywords">Keywords / discovery terms</label><input id="keywords" placeholder="Add comma-separated search terms" /></div>
+            <div class="field"><label for="researchLimitations">Limitations</label><textarea id="researchLimitations" rows="3" placeholder="Important limitations researchers should know before using the findings."></textarea></div>
+            <div class="field"><label for="recommendedFor">Recommended for</label><textarea id="recommendedFor" rows="3" placeholder="Researchers, postgraduate students, policy analysts, laboratories, specific disciplines, etc."></textarea></div>
+            <div class="field"><label for="cover">Cover image</label><input id="cover" type="file" accept="image/*" required /><small class="cover-upload-tip">Recommended cover: portrait JPG/PNG, 600 × 850px. Use the front cover page for best display.</small></div>
+            
+            <div class="field span-two">
+              <label>Publication File Type</label>
+              <div class="upload-type-options">
+                <label><input type="radio" name="publicationMode" value="pdf" checked /> PDF document / flipbook</label>
+                <label><input type="radio" name="publicationMode" value="html" /> HTML eBook / CD-ROM folder</label>
+              </div>
+            </div>
+
+            <div id="pdfUploadFields" class="field">
+              <label for="pdf">PDF document</label>
+              <input id="pdf" type="file" accept="application/pdf" />
+              <small>Use this for normal PDF publications.</small>
+            </div>
+
+            <div id="htmlUploadFields" class="html-ebook-fields span-two hidden">
+              <div class="field">
+                <label for="ebookFolder">HTML eBook folder from CD-ROM</label>
+                <input id="ebookFolder" type="file" webkitdirectory directory multiple />
+                <small>Select the copied CD-ROM folder that contains index.html and its assets.</small>
+              </div>
+
+              <div class="field">
+                <label for="ebookEntry">Entry HTML file</label>
+                <input id="ebookEntry" type="text" value="index.html" placeholder="index.html or start.html" />
+                <small>Usually index.html. If your CD-ROM uses another start file, type it here.</small>
+              </div>
+
+              <div class="field span-two">
+                <label for="ebookExternalUrl">OR paste existing HTML eBook URL/path</label>
+                <input id="ebookExternalUrl" type="url" placeholder="https://.../index.html" />
+                <small>Optional. Use this if the eBook is already hosted online.</small>
+              </div>
+            </div>
+            <div class="auto-fill-panel span-two">
+              <div>
+                <strong>Auto Fill Publication Details</strong>
+                <p>Select a PDF or HTML eBook folder, then click Auto Fill to extract title, year, ISBN, DOI and abstract hints. Review before uploading.</p>
+              </div>
+              <button id="autoFillPublicationBtn" class="btn btn-secondary" type="button">Auto Fill Details</button>
+            </div>
+            <div id="autoFillStatus" class="notice hidden span-two"></div>
+            <div class="form-actions span-two"><button id="uploadBtn" class="btn btn-primary" type="submit">Upload publication</button></div>
+          </form>
+          <div id="uploadMessage" class="notice hidden"></div>
+        </section>
+
+        <section id="researchIntelligence" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">Researcher-facing intelligence</p><h2>Research Intelligence Profile</h2></div><button class="btn btn-secondary" type="button" onclick="showAdminSection('upload')">＋ Add research output</button></div>
+          <div class="intelligence-preview-grid">
+            <article><strong>Attention signals</strong><p>Why it matters, key findings, methodology, data/resources and research gaps.</p></article>
+            <article><strong>Discovery signals</strong><p>Research areas, keywords, context, discipline and recommended audience.</p></article>
+            <article><strong>Research reuse</strong><p>Reusable datasets, protocols, instruments, software and evidence.</p></article>
+          </div>
+          <p class="muted">These fields are stored with the publication so researchers can discover useful work based on substance—not only title, author, abstract and citation.</p>
+        </section>
+
+        <section id="technologyUpload" class="admin-panel-v2 card hidden">
+          <div class="section-head">
+            <div><p class="section-tag">Investor-facing technology intelligence</p><h2>Add RMRDC Technology Opportunity</h2><p class="muted">Staff can register RMRDC technologies directly, just as researchers submit technologies, then route them through RMRDC validation before investor matching.</p></div>
+            <a class="btn btn-secondary" href="technology-opportunities.html">Manage Opportunities</a>
+          </div>
+          <form id="adminTechnologyForm" class="technology-admin-form">
+            <div class="form-section-title">1. Identity & readiness</div><div class="grid-two">
+              <div class="field span-two"><label for="adminTechTitle">Technology title *</label><input id="adminTechTitle" required placeholder="e.g. Improved Shea Butter Extraction Process"></div>
+              <div class="field"><label for="adminTechSector">Industrial sector</label><select id="adminTechSector"><option>Agro-processing</option><option>Construction Materials</option><option>Renewable Energy</option><option>Biotechnology</option><option>Chemicals</option><option>Mining & Minerals</option><option>Pharmaceuticals</option><option>Food & Beverage</option><option>Other</option></select></div>
+              <div class="field"><label for="adminTechCategory">Technology category</label><input id="adminTechCategory" placeholder="Process, product, formulation, equipment, API, excipient..."></div>
+              <div class="field"><label for="adminTechTrl">TRL</label><select id="adminTechTrl"><option value="">Select TRL</option><option value="1">TRL 1 — Basic principles</option><option value="2">TRL 2 — Technology concept</option><option value="3">TRL 3 — Experimental proof</option><option value="4">TRL 4 — Laboratory validated</option><option value="5">TRL 5 — Technology validated</option><option value="6">TRL 6 — Pilot demonstrated</option><option value="7">TRL 7 — Pilot/system tested</option><option value="8">TRL 8 — System complete</option><option value="9">TRL 9 — Commercially proven</option></select></div>
+              <div class="field"><label for="adminTechInstitution">Institution / department</label><input id="adminTechInstitution" placeholder="RMRDC centre, laboratory, partner or institution"></div>
+              <div class="field"><label for="adminTechResearcher">Researcher / technology owner</label><input id="adminTechResearcher" placeholder="Principal investigator / technology owner"></div>
+              <div class="field span-two"><label for="adminTechProblem">Problem solved / industrial application</label><textarea id="adminTechProblem" rows="3"></textarea></div>
+            </div>
+            <div class="form-section-title">2. Product, performance & manufacturing</div><div class="grid-two">
+              <div class="field"><label for="adminTechSpecification">Product specification / purity</label><input id="adminTechSpecification"></div><div class="field"><label for="adminTechConsistency">Product consistency / evidence</label><input id="adminTechConsistency"></div>
+              <div class="field"><label for="adminTechShelfLife">Shelf life</label><input id="adminTechShelfLife"></div><div class="field"><label for="adminTechYield">Input-output yield</label><input id="adminTechYield"></div>
+              <div class="field"><label for="adminTechCapacity">Production capacity</label><input id="adminTechCapacity"></div><div class="field"><label for="adminTechMachinery">Machinery / equipment</label><input id="adminTechMachinery"></div>
+              <div class="field"><label for="adminTechEnergy">Energy requirement</label><input id="adminTechEnergy"></div><div class="field"><label for="adminTechUtilities">Water / utilities</label><input id="adminTechUtilities"></div>
+              <div class="field"><label for="adminTechWaste">Waste / environmental profile</label><input id="adminTechWaste"></div><div class="field"><label for="adminTechEvidence">Laboratory / pilot evidence</label><select id="adminTechEvidence"><option>Laboratory tested</option><option>Pilot tested</option><option>Demonstration plant</option><option>Commercial production</option></select></div>
+            </div>
+            <div class="form-section-title">3. Commercial & investment case</div><div class="grid-two">
+              <div class="field"><label for="adminTechProductionCost">Estimated production cost</label><input id="adminTechProductionCost" placeholder="₦ per unit / kg / litre / tonne"></div><div class="field"><label for="adminTechRawCost">Raw-material cost</label><input id="adminTechRawCost"></div>
+              <div class="field"><label for="adminTechOperatingCost">Operating cost</label><input id="adminTechOperatingCost"></div><div class="field"><label for="adminTechInvestment">Capital required for scale-up</label><input id="adminTechInvestment" type="number" min="0" placeholder="Estimated CAPEX"></div>
+              <div class="field"><label for="adminTechSellingPrice">Expected selling price</label><input id="adminTechSellingPrice"></div><div class="field"><label for="adminTechMargin">Profit margin</label><input id="adminTechMargin"></div>
+              <div class="field"><label for="adminTechMarket">Market size</label><input id="adminTechMarket" type="number" min="0"></div><div class="field"><label for="adminTechDemand">Expected demand / CAGR</label><input id="adminTechDemand"></div>
+              <div class="field"><label for="adminTechPayback">Payback period</label><input id="adminTechPayback"></div><div class="field"><label for="adminTechImportSub">Import-substitution opportunity</label><textarea id="adminTechImportSub" rows="3"></textarea></div>
+              <div class="field span-two"><label for="adminTechMarketSummary">Market opportunity summary</label><textarea id="adminTechMarketSummary" rows="3" placeholder="Target market, customer segments, demand signals and commercial opportunity."></textarea></div>
+            </div>
+            <div class="form-section-title">4. Raw materials & supply chain</div><div class="grid-two">
+              <div class="field span-two"><label for="adminTechMaterials">Raw materials required</label><textarea id="adminTechMaterials" rows="3"></textarea></div><div class="field"><label for="adminTechLocations">States / locations of availability</label><input id="adminTechLocations"></div><div class="field"><label for="adminTechAvailability">Availability</label><select id="adminTechAvailability"><option>High</option><option>Moderate</option><option>Low</option><option>Seasonal</option></select></div><div class="field"><label for="adminTechQuantity">Quantity available</label><input id="adminTechQuantity"></div><div class="field"><label for="adminTechSeasonality">Seasonality</label><input id="adminTechSeasonality"></div><div class="field"><label for="adminTechSuppliers">Number of suppliers</label><input id="adminTechSuppliers"></div><div class="field"><label for="adminTechMaterialPrice">Current market price</label><input id="adminTechMaterialPrice"></div><div class="field"><label for="adminTechLogistics">Transport / storage</label><input id="adminTechLogistics"></div><div class="field span-two"><label for="adminTechBottlenecks">Hard-to-obtain raw materials / bottlenecks</label><textarea id="adminTechBottlenecks" rows="3"></textarea></div>
+            </div>
+            <div class="form-section-title">5. IP, legal & regulatory</div><div class="grid-two">
+              <div class="field"><label for="adminTechIp">IP / patent status</label><select id="adminTechIp"><option>Patent granted</option><option>Patent pending</option><option>Proprietary know-how</option><option>Open / unprotected</option><option>Not assessed</option></select></div><div class="field"><label for="adminTechPatentRef">Patent number / reference</label><input id="adminTechPatentRef"></div><div class="field"><label for="adminTechPatentOwner">Patent ownership</label><input id="adminTechPatentOwner"></div><div class="field"><label for="adminTechFto">Freedom-to-operate status</label><select id="adminTechFto"><option>Verified</option><option>Initial review</option><option>Not assessed</option></select></div><div class="field"><label for="adminTechLicensing">Licensing terms</label><input id="adminTechLicensing"></div><div class="field"><label for="adminTechLicensees">Existing licensees</label><input id="adminTechLicensees"></div><div class="field"><label for="adminTechNda">NDA arrangement</label><select id="adminTechNda"><option>NDA available</option><option>NDA required before disclosure</option><option>Not required</option></select></div><div class="field"><label for="adminTechRegulatory">Regulatory approvals</label><input id="adminTechRegulatory" placeholder="NAFDAC / SON / sector regulator"></div><div class="field"><label for="adminTechStandards">International standards</label><input id="adminTechStandards"></div><div class="field"><label for="adminTechCompliance">Environmental compliance</label><input id="adminTechCompliance"></div>
+            </div>
+            <div class="form-section-title">6. RMRDC ownership, engagement & support</div><div class="grid-two">
+              <div class="field"><label for="adminTechPrototype">Prototype status</label><input id="adminTechPrototype"></div><div class="field"><label for="adminTechPilot">Pilot plant availability</label><input id="adminTechPilot"></div><div class="field span-two"><label for="adminTechDemo">Demonstration results</label><textarea id="adminTechDemo" rows="3"></textarea></div><div class="field"><label for="adminTechPartnerships">Existing partnerships</label><input id="adminTechPartnerships"></div><div class="field"><label for="adminTechFabrication">Fabrication requirements</label><textarea id="adminTechFabrication" rows="3"></textarea></div><div class="field span-two"><label for="adminTechScaleup">Scale-up requirements</label><textarea id="adminTechScaleup" rows="3"></textarea></div><div class="field span-two"><label>Engagement models</label><div class="check-grid"><label><input class="admin-tech-engagement" type="checkbox" value="Joint Venture"> Joint Venture</label><label><input class="admin-tech-engagement" type="checkbox" value="Patent Licensing"> Patent Licensing</label><label><input class="admin-tech-engagement" type="checkbox" value="Technology Purchase"> Technology Purchase</label><label><input class="admin-tech-engagement" type="checkbox" value="Contract Research"> Contract Research</label><label><input class="admin-tech-engagement" type="checkbox" value="R&D Consultancy"> R&D Consultancy</label><label><input class="admin-tech-engagement" type="checkbox" value="Corporate Spin-off"> Corporate Spin-off</label></div></div><div class="field span-two"><label for="adminTechSupport">Technical support after engagement</label><textarea id="adminTechSupport" rows="3"></textarea></div>
+            </div>
+            <div class="submission-note"><strong>RMRDC governance:</strong> Staff-created technologies enter as <b>draft</b>. They become investor-facing only after RMRDC review and approval. Sensitive commercial information remains controlled by the platform access model.</div>
+            <div class="form-actions"><button class="btn btn-primary" type="submit">＋ Save Technology Draft</button><button class="btn btn-secondary" type="reset">Reset</button></div><p id="adminTechnologyMessage" class="notice hidden"></p>
+          </form>
+        </section>
+
+        <section id="publications" class="admin-panel-v2 card hidden">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Library Records</p>
+              <h2>Recent Publications</h2>
+            </div>
+            <button id="refreshPublicationsBtn" class="btn btn-secondary" type="button">Refresh</button>
+          </div>
+          <div class="table-scroll-v2">
+            <table class="admin-table-v2">
+              <thead><tr><th>Title</th><th>Author(s)</th><th>Type</th><th>Year</th><th>ISBN</th><th>DOI</th><th>Research Areas</th><th>Price</th><th>Views</th><th>Downloads</th><th>Actions</th></tr></thead>
+              <tbody id="publicationsTable"><tr><td colspan="11">No publications loaded.</td></tr></tbody>
+            </table>
+          </div>
+          <div id="adminList" class="admin-list hidden"></div>
+        </section>
+
+        <section id="emailNotifications" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">Alert System</p><h2>Email & WhatsApp Notifications</h2></div><button id="refreshNotificationsBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+          <p class="muted">Shows recent publication notification records created by the email and WhatsApp matching system.</p>
+          <div class="table-scroll-v2"><table class="admin-table-v2"><thead><tr><th>Email</th><th>Publication</th><th>Status</th><th>Sent At</th><th>Error</th></tr></thead><tbody id="notificationsTable"><tr><td colspan="5">No notifications loaded.</td></tr></tbody></table></div>
+        </section>
+
+        <section id="analytics" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">Performance</p><h2>Analytics</h2></div><button id="refreshAnalyticsBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+          <div class="analytics-grid-v2"><article><span>Total Publications</span><strong id="analyticsPublications">0</strong></article><article><span>Total Users</span><strong id="analyticsUsers">0</strong></article><article><span>Total Subscribers</span><strong id="analyticsSubscribers">0</strong></article><article><span>Total Views</span><strong id="analyticsViews">0</strong></article><article><span>Total Downloads</span><strong id="analyticsDownloads">0</strong></article></div>
+        </section>
+
+
+        <section id="rawMaterials" class="admin-panel-v2 card hidden">
+          <div class="section-head">
+            <div>
+              <p class="section-tag">Raw Materials Intelligence</p>
+              <h2>Raw Materials Admin</h2>
+            </div>
+            <a class="btn btn-secondary" href="../raw-materials/index.html" target="_blank" rel="noopener">View Raw Materials Page</a>
+          </div>
+          <p class="muted">Use this section to upload Mineral Raw Material Profiles and Agro Raw Materials Profiles. It is integrated into the existing Library Admin panel.</p>
+          <iframe class="raw-materials-admin-frame" src="../raw-materials/admin.html" title="Raw Materials Admin"></iframe>
+        </section>
+
+        <section id="settings" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">System</p><h2>Settings</h2></div></div>
+          <div class="settings-list-v2"><label class="check-row-v2"><input type="checkbox" checked disabled /> Public library browsing enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> PDF flipbook viewer enabled</label><label class="check-row-v2"><input type="checkbox" checked disabled /> Targeted email and WhatsApp matching enabled</label><p class="muted">Advanced settings can later be connected to a database table if you want admins to edit them from this page.</p></div>
+        </section>
+
+        <section id="activityLogs" class="admin-panel-v2 card hidden">
+          <div class="section-head"><div><p class="section-tag">Audit</p><h2>Activity Logs</h2></div><button id="refreshActivityBtn" class="btn btn-secondary" type="button">Refresh</button></div>
+          <div class="table-scroll-v2"><table class="admin-table-v2"><thead><tr><th>Type</th><th>Publication</th><th>Date</th><th>User Agent</th></tr></thead><tbody id="activityTable"><tr><td colspan="4">No activity loaded.</td></tr></tbody></table></div>
+        </section>
+
+        <footer class="admin-footer-v2">
+          <span>© 2026 RMRDC Current Awareness Service (CAS)</span>
+          <span>Raw Materials Research and Development Council</span>
+        </footer>
+      
+      <section id="bulletinsSection" class="admin-section hidden">
+        <div class="admin-section-head">
+          <div>
+            <p class="section-tag">Current Awareness Service</p>
+            <h2>Create CAS Bulletin</h2>
+          </div>
+          <button id="refreshBulletinsBtn" class="btn btn-secondary" type="button">Refresh Bulletins</button>
+        </div>
+
+        <form id="bulletinForm" class="admin-form card">
+          <div class="field">
+            <label for="bulletinTitle">Bulletin Title</label>
+            <input id="bulletinTitle" required placeholder="e.g. Weekly CAS Bulletin - Food & Beverage Updates" />
+          </div>
+
+          <div class="field">
+            <label for="bulletinType">Bulletin Type</label>
+            <select id="bulletinType">
+              <option>Weekly CAS Bulletin</option>
+              <option>Monthly CAS Bulletin</option>
+              <option>Sector Watch</option>
+              <option>New Arrival Alert</option>
+              <option>Special Research Alert</option>
+            </select>
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinSectors">Sectors / Research Areas</label>
+            <input id="bulletinSectors" placeholder="food science, agro raw materials, policy brief" />
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinSummary">Short Summary</label>
+            <textarea id="bulletinSummary" rows="3" required placeholder="A short summary shown on the bulletin page."></textarea>
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinBody">Full Bulletin Body</label>
+            <textarea id="bulletinBody" rows="8" required placeholder="Write the bulletin: new publications, key findings, who should read them, value-chain relevance, etc."></textarea>
+          </div>
+
+          <div class="field span-two">
+            <label for="bulletinPublicationIds">Featured Publication IDs or Titles</label>
+            <textarea id="bulletinPublicationIds" rows="3" placeholder="Paste publication titles or IDs, one per line."></textarea>
+          </div>
+
+          <div class="alert-options span-two">
+            <label><input id="publishBulletinNow" type="checkbox" checked /> Publish on bulletin page</label>
+            <label><input id="sendBulletinAlerts" type="checkbox" /> Send email/WhatsApp alerts to matching subscribers</label>
+          </div>
+
+          <button class="btn btn-primary span-two" type="submit">Save CAS Bulletin</button>
+          <p id="bulletinMessage" class="notice hidden span-two"></p>
+        </form>
+
+        <section id="adminBulletinList" class="admin-list"></section>
+      </section>
+
+    </main>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="js/site-menu.js"></script>
+
+  <div id="isbnScannerModal" class="isbn-scanner-modal hidden" role="dialog" aria-modal="true">
+    <div class="isbn-scanner-dialog">
+      <div class="isbn-scanner-head">
+        <div>
+          <p class="section-tag">Camera Barcode Scanner</p>
+          <h2>Scan ISBN Barcode</h2>
+          <p>Point your camera at the book barcode. ISBN barcodes are usually EAN-13.</p>
+        </div>
+        <button id="closeScannerBtn" class="isbn-scanner-close" type="button">×</button>
+      </div>
+
+      <div class="scanner-video-wrap">
+        <video id="isbnScannerVideo" playsinline></video>
+        <div class="scanner-guide"></div>
+      </div>
+
+      <div class="scanner-actions">
+        <button id="startScannerBtn" class="btn btn-primary" type="button">Start Camera</button>
+        <button id="stopScannerBtn" class="btn btn-secondary" type="button">Stop Camera</button>
+      </div>
+
+      <p id="scannerStatus" class="notice hidden"></p>
+    </div>
+  </div>
+
+<script src="js/pwa.js"></script>
+  <script src="js/scroll-reveal.js"></script>
+</body>
+</html>

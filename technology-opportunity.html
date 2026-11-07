@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Technology Opportunity | RMRDC</title><link rel="stylesheet" href="css/styles.css"><link rel="stylesheet" href="portal.css?v=28"><link rel="stylesheet" href="css/research-to-industry.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <link rel="stylesheet" href="css/layout-uniformity.css">
+  <link rel="stylesheet" href="css/scroll-reveal.css">
+</head>
+<body><header class="site-header compact"><div class="container nav-row"><div class="brand-wrap small"><img class="brand-logo" src="assets/rmrdc-logo.png" alt="RMRDC"><div><p class="eyebrow">RMRDC Research-to-Industry Intelligence</p><h1>Technology Opportunity</h1></div></div><nav class="top-nav"><a href="index.html">Intelligence Hub</a><a href="researcher-portal.html">Researcher Portal</a><a href="investor-portal.html">Investor Portal</a><a href="fabricator-portal.html">Fabricator / Engineer</a><a href="subscribe.html">Sign In / Register</a><a href="user-dashboard.html">User Dashboard</a>
+      </nav></div></header>
+<main class="container" style="padding:34px 0"><div id="loading">Loading opportunity…</div><article id="opportunity" class="hidden">
+<div class="access-banner"><div><strong id="accessTitle">Free discovery view</strong><p id="accessText">You can see what the technology is and why it matters. Subscribe to unlock the full available technology intelligence.</p></div><button class="primary-btn" id="subscribeBtn">Subscribe to Unlock</button></div>
+<div class="v3-card"><span class="v3-label">RMRDC Technology Opportunity</span><h2 id="title"></h2><p id="summary"></p><p id="executiveSummary" class="rti-lock-preview"></p><div class="workflow-status"><span id="sector"></span><span id="trl"></span><span id="status"></span></div></div>
+<div class="v3-grid" style="margin-top:16px" id="technologyIntelligence">
+<section class="v3-card"><span class="v3-label">Free discovery</span><h3>Technology overview</h3><p id="problem"></p><div class="rti-lock-preview">🔒 Detailed technical specifications, production requirements, pilot evidence and scale-up information are available after subscription.</div></section>
+<section class="v3-card" data-premium-section><span class="v3-label">Controlled intelligence</span><h3>Commercial & supply information</h3><p data-premium-value>Raw-material availability: <strong id="rawAvailability"></strong></p><div class="rti-request-box" data-premium-value><span class="rti-badge">🔒 Subscriber access</span><h4>Raw materials & supply chain</h4><p class="rti-lock-preview">Unlock sourcing information, availability, supplier intelligence and procurement considerations.</p></div><div class="rti-request-box" data-premium-value><span class="rti-badge">🔒 Subscriber access</span><h4>Market & investment intelligence</h4><p class="rti-lock-preview">Unlock market opportunity, production economics, investment requirements and commercialisation context.</p></div></section>
+<section class="v3-card" data-premium-section><span class="v3-label">IP & engagement</span><h3>RMRDC-facilitated pathway</h3><p data-premium-value>IP status: <strong id="ip"></strong></p><div class="rti-request-box" data-premium-value><span class="rti-badge">🔒 Subscriber access</span><h4>IP, licensing & partnership information</h4><p class="rti-lock-preview">Unlock available IP ownership, licensing, partnership and engagement information.</p></div><div class="rti-actions"><button class="primary-btn" id="interestBtn">Express Interest</button></div></section>
+</div>
+<div class="rti-request-box"><h3>How the RMRDC connection works</h3><div class="rti-flow"><span class="rti-node">Investor</span><span class="rti-arrow">→</span><span class="rti-node">RMRDC Review</span><span class="rti-arrow">→</span><span class="rti-node">Researcher</span><span class="rti-arrow">→</span><span class="rti-node">Fabricator / Engineer</span><span class="rti-arrow">→</span><span class="rti-node">Deal Room</span><span class="rti-arrow">→</span><span class="rti-node">Commercialisation</span></div><p style="margin-bottom:0">RMRDC coordinates the engagement so investor interest can move from discovery to validated technical discussion, engineering/fabrication support and commercialisation.</p></div>
+<div class="v3-card" style="margin-top:16px"><span class="v3-label">Subscription preview</span><p><strong>Once subscribed, you can access the available detailed technical, production, market, raw-material, IP and commercialisation information for this opportunity, subject to RMRDC's approved access level.</strong></p></div>
+</article></main>
+<div id="interestModal" class="interest-modal hidden" role="dialog" aria-modal="true" aria-labelledby="interestModalTitle">
+  <div class="interest-dialog">
+    <button class="interest-close" type="button" id="interestClose" aria-label="Close">×</button>
+    <div class="interest-kicker">RMRDC INVESTOR ENGAGEMENT</div>
+    <h2 id="interestModalTitle">Express Interest in this Technology</h2>
+    <p class="interest-intro">Tell RMRDC what you are interested in. Your submission will be reviewed by the RMRDC Investment Desk before the next engagement step.</p>
+    <form id="interestForm" class="interest-form">
+      <div class="interest-grid">
+        <label>Full Name <span>*</span><input id="interestName" required autocomplete="name"></label>
+        <label>Organisation / Company <span>*</span><input id="interestCompany" required autocomplete="organization"></label>
+        <label>Email <span>*</span><input id="interestEmail" type="email" required autocomplete="email"></label>
+        <label>Phone <span>*</span><input id="interestPhone" type="tel" required autocomplete="tel"></label>
+        <label>Interest Type <span>*</span><select id="interestType" required><option value="">Select</option><option>Investment</option><option>Technology Licensing</option><option>Joint Venture</option><option>Technology Partnership</option><option>Commercialisation</option><option>Manufacturing / Scale-up</option></select></label>
+        <label>Estimated Investment Range<select id="interestRange"><option value="">Select if applicable</option><option>Under ₦10 million</option><option>₦10–50 million</option><option>₦50–100 million</option><option>₦100–500 million</option><option>Above ₦500 million</option><option>To be determined</option></select></label>
+        <label>Preferred Next Step <span>*</span><select id="interestNext" required><option value="">Select</option><option>RMRDC briefing</option><option>Meeting with researcher / technology owner</option><option>Request detailed technology dossier</option><option>Fabrication / engineering assessment</option><option>Commercialisation discussion</option></select></label>
+        <label>Timeline<select id="interestTimeline"><option value="">Select</option><option>Immediate</option><option>Within 3 months</option><option>3–6 months</option><option>6–12 months</option><option>Exploratory</option></select></label>
+        <label class="span-2">What are you interested in? <span>*</span><textarea id="interestMessage" rows="4" required placeholder="Briefly describe your intended use, investment interest, partnership need or questions."></textarea></label>
+      </div>
+      <div class="interest-consent"><input id="interestConsent" type="checkbox" required><label for="interestConsent">I consent to RMRDC reviewing this expression of interest and contacting me regarding this technology.</label></div>
+      <input type="hidden" id="interestTechnology">
+      <div class="interest-actions"><button type="button" class="outline-btn" id="interestCancel">Cancel</button><button type="submit" class="primary-btn" id="interestSubmit">Submit Expression of Interest</button></div>
+      <p id="interestStatus" class="interest-status" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<div id="subscriptionGate" class="gate-modal hidden"><div class="gate-box"><h2>🔒 Unlock full technology intelligence</h2><p>Subscribe to access the available validated technical specifications, production economics, market intelligence, raw-material/supply information, IP and partnership information. Subscription also enables structured RMRDC-facilitated engagement requests.</p><div class="gate-actions"><a class="primary-btn" href="subscribe.html">Subscribe / Sign in</a><button class="outline-btn" onclick="document.getElementById('subscriptionGate').classList.add('hidden')">Not now</button></div></div></div>
+<script src="js/config.js"></script><script src="js/supabase-client.js"></script><script src="js/subscription-ui.js"></script><script src="js/research-to-industry.js"></script><script src="js/rti-engagement.js"></script>
+<script>(async function(){
+const q=new URLSearchParams(location.search),id=q.get('id'),title=q.get('title');
+let row=null,sub=false;
+try{sub=await RMRDCWorkflow.activeSubscription()}catch(e){}
+if(window.db&&id){const r=await db.from('technology_opportunities').select('*').eq('id',id).maybeSingle();row=r.data||null}
+if(!row&&window.db){const r=await db.from('public_technology_opportunities').select('*').ilike('title',title||'').maybeSingle();row=r.data||null}
+if(!row){document.getElementById('loading').textContent='Opportunity not found or not yet approved.';return}
+const set=(i,v)=>{const e=document.getElementById(i);if(e)e.textContent=v||'Not provided'};
+set('title',row.title);set('summary',row.abstract||row.short_summary);set('executiveSummary',row.executive_summary);set('sector',row.sector);set('trl',row.trl?'TRL '+row.trl:'TRL not set');set('status','RMRDC approved');set('problem',row.problem_addressed);set('rawAvailability',row.raw_material_availability);set('ip',row.patent_ip_status);
+document.getElementById('loading').classList.add('hidden');document.getElementById('opportunity').classList.remove('hidden');
+const gate=document.getElementById('subscriptionGate');
+const lock=()=>gate.classList.remove('hidden');
+document.getElementById('subscribeBtn').onclick=()=>{if(!sub)lock()};
+if(sub){document.getElementById('accessTitle').textContent='Subscriber access active';document.getElementById('accessText').textContent='Your subscription unlocks the detailed technology intelligence available for this opportunity.';document.getElementById('subscribeBtn').classList.add('hidden');}
+// Apply subscription gate to every controlled technology field. No sensitive value is rendered to free users.
+const premiumSections=document.querySelectorAll('[data-premium-section]');
+if(!sub){
+  premiumSections.forEach(section=>{section.classList.add('rti-sensitive-content');section.querySelectorAll('[data-premium-value]').forEach(v=>{v.dataset.lockedText=v.textContent;v.innerHTML='<strong>🔒 Subscriber information</strong><br><span>Subscribe to unlock the detailed technical, commercial, market, supply-chain and IP information available for this technology.</span>';});});
+  document.querySelectorAll('[data-premium-value]').forEach(v=>v.classList.add('premium-value-locked'));
+}
+const needSub=()=>true;
+// Express Interest form
+const modal=document.getElementById('interestModal'),form=document.getElementById('interestForm'),close=()=>modal.classList.add('hidden');
+document.getElementById('interestClose').onclick=close;document.getElementById('interestCancel').onclick=close;
+const interestBtn=document.getElementById('interestBtn');
+interestBtn.onclick=async()=>{const u=await RTIEngagement.user();if(!u){alert('Please sign in as an investor before expressing interest.');return;}
+  document.getElementById('interestTechnology').value=row.title;
+  const meta=u.user_metadata||{};
+  document.getElementById('interestName').value=meta.full_name||meta.name||'';
+  document.getElementById('interestEmail').value=u.email||'';
+  document.getElementById('interestCompany').value=meta.organisation||meta.organization||'';
+  modal.classList.remove('hidden');
+};
+form.addEventListener('submit',async e=>{e.preventDefault();const btn=document.getElementById('interestSubmit'),status=document.getElementById('interestStatus');btn.disabled=true;status.textContent='Submitting to RMRDC…';
+  try{const u=await RTIEngagement.user();if(!u)throw new Error('Please sign in before submitting.');
+    const payload={investor_user_id:u.id,opportunity_id:(row.id||null),request_type:'expression_of_interest',message:document.getElementById('interestMessage').value.trim(),requested_items:[
+      'Technology: '+row.title,
+      'Contact: '+document.getElementById('interestName').value.trim(),
+      'Organisation: '+document.getElementById('interestCompany').value.trim(),
+      'Phone: '+document.getElementById('interestPhone').value.trim(),
+      'Interest type: '+document.getElementById('interestType').value,
+      'Investment range: '+(document.getElementById('interestRange').value||'Not specified'),
+      'Preferred next step: '+document.getElementById('interestNext').value,
+      'Timeline: '+(document.getElementById('interestTimeline').value||'Not specified')
+    ]};
+    const {error}=await db.from('investor_requests').insert(payload);if(error)throw error;
+    status.textContent='Submitted successfully. RMRDC will review your expression of interest and coordinate the next step.';
+    RTIEngagement.toast('Expression of interest submitted to RMRDC.');
+    setTimeout(close,1300);form.reset();document.getElementById('interestEmail').value=u.email||'';
+  }catch(err){status.textContent=err?.message||'Unable to submit the request. Please try again.';}finally{btn.disabled=false}
+});
+</script>  <script src="js/scroll-reveal.js"></script>
+</body></html>
