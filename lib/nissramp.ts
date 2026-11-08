@@ -1,5 +1,4 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
+import bundledMockData from "../nissramp_mock_data.json";
 
 export interface NissrampRecord {
   commodity_name?: string;
@@ -74,10 +73,9 @@ function isRecord(value: unknown): value is NissrampRecord {
 }
 
 async function readMockNissrampData(): Promise<NissrampRecord[]> {
-  // process.cwd() is the project root in Netlify Functions and Next.js runtime builds.
-  const mockPath = path.join(process.cwd(), "nissramp_mock_data.json");
-  const text = await readFile(mockPath, "utf8");
-  const payload = JSON.parse(text) as unknown;
+  // Bundling keeps demo data available in Netlify serverless runtimes where the
+  // repository working directory and source JSON file are not guaranteed to exist.
+  const payload = bundledMockData as unknown;
   if (payload && typeof payload === "object" && !Array.isArray(payload)) {
     const indexed = payload as Record<string, unknown>;
     if (indexed.demonstration_records && typeof indexed.demonstration_records === "object") {
