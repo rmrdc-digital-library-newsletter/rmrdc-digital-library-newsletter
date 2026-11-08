@@ -3,15 +3,16 @@
   const ROLE_ROUTES={researcher:'researcher-portal.html',investor:'investor-portal.html',fabricator:'fabricator-portal.html',library_user:'library-user-portal.html',admin:'admin/index.html',editor:'admin/index.html'};
   const USER_ROLES=['researcher','investor','fabricator','library_user','admin','editor'];
   const safeRole=r=>USER_ROLES.includes(r)?r:'library_user';
-  const resolveRole=(platformProfile,legacyProfile,researcherProfile)=>{
-    // Staff roles are stored in the legacy profiles table. Keep them authoritative
-    // if an old or duplicate platform_profiles row also exists for that user.
-    if(['admin','editor'].includes(legacyProfile?.role))return legacyProfile.role;
-    // A role-specific profile is evidence that the account belongs to that portal.
-    // Prefer it when a stale central profile contains a default or different role.
-    if(researcherProfile&&['library_user','viewer',undefined].includes(platformProfile?.role||legacyProfile?.role))return 'researcher';
-    if(legacyProfile?.role==='researcher')return 'researcher';
-    return safeRole(platformProfile?.role||legacyProfile?.role||(researcherProfile?'researcher':''));
+  const resolveRole=(user,platformProfile,legacyProfile,researcherProfile)=>{
+    const metadataRole=user?.user_metadata?.role;
+    if(['admin','editor'].includes(metadataRole)||['admin','editor'].includes(legacyProfile?.role)) {
+      return ['admin','editor'].includes(metadataRole) ? metadataRole : legacyProfile.role;
+    }
+    if(['researcher','investor','fabricator','library_user'].includes(metadataRole)) return metadataRole;
+    if(researcherProfile) return 'researcher';
+    if(['researcher','investor','fabricator','library_user'].includes(platformProfile?.role)) return platformProfile.role;
+    if(['researcher','investor','fabricator','library_user'].includes(legacyProfile?.role)) return legacyProfile.role;
+    return 'library_user';
   };
   let routePromise = null;
 
@@ -86,7 +87,7 @@
     baseProfile.full_name=platformProfile?.full_name||legacyProfile?.full_name||user.user_metadata?.full_name||user.email;
     baseProfile.organisation=platformProfile?.organisation||legacyProfile?.organisation||'';
     baseProfile.research_areas=Array.isArray(platformProfile?.interest_data)?platformProfile.interest_data:(Array.isArray(legacyProfile?.research_areas)?legacyProfile.research_areas:[]);
-    const role=resolveRole(platformProfile,legacyProfile,researcherProfile);
+    const role=resolveRole(user,platformProfile,legacyProfile,researcherProfile);
     const roleTables={researcher:['researcher_profiles','profile_id'],investor:['investor_profiles_v2','user_id'],library_user:['library_user_profiles','user_id'],fabricator:['fabricator_profiles_v2','user_id']};
     const detail=roleTables[role]?await getRoleProfile(roleTables[role][0],user.id,roleTables[role][1]):null;
     const identity={user,baseProfile,detail,role};
