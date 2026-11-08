@@ -29,6 +29,12 @@ function cleanStringList(value: unknown, maxItems = 12) {
 }
 
 const fieldQuestions: Record<string, string> = {
+  title: "What exact document title, report title, policy title, or publication title is stated?",
+  authors: "Which authors, researchers, editors, institutions, or organizations are named as responsible?",
+  year: "What publication, copyright, report, conference, or issuance year is stated?",
+  type: "What document type is indicated: publication, policy brief, technical report, journal article, bulletin, thesis, or similar?",
+  isbn: "What ISBN identifier is explicitly printed?",
+  doi: "What DOI identifier is explicitly printed?",
   abstract: "What are the work's stated purpose, scope, approach, main documented findings, and relevance?",
   research_significance: "What problem does the work address and why does the source say it matters?",
   key_findings: "What results, measurements, findings, discoveries, or conclusions does the source explicitly report?",
@@ -134,6 +140,12 @@ Deno.serve(async req => {
   const schema = {
     type: "OBJECT",
     properties: {
+      title: { type: "STRING" },
+      authors: { type: "STRING" },
+      year: { type: "STRING" },
+      type: { type: "STRING" },
+      isbn: { type: "STRING" },
+      doi: { type: "STRING" },
       abstract: { type: "STRING" },
       research_significance: { type: "STRING" },
       key_findings: { type: "STRING" },
@@ -148,6 +160,7 @@ Deno.serve(async req => {
       research_areas: { type: "ARRAY", items: { type: "STRING" } }
     },
     required: [
+      "title", "authors", "year", "type", "isbn", "doi",
       "abstract", "research_significance", "key_findings", "methodology", "data_resources",
       "research_gaps", "research_implications", "context_geography", "keywords", "limitations",
       "recommended_for", "research_areas"
@@ -198,6 +211,12 @@ ${JSON.stringify(evidence)}`;
 
     const parsed = JSON.parse(generatedText.replace(/^```(?:json)?\s*|\s*```$/g, ""));
     const profileResult = {
+      title: cleanString(parsed.title, 500),
+      authors: cleanString(parsed.authors, 500),
+      year: cleanString(parsed.year, 20),
+      type: cleanString(parsed.type, 100),
+      isbn: cleanString(parsed.isbn, 100),
+      doi: cleanString(parsed.doi, 150),
       abstract: cleanString(parsed.abstract),
       research_significance: cleanString(parsed.research_significance),
       key_findings: cleanString(parsed.key_findings),

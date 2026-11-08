@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -70,6 +71,21 @@ def page_record(page_number: int, payload: dict[str, Any], markdown: str, filena
     }
 
 
+def clean_markdown(markdown: str) -> str:
+    lines = [line.strip() for line in markdown.splitlines()]
+    output: list[str] = []
+    previous = ""
+    for line in lines:
+        if line:
+            if line != previous:
+                output.append(line)
+            previous = line
+        elif output and output[-1]:
+            output.append("")
+            previous = ""
+    return "\n".join(output).strip()
+
+
 @app.get("/health")
 def health():
     try:
@@ -116,12 +132,19 @@ async def process(request: ProcessRequest, x_worker_secret: str | None = Header(
             raise HTTPException(status_code=413, detail="Document exceeds configured page limit")
 
         extracted: list[dict[str, Any]] = []
-        for index, result in enumerate(pages, start=1):
+
+        def render_page(indexed_result: tuple[int, Any]) -> dict[str, Any]:
+            index, result = indexed_result
             page_dir = output_dir / f"page-{index:04d}"
             page_dir.mkdir()
             payload = result_json(result, page_dir)
-            markdown = result_markdown(result, page_dir)
-            extracted.append(page_record(index, payload, markdown, request.source_name))
+            markdown = clean_markdown(result_markdown(result, page_dir))
+            return page_record(index, payload, markdown, request.source_name)
+
+        if pages:
+            workers = min(4, len(pages))
+            with ThreadPoolExecutor(max_workers=workers) as executor:
+                extracted.extend(executor.map(render_page, enumerate(pages, start=1)))
 
         return {
             "document_id": request.document_id,

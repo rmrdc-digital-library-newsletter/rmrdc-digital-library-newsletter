@@ -1457,6 +1457,12 @@ function getLibraryPageDetails(value) {
 }
 
 const publicationProfileFields = {
+  title: 'title',
+  authors: 'authors',
+  year: 'year',
+  type: 'type',
+  isbn: 'isbn',
+  doi: 'doi',
   abstract: 'abstract',
   research_significance: 'researchSignificance',
   key_findings: 'keyFindings',
