@@ -66,7 +66,7 @@ Deno.serve(async (request) => {
 
     const { data: opportunity, error: opportunityError } = await serviceClient
       .from("technology_opportunities")
-      .select("id,title,sector,trl,short_summary,created_by,approved_by,approved_at,visibility")
+      .select("id,title,sector,category,trl,short_summary,abstract,executive_summary,problem_addressed,market_summary,estimated_investment,created_by,approved_by,approved_at,visibility")
       .eq("id", opportunityId).single();
     if (opportunityError || !opportunity) return json({ error: "Technology opportunity not found." }, 404);
 
@@ -113,7 +113,37 @@ Deno.serve(async (request) => {
         entity_id: opportunity.id,
       })));
     }
-    const html = `<div style="font-family:Arial,sans-serif;max-width:640px;color:#173d30"><div style="background:#075c36;padding:22px 26px;color:#fff"><strong style="font-size:18px">RMRDC Research-to-Industry</strong><div style="margin-top:5px;opacity:.82">Investor opportunity alert</div></div><div style="padding:26px"><div style="display:inline-block;background:#e7f5eb;color:#087244;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold">RMRDC APPROVED</div><h2 style="margin:16px 0 10px">A new technology matches your investment interests</h2><p>${title} has completed RMRDC review and is now available for investor discovery.</p><table style="border-collapse:collapse;width:100%;margin:20px 0"><tr><td style="padding:9px 0;color:#68776f">Sector</td><td style="padding:9px 0">${sector}</td></tr><tr><td style="padding:9px 0;color:#68776f">Readiness</td><td style="padding:9px 0">${trl}</td></tr></table><a href="${Deno.env.get("INVESTOR_PORTAL_URL") || "https://rmrdc.gov.ng/investor-portal.html#discover"}" style="display:inline-block;background:#075c36;color:#fff;padding:12px 16px;text-decoration:none;border-radius:6px">View opportunity</a><p style="font-size:12px;color:#68776f;margin-top:24px">Sign in to review the available brief and request deeper technology intelligence from RMRDC.</p></div></div>`;
+    let businessPitch: any = null;
+    try {
+      const pitchResponse = await fetch(`${url}/functions/v1/generate-investor-business-model`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${serviceKey}`,
+          apikey: serviceKey,
+          "Content-Type": "application/json",
+          "X-Internal-Processing-Secret": Deno.env.get("DOCUMENT_PROCESSING_INTERNAL_SECRET") || "",
+        },
+        body: JSON.stringify({ opportunity_id: opportunityId }),
+      });
+      if (pitchResponse.ok) businessPitch = (await pitchResponse.json()).model;
+    } catch (error) {
+      console.error("Business-model pitch generation failed:", error);
+    }
+    const pitchHtml = businessPitch ? `
+      <h3>Business model</h3>
+      <p>${escapeHtml(businessPitch.opening_hook)}</p>
+      <table style="border-collapse:collapse;width:100%;margin:16px 0">
+        <tr><td style="padding:8px 0;color:#68776f;width:28%">Problem</td><td style="padding:8px 0">${escapeHtml(businessPitch.problem)}</td></tr>
+        <tr><td style="padding:8px 0;color:#68776f">Solution</td><td style="padding:8px 0">${escapeHtml(businessPitch.solution)}</td></tr>
+        <tr><td style="padding:8px 0;color:#68776f">Unique value</td><td style="padding:8px 0">${escapeHtml(businessPitch.unique_value)}</td></tr>
+        <tr><td style="padding:8px 0;color:#68776f">Revenue streams</td><td style="padding:8px 0">${escapeHtml((businessPitch.revenue_streams || []).join("; "))}</td></tr>
+        <tr><td style="padding:8px 0;color:#68776f">Pricing</td><td style="padding:8px 0">${escapeHtml(businessPitch.pricing)}</td></tr>
+        <tr><td style="padding:8px 0;color:#68776f">Unit economics</td><td style="padding:8px 0">${escapeHtml(businessPitch.unit_economics)}</td></tr>
+        <tr><td style="padding:8px 0;color:#68776f">Investment case</td><td style="padding:8px 0">${escapeHtml(businessPitch.investment_case)}</td></tr>
+      </table>
+      <p><strong>${escapeHtml(businessPitch.call_to_action)}</strong></p>
+      ${(businessPitch.assumptions || []).length ? `<p style="font-size:12px;color:#68776f">Commercial assumptions requiring validation: ${escapeHtml((businessPitch.assumptions || []).join("; "))}</p>` : ""}` : "";
+    const html = `<div style="font-family:Arial,sans-serif;max-width:640px;color:#173d30"><div style="background:#075c36;padding:22px 26px;color:#fff"><strong style="font-size:18px">RMRDC Research-to-Industry</strong><div style="margin-top:5px;opacity:.82">Investor opportunity alert</div></div><div style="padding:26px"><div style="display:inline-block;background:#e7f5eb;color:#087244;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold">RMRDC APPROVED</div><h2 style="margin:16px 0 10px">A new technology matches your investment interests</h2><p>${title} has completed RMRDC review and is now available for investor discovery.</p><table style="border-collapse:collapse;width:100%;margin:20px 0"><tr><td style="padding:9px 0;color:#68776f">Sector</td><td style="padding:9px 0">${sector}</td></tr><tr><td style="padding:9px 0;color:#68776f">Readiness</td><td style="padding:9px 0">${trl}</td></tr></table>${pitchHtml}<a href="${Deno.env.get("INVESTOR_PORTAL_URL") || "https://rmrdc.gov.ng/investor-portal.html#discover"}" style="display:inline-block;background:#075c36;color:#fff;padding:12px 16px;text-decoration:none;border-radius:6px">View opportunity</a><p style="font-size:12px;color:#68776f;margin-top:24px">Sign in to review the available brief and request deeper technology intelligence from RMRDC.</p></div></div>`;
     await sendEmail((investors || []).map(investor => investor.email).filter(Boolean), `New RMRDC opportunity: ${opportunity.title}`, html);
     return json({ ok: true, event, notified_investors: investorIds.length });
   } catch (error) {
