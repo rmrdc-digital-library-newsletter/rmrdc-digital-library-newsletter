@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Investor Opportunity | RMRDC</title>
+  <link rel="stylesheet" href="portal.css?v=29">
+  <style>
+    body{margin:0;background:#f4f7f5;color:#17352d;font-family:Arial,sans-serif}
+    .detail-shell{max-width:1120px;margin:auto;padding:36px 20px 70px}
+    .detail-header{background:linear-gradient(135deg,#073f2a,#087244);color:#fff;border-radius:20px;padding:34px;margin-bottom:18px}
+    .detail-header h1{font-size:34px;margin:10px 0}
+    .detail-header p{max-width:780px;line-height:1.65;color:#e4f3eb}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.meta span{background:#ffffff16;border:1px solid #ffffff30;padding:7px 11px;border-radius:999px;font-size:12px}
+    .section{background:#fff;border:1px solid #dde6e1;border-radius:16px;padding:24px;margin-top:16px}
+    .section h2{margin-top:0;font-size:21px}.canvas-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .canvas-grid article,.economics div{border:1px solid #e4ebe7;border-radius:12px;padding:16px;background:#fbfcfb}.canvas-grid small,.economics small{display:block;text-transform:uppercase;font-size:10px;letter-spacing:.08em;color:#718078;margin-bottom:7px;font-weight:bold}
+    .canvas-grid p,.canvas-grid ul{margin:0;font-size:14px;line-height:1.55}.economics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.economics strong{line-height:1.55;font-size:14px}
+    .projection-table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:13px;border-bottom:1px solid #e4ebe7;text-align:left}th{background:#edf6f1;color:#315244}
+    .actions{display:flex;gap:10px;margin-top:22px}.primary-btn{background:#087244;color:#fff;border:0;border-radius:8px;padding:12px 18px;text-decoration:none;font-weight:bold}.outline-btn{border:1px solid #087244;color:#087244;border-radius:8px;padding:12px 18px;text-decoration:none;font-weight:bold}
+    #opportunityState{background:#fff;border-radius:16px;padding:40px;text-align:center;color:#66756f}
+    .empty-state{padding:18px;border:1px solid #dce9e2;background:#f7faf8;border-radius:12px}.empty-state strong{display:block;margin-bottom:6px}.empty-state p{margin:0;color:#68776f;line-height:1.55}
+    @media(max-width:800px){.canvas-grid,.economics{grid-template-columns:1fr}.detail-header h1{font-size:27px}.actions{flex-direction:column}.actions a{text-align:center}}
+  </style>
+</head>
+<body>
+  <main class="detail-shell">
+    <div id="opportunityState">Loading the investment opportunity…</div>
+    <div id="opportunityContent" hidden>
+      <header class="detail-header">
+        <span>RMRDC APPROVED INVESTMENT OPPORTUNITY</span>
+        <h1 id="opportunityTitle"></h1>
+        <p id="opportunitySummary"></p>
+        <div class="meta"><span id="opportunitySector"></span><span id="opportunityTrl"></span><span>Evidence-grounded business model</span></div>
+      </header>
+      <section class="section"><h2>Lean Canvas business model</h2><div id="leanCanvas" class="canvas-grid"></div></section>
+      <section class="section"><h2>Commercial economics</h2><div id="economics" class="economics"></div></section>
+      <section class="section"><h2>FlexShift 5-Year Revenue Growth Projection</h2><p>Revenue scenarios are shown only where supported by evidence or clearly identified as requiring validation.</p><div id="projection"></div></section>
+      <section class="section"><h2>Investment assumptions requiring validation</h2><div id="assumptions"></div></section>
+      <div class="actions"><a class="primary-btn" href="investor-portal.html#discover">Return to investor opportunities</a><a class="outline-btn" href="mailto:investments@rmrdc.gov.ng?subject=RMRDC%20investment%20briefing">Request a briefing</a></div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/platform-auth.js"></script>
+  <script src="js/investor-opportunity.js"></script>
+</body>
+</html>

@@ -78,6 +78,19 @@ Deno.serve(async request => {
       revenue_streams: { type: "ARRAY", items: { type: "STRING" } },
       pricing: { type: "STRING" },
       unit_economics: { type: "STRING" },
+      five_year_revenue_projection: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: {
+            year: { type: "STRING" },
+            revenue: { type: "STRING" },
+            basis: { type: "STRING" },
+            confidence: { type: "STRING" },
+          },
+          required: ["year", "revenue", "basis", "confidence"],
+        },
+      },
       channels: { type: "ARRAY", items: { type: "STRING" } },
       key_resources: { type: "ARRAY", items: { type: "STRING" } },
       key_activities: { type: "ARRAY", items: { type: "STRING" } },
@@ -89,7 +102,7 @@ Deno.serve(async request => {
       call_to_action: { type: "STRING" },
       sources: { type: "ARRAY", items: { type: "STRING" } },
     },
-    required: ["subject", "opening_hook", "problem", "solution", "unique_value", "customer_segments", "revenue_streams", "pricing", "unit_economics", "channels", "key_resources", "key_activities", "key_partnerships", "cost_structure", "traction", "investment_case", "assumptions", "call_to_action", "sources"],
+    required: ["subject", "opening_hook", "problem", "solution", "unique_value", "customer_segments", "revenue_streams", "pricing", "unit_economics", "five_year_revenue_projection", "channels", "key_resources", "key_activities", "key_partnerships", "cost_structure", "traction", "investment_case", "assumptions", "call_to_action", "sources"],
   };
 
   const approvedRecord = {
@@ -126,6 +139,7 @@ Deno.serve(async request => {
 
 Use only approved technology data and document evidence. Do not fabricate traction, market size, customers, revenue, margins, costs, price, unit economics, partnerships, grants or pilot users.
 If commercial facts are absent, propose clearly labeled "commercial assumption requiring validation". Quantified assumptions must be separated from documented facts. A concise call to action should request a 10-minute introductory call.
+Provide a "five_year_revenue_projection" named "FlexShift 5-Year Revenue Growth Projection". If evidence cannot support revenue figures, provide five explicitly labeled validation assumptions rather than fabricated values, including the basis and confidence for each year.
 Write for busy angel investors and VCs. Keep the narrative concrete, specific, and free of generic corporate language. Use no placeholders.
 
 Approved technology record:

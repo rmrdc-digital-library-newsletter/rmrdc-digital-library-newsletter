@@ -1,0 +1,78 @@
+{
+  "demonstration_records": {
+    "1108140000": {
+      "commodity": "Industrial Cassava Starch",
+      "commodity_name": "Industrial Cassava Starch",
+      "import_dependency": "65%",
+      "local_availability": "High (Ogun, Oyo, Benue)",
+      "rmrdc_patent": "RMRDC-CS-2026: Automated High-Speed Flash Dryer",
+      "compliance_status": "Fails 30% Local Value-Addition Rule without processing"
+    },
+    "2507000000": {
+      "commodity": "Refined Kaolin Clay (Paint & Paper Grade)",
+      "commodity_name": "Refined Kaolin Clay (Paint & Paper Grade)",
+      "import_dependency": "80%",
+      "local_availability": "Abundant but unrefined (Katsina, Plateau)",
+      "rmrdc_patent": "RMRDC-MIN-2025: Fluidized Bed Calciner Process",
+      "compliance_status": "Raw export restricted under industrialization policy"
+    },
+    "1511100000": {
+      "commodity": "Crude Palm Oil (CPO)",
+      "commodity_name": "Crude Palm Oil (CPO)",
+      "import_dependency": "40%",
+      "local_availability": "Medium (Ondo, Cross River, Imo)",
+      "rmrdc_patent": "RMRDC-AGRO-2026: Low-FFA Extraction Mill System",
+      "compliance_status": "High domestic demand; tariff incentives apply"
+    }
+  },
+  "records": [
+    {
+      "commodity_name": "Raw shea nuts",
+      "hs_code": "120770",
+      "primary_locations": ["Niger", "Kwara", "Nasarawa", "Oyo"],
+      "raw_material_type": "Agro-industrial",
+      "market_status": "Demo dataset",
+      "annual_import_value_ngn": null
+    },
+    {
+      "commodity_name": "Sesame seeds",
+      "hs_code": "120740",
+      "primary_locations": ["Benue", "Nasarawa", "Kaduna", "Niger"],
+      "raw_material_type": "Agro-industrial",
+      "market_status": "Demo dataset",
+      "annual_import_value_ngn": null
+    },
+    {
+      "commodity_name": "Lithium ore concentrates",
+      "hs_code": "282520",
+      "primary_locations": ["Nasarawa", "Kogi", "Niger", "Kaduna"],
+      "raw_material_type": "Solid minerals",
+      "market_status": "Demo dataset",
+      "annual_import_value_ngn": null
+    },
+    {
+      "commodity_name": "Natural gypsum",
+      "hs_code": "252010",
+      "primary_locations": ["Gombe", "Borno", "Yobe", "Niger"],
+      "raw_material_type": "Mineral",
+      "market_status": "Demo dataset",
+      "annual_import_value_ngn": null
+    },
+    {
+      "commodity_name": "Kaolin",
+      "hs_code": "250700",
+      "primary_locations": ["Ogun", "Kaduna", "Edo", "Niger"],
+      "raw_material_type": "Mineral",
+      "market_status": "Demo dataset",
+      "annual_import_value_ngn": null
+    },
+    {
+      "commodity_name": "Palm kernel oil",
+      "hs_code": "151329",
+      "primary_locations": ["Akwa Ibom", "Cross River", "Edo", "Ondo"],
+      "raw_material_type": "Agro-industrial",
+      "market_status": "Demo dataset",
+      "annual_import_value_ngn": null
+    }
+  ]
+}
