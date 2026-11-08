@@ -290,6 +290,28 @@ main>.container{width:min(var(--layout-max),calc(100% - var(--layout-gutter)))!i
   .ri-section .fabricator-match-grid{gap:24px !important;}
 }
 
+/* Keep the desktop portal at its intended full width and restore the fixed
+   navigation rail without altering the mobile drawer behavior. */
+@media (min-width:1101px){
+  html, body{width:100%;min-width:0;overflow-x:hidden}
+  .portal-shell{width:100%;min-width:0}
+  .portal-sidebar{
+    position:fixed;
+    transform:none !important;
+    opacity:1 !important;
+    pointer-events:auto !important;
+    box-shadow:none;
+  }
+  .portal-main{
+    margin-left:250px !important;
+    width:calc(100% - 250px) !important;
+    max-width:none;
+  }
+  .portal-content{width:100%;max-width:none;margin:0}
+  .portal-grid{width:100%;grid-template-columns:minmax(0,1fr) 310px}
+  .mobile-toggle{display:none !important}
+}
+
 @media (max-width:900px){
   .ri-section > .container{
     width:calc(100% - 32px) !important;
