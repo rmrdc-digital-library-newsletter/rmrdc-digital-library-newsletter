@@ -5,11 +5,11 @@
   const safeRole=r=>USER_ROLES.includes(r)?r:'library_user';
   const resolveRole=(user,platformProfile,legacyProfile,researcherProfile)=>{
     const metadataRole=user?.user_metadata?.role;
+    if(researcherProfile) return 'researcher';
     if(['admin','editor'].includes(metadataRole)||['admin','editor'].includes(legacyProfile?.role)) {
       return ['admin','editor'].includes(metadataRole) ? metadataRole : legacyProfile.role;
     }
     if(['researcher','investor','fabricator','library_user'].includes(metadataRole)) return metadataRole;
-    if(researcherProfile) return 'researcher';
     if(['researcher','investor','fabricator','library_user'].includes(platformProfile?.role)) return platformProfile.role;
     if(['researcher','investor','fabricator','library_user'].includes(legacyProfile?.role)) return legacyProfile.role;
     return 'library_user';
