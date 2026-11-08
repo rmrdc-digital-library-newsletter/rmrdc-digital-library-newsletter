@@ -28,4 +28,4 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeResearchModal(
 document.addEventListener('click',e=>{if(e.target.classList.contains('modal-backdrop'))e.target.classList.add('hidden')})
 document.querySelectorAll('.filter-chip').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.filter-chip').forEach(x=>x.classList.remove('active'));b.classList.add('active')}))
 document.addEventListener('click',e=>{const b=e.target.closest('.intel-tabs button');if(!b)return;const tab=b.dataset.tab;b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const root=b.closest('.opportunity-modal');root.querySelectorAll('.intel-pane').forEach(x=>x.classList.remove('active'));root.querySelector('#intel-'+tab)?.classList.add('active')});
-window.rtiOpenEOI = rtiOpenEOI;
+if(typeof rtiOpenEOI === 'function') window.rtiOpenEOI = rtiOpenEOI;
