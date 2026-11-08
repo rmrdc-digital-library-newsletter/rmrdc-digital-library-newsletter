@@ -39,11 +39,44 @@
     const localSaved=localList(SAVED_KEY),localHistory=localList(HISTORY_KEY);
     render('savedGrid',localSaved,'Loading your saved publications...','saved');render('historyGrid',localHistory,'Loading your reading history...');
     await loadActivity(identity?.user?.id);
-    const areas=identity?.baseProfile?.research_areas||identity?.detail?.preferred_cas_topics||[];
     if(!window.db){document.getElementById('feedHint').textContent='Connect your library account to load recommendations.';await loadAlerts(null);return}
-    const publications=await window.db.from('publications_with_stats').select('id,title,authors,type,year,cover_url,research_areas').order('created_at',{ascending:false}).limit(40);
-    const matches=(publications.data||[]).filter(pub=>!areas.length||areas.some(area=>[pub.title,pub.authors,pub.type,...(pub.research_areas||[])].join(' ').toLowerCase().includes(String(area).toLowerCase()))).slice(0,6);
-    document.getElementById('recommendationCount').textContent=matches.length;document.getElementById('feedHint').textContent=areas.length?`Based on: ${areas.join(', ')}`:'Latest RMRDC library records';render('feedGrid',matches,'No recommended publications found yet.');
+    const normalizeAreas=values=>{
+      if(Array.isArray(values)) return values;
+      if(typeof values==='string') return values.split(',').map(value=>value.trim()).filter(Boolean);
+      return [];
+    };
+    const profileAreas=normalizeAreas(identity?.baseProfile?.research_areas).concat(normalizeAreas(identity?.baseProfile?.interests));
+    const detailAreas=normalizeAreas(identity?.detail?.preferred_cas_topics).concat(normalizeAreas(identity?.detail?.subject_areas));
+    const metadataAreas=normalizeAreas(identity?.user?.user_metadata?.interests);
+    let interestRows=[];
+    const interestResult=identity?.user?.id
+      ? await window.db.from('user_interests').select('interest').eq('user_id',identity.user.id)
+      : {data:null,error:null};
+    if(!interestResult.error) interestRows=(interestResult.data||[]).map(row=>row.interest).filter(Boolean);
+    const areas=[...profileAreas,...detailAreas,...metadataAreas,...interestRows].map(value=>String(value).trim()).filter(Boolean)
+      .filter((value,index,list)=>list.findIndex(item=>item.toLowerCase()===value.toLowerCase())===index);
+    let publicationResult=await window.db.from('publications_with_stats').select('id,title,authors,type,year,cover_url,research_areas,abstract').order('created_at',{ascending:false}).limit(80);
+    if(publicationResult.error){
+      publicationResult=await window.db.from('publications').select('id,title,authors,type,year,cover_url,research_areas,abstract').order('created_at',{ascending:false}).limit(80);
+    }
+    if(publicationResult.error){
+      document.getElementById('feedHint').textContent='Recommendations could not be loaded. Refresh to try again.';
+      console.warn('Could not load publication recommendations:',publicationResult.error.message);
+      render('feedGrid',[],'No publications are available yet.');
+      await loadAlerts(identity?.user?.id);
+      return;
+    }
+    const publications=publicationResult.data||[];
+    const ranked=publications.map(publication=>{
+      const publicationAreas=[publication.title,publication.authors,publication.type,publication.abstract,...normalizeAreas(publication.research_areas)].filter(Boolean).join(' ').toLowerCase();
+      const score=areas.reduce((total,area)=>total+(publicationAreas.includes(area.toLowerCase())?1:0),0);
+      return {...publication,_score:score};
+    }).sort((a,b)=>b._score-a._score||String(b.year||'').localeCompare(String(a.year||'')));
+    const matched=areas.length?ranked.filter(publication=>publication._score>0).slice(0,6):[];
+    const recommendations=matched.length?matched:ranked.slice(0,6);
+    document.getElementById('recommendationCount').textContent=recommendations.length;
+    document.getElementById('feedHint').textContent=areas.length?`Matched to: ${areas.slice(0,5).join(', ')}`:'Latest RMRDC library records';
+    render('feedGrid',recommendations,'No recommended publications found yet.');
     await loadAlerts(identity?.user?.id);
   }
   document.addEventListener('click',async event=>{
