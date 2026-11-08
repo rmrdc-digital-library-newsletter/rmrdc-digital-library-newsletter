@@ -5,6 +5,11 @@
     window.db = null;
     return;
   }
+  if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+    console.error('Supabase browser library could not be loaded.');
+    window.db = null;
+    return;
+  }
   window.db = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, {
     auth: { persistSession: true, autoRefreshToken: true }
   });
