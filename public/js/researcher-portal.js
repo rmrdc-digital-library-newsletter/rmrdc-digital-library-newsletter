@@ -3,6 +3,7 @@
   const message = document.getElementById('technologyMessage');
   const portalMessage = document.getElementById('researcherPortalMessage');
   const form = document.getElementById('technologyForm');
+  const submitSection = document.getElementById('submit');
   const search = document.getElementById('technologySearch');
   const status = document.getElementById('technologyStatus');
   let userId = null;
@@ -21,6 +22,12 @@
       return;
     }
     rows.innerHTML = visible.map(item => `<tr><td><strong>${escapeHtml(item.title)}</strong><br /><small>${escapeHtml(item.short_summary || '')}</small></td><td>${escapeHtml(item.sector || '—')}</td><td>${item.trl ? `TRL ${escapeHtml(item.trl)}` : '—'}</td><td><span class="pill ${item.visibility === 'approved' ? 'green' : 'blue'}">${escapeHtml(item.visibility || 'draft')}</span></td><td>${escapeHtml(new Date(item.created_at).toLocaleDateString())}</td></tr>`).join('');
+  }
+
+  function openSubmitForm() {
+    submitSection.hidden = false;
+    document.getElementById('openSubmit')?.setAttribute('aria-expanded', 'true');
+    submitSection.scrollIntoView({ behavior: 'smooth' });
   }
 
   async function loadData() {
@@ -85,8 +92,7 @@
   search.addEventListener('input', render);
   status.addEventListener('change', render);
   document.getElementById('researcherSignOut')?.addEventListener('click', async event => { event.preventDefault(); await window.db.auth.signOut(); window.location.replace('researcher-login.html'); });
-  document.getElementById('openSubmit')?.addEventListener('click', () => document.getElementById('submit').scrollIntoView({ behavior: 'smooth' }));
-  document.getElementById('openSubmitSecondary')?.addEventListener('click', () => document.getElementById('submit').scrollIntoView({ behavior: 'smooth' }));
+  document.getElementById('openSubmit')?.addEventListener('click', openSubmitForm);
   init().catch(error => {
     console.error('Researcher portal failed to load:', error);
     portalMessage.textContent = 'Some workspace data could not be loaded. Please try again later.';
